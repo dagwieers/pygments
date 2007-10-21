@@ -12,7 +12,7 @@
     * a wide range of common languages and markup formats is supported
     * special attention is paid to details, increasing quality by a fair amount
     * support for new languages and formats are added easily
-    * a number of output formats, presently HTML, LaTeX, RTF and ANSI sequences
+    * a number of output formats, presently HTML, LaTeX, RTF, SVG and ANSI sequences
     * it is usable as a command-line tool and as a library
     * ... and it highlights even Brainfuck!
 
@@ -20,7 +20,7 @@
     :license: BSD, see LICENSE for more details.
 """
 
-__version__ = '0.9'
+__version__ = '1.0'
 __author__ = 'Georg Brandl <g.brandl@gmx.net>'
 __url__ = 'http://pygments.org/'
 __license__ = 'BSD License'
