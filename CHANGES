@@ -1,6 +1,17 @@
 Pygments changelog
 ==================
 
+Version 0.11
+------------
+(codename not selected, release XXX XX, 2008)
+
+- Added "Visual Studio" style.
+
+- Added ActionScript 3 lexer, thanks to Pierre Bourdon.
+
+- Added YAML lexer, thanks to Kirill Simonov.
+
+
 Version 0.10
 ------------
 (codename Malzeug, released May 06, 2008)
