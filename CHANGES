@@ -5,18 +5,20 @@ Version 0.11
 ------------
 (codename not selected, release XXX XX, 2008)
 
-- Added Gnuplot lexer.
+- Lexers added:
+
+  * Nasm-style assembly language, thanks to delroth
+  * YAML, thanks to Kirill Simonov
+  * ActionScript 3, thanks to Pierre Bourdon
+  * Cheetah/Spitfire templates, thanks to Matt Good
+  * Lighttpd config files
+  * Nginix config files
+  * Gnuplot plotting scripts
 
 - Added "Visual Studio" style.
 
-- Added ActionScript 3 lexer, thanks to Pierre Bourdon.
-
-- Added YAML lexer, thanks to Kirill Simonov.
-
 - C lexer highlights standard library functions now and supports
   C99 types.
-
-- Added Nasm lexer.
 
 - Updated markdown processor to Markdown 1.7.
 
@@ -26,6 +28,15 @@ Version 0.11
 - The RawTokenFormatter is no longer registered to ``*.raw``
   and it's documented that tokenization with this lexer may
   raise exceptions.
+
+- New option *-g* to pygmentize, to allow lexer guessing based
+  on filetext (can be slowish, so file extensions are still checked
+  first).
+
+- ``guess_lexer()`` now makes its decision much faster due to a
+  cache of whether data is xml-like (a check which is used in several
+  versions of ``analyse_text()``.  Several lexers also have more
+  accurate ``analyse_text()`` now.
 
 
 Version 0.10

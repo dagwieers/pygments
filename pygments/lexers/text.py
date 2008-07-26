@@ -35,7 +35,8 @@ __all__ = ['IniLexer', 'SourcesListLexer', 'BaseMakefileLexer',
            'MakefileLexer', 'DiffLexer', 'IrcLogsLexer', 'TexLexer',
            'GroffLexer', 'ApacheConfLexer', 'BBCodeLexer', 'MoinWikiLexer',
            'RstLexer', 'VimLexer', 'GettextLexer', 'SquidConfLexer',
-           'DebianControlLexer', 'DarcsPatchLexer', 'YamlLexer']
+           'DebianControlLexer', 'DarcsPatchLexer', 'YamlLexer',
+           'LighttpdConfLexer', 'NginxConfLexer']
 
 
 class IniLexer(RegexLexer):
@@ -218,7 +219,7 @@ class DiffLexer(RegexLexer):
             (r'-.*\n', Generic.Deleted),
             (r'!.*\n', Generic.Strong),
             (r'@.*\n', Generic.Subheading),
-            (r'Index.*\n', Generic.Heading),
+            (r'(Index|diff).*\n', Generic.Heading),
             (r'=.*\n', Generic.Heading),
             (r'.*\n', Text),
         ]
@@ -250,8 +251,9 @@ class DarcsPatchLexer(RegexLexer):
             (r'<', Operator),
             (r'>', Operator),
             (r'{', Operator, 'patch'),
-            (r'(\[)((?:TAG )?)(.*)(\n)(.*)(\*\*)(\d+)(\s?)', bygroups(Operator, Keyword, Name, Text,
-                Name, Operator, Literal.Date, Text), 'comment'),
+            (r'(\[)((?:TAG )?)(.*)(\n)(.*)(\*\*)(\d+)(\s?)',
+             bygroups(Operator, Keyword, Name, Text, Name, Operator,
+                      Literal.Date, Text), 'comment'),
             (r'New patches:', Generic.Heading),
             (r'Context:', Generic.Heading),
             (r'Patch bundle hash:', Generic.Heading),
@@ -685,6 +687,16 @@ class RstLexer(RegexLexer):
         self.handlecodeblocks = get_bool_opt(options, 'handlecodeblocks', True)
         RegexLexer.__init__(self, **options)
 
+    def analyse_text(text):
+        if text[:2] == '..' and text[2:3] != '.':
+            return 0.3
+        p1 = text.find("\n")
+        p2 = text.find("\n", p1 + 1)
+        if (p2 > -1 and              # has two lines
+            p1 * 2 + 1 == p2 and     # they are the same length
+            text[p1+1] in '-=' and   # the next line both starts and ends with
+            text[p1+1] == text[p2-1]): # ...a sufficiently high header
+            return 0.5
 
 class VimLexer(RegexLexer):
     """
@@ -994,7 +1006,8 @@ class YamlLexerContext(LexerContext):
 
 class YamlLexer(ExtendedRegexLexer):
     """
-    Lexer for YAML, a human-friendly data serialization language (http://yaml.org/).
+    Lexer for `YAML <http://yaml.org/>`_, a human-friendly data serialization
+    language.
 
     *New in Pygments 0.11.*
     """
@@ -1390,3 +1403,74 @@ class YamlLexer(ExtendedRegexLexer):
         if context is None:
             context = YamlLexerContext(text, 0)
         return super(YamlLexer, self).get_tokens_unprocessed(text, context)
+
+class LighttpdConfLexer(RegexLexer):
+    """
+    Lexer for `Lighttpd <http://lighttpd.net/>`_ configuration files.
+
+    *New in Pygments 0.11.*
+    """
+    name = 'Lighttpd configuration file'
+    aliases = ['lighty', 'lighttpd']
+    filenames = []
+    mimetypes = ['text/x-lighttpd-conf']
+
+    tokens = {
+        'root': [
+            (r'#.*\n', Comment.Single),
+            (r'/\S*', Name), # pathname
+            (r'[a-zA-Z._-]+', Keyword),
+            (r'\d+\.\d+\.\d+\.\d+(?:/\d+)?', Number),
+            (r'[0-9]+', Number),
+            (r'=>|=~|\+=|==|=|\+', Operator),
+            (r'\$[A-Z]+', Name.Builtin),
+            (r'[(){}\[\],]', Punctuation),
+            (r'"([^"\\]*(?:\\.[^"\\]*)*)"', String.Double),
+            (r'\s+', Text),
+        ],
+
+    }
+
+class NginxConfLexer(RegexLexer):
+    """
+    Lexer for `Nginx <http://nginx.net/>`_ configuration files.
+
+    *New in Pygments 0.11.*
+    """
+    name = 'Nginx configuration file'
+    aliases = ['nginx']
+    filenames = []
+    mimetypes = ['text/x-nginx-conf']
+
+    tokens = {
+        'root': [
+            (r'(include)(\s+)([^\s;]+)', bygroups(Keyword, Text, Name)),
+            (r'[^\s;#]+', Keyword, 'stmt'),
+            include('base'),
+        ],
+        'block': [
+            (r'}', Punctuation, '#pop:2'),
+            (r'[^\s;#]+', Keyword.Namespace, 'stmt'),
+            include('base'),
+        ],
+        'stmt': [
+            (r'{', Punctuation, 'block'),
+            (r';', Punctuation, '#pop'),
+            include('base'),
+        ],
+        'base': [
+            (r'#.*\n', Comment.Single),
+            (r'on|off', Name.Constant),
+            (r'\$[^\s;#]+', Name.Variable),
+            (r'([a-z0-9.-]+)(:)([0-9]+)',
+             bygroups(Name, Punctuation, Number.Integer)),
+            (r'[a-z-]+/[a-z-]+', Name), # mimetype
+            #(r'[a-zA-Z._-]+', Keyword),
+            (r'[0-9]+[km]?\b', Number.Integer),
+            (r'(~)(\s*)([^\s{]+)', bygroups(Punctuation, Text, String.Regex)),
+            (r'[:=~]', Punctuation),
+            (r'[^\s;#{}$]+', String), # catch all
+            (r'/[^\s;#]*', Name), # pathname
+            (r'\s+', Text),
+        ],
+    }
