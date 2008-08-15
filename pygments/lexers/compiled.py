@@ -986,8 +986,8 @@ class ObjectiveCLexer(RegexLexer):
 
     tokens = {
         'whitespace': [
-            (r'^\s*#if\s+0', Comment.Preproc, 'if0'),
-            (r'^\s*#', Comment.Preproc, 'macro'),
+            (r'^(\s*)(#if\s+0)', bygroups(Text, Comment.Preproc), 'if0'),
+            (r'^(\s*)(#)', bygroups(Text, Comment.Preproc), 'macro'),
             (r'\n', Text),
             (r'\s+', Text),
             (r'\\\n', Text), # line continuation
@@ -1006,9 +1006,10 @@ class ObjectiveCLexer(RegexLexer):
             (r'[()\[\],.]', Punctuation),
             (r'(auto|break|case|const|continue|default|do|else|enum|extern|'
              r'for|goto|if|register|restricted|return|sizeof|static|struct|'
-             r'switch|typedef|union|volatile|virtual|while|@selector|'
+             r'switch|typedef|union|volatile|virtual|while|in|@selector|'
              r'@private|@protected|@public|@encode|'
-             r'@synchronized|@try|@throw|@catch|@finally|@end)\b', Keyword),
+             r'@synchronized|@try|@throw|@catch|@finally|@end|@property|'
+             r'@synthesize|@dynamic)\b', Keyword),
             (r'(int|long|float|short|double|char|unsigned|signed|void|'
              r'id|BOOL|IBOutlet|IBAction|SEL)\b', Keyword.Type),
             (r'(_{0,2}inline|naked|restrict|thread|typename)\b', Keyword.Reserved),
@@ -1043,7 +1044,7 @@ class ObjectiveCLexer(RegexLexer):
             ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*:\s*)([a-zA-Z_][a-zA-Z0-9_]*)?',
              bygroups(Name.Class, Text, Name.Class), '#pop'),
             # interface definition for a category
-            ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*)(\([a-zA-Z_][a-zA-Z0-9_]\)*)',
+            ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*)(\([a-zA-Z_][a-zA-Z0-9_]*\))',
              bygroups(Name.Class, Text, Name.Label), '#pop'),
             # simple interface / implementation
             ('([a-zA-Z_][a-zA-Z0-9_]*)', Name.Class, '#pop')
