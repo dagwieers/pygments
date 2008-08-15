@@ -298,6 +298,10 @@ class IrcLogsLexer(RegexLexer):
           # weechat
           \d{4}\s\w{3}\s\d{2}\s        # Date
           \d{2}:\d{2}:\d{2}\s+         # Time + Whitespace
+        |
+          # xchat
+          \w{3}\s\d{2}\s               # Date
+          \d{2}:\d{2}:\d{2}\s+         # Time + Whitespace
         )?
     """
     tokens = {
@@ -305,7 +309,7 @@ class IrcLogsLexer(RegexLexer):
                 # log start/end
             (r'^\*\*\*\*(.*)\*\*\*\*$', Comment),
             # hack
-            ("^" + timestamp + r'(\s*<.*>\s*)$', bygroups(Comment.Preproc, Name.Tag)),
+            ("^" + timestamp + r'(\s*<[^>]*>\s*)$', bygroups(Comment.Preproc, Name.Tag)),
             # normal msgs
             ("^" + timestamp + r"""
                 (\s*<.*?>\s*)          # Nick """,
@@ -722,10 +726,12 @@ class VimLexer(RegexLexer):
             (r'"(\\\\|\\"|[^\n"])*"', String.Double),
             (r"'(\\\\|\\'|[^\n'])*'", String.Single),
             (r'-?\d+', Number),
+            (r'#[0-9a-f]{6}', Number.Hex),
             (r'^:', Punctuation),
             (r'[()<>+=!|,~-]', Punctuation), # Inexact list.  Looks decent.
             (r'\b(let|if|else|endif|elseif|fun|function|endfunction)\b',
              Keyword),
+            (r'\b(NONE|bold|italic|underline|dark|light)\b', Name.Builtin),
             (r'\b\w+\b', Name.Other), # These are postprocessed below
             (r'.', Text),
         ],

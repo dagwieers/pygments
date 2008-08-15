@@ -6,7 +6,7 @@
     Lexers for compiled languages.
 
     :copyright: 2006-2008 by Georg Brandl, Armin Ronacher, Christoph Hack,
-                Whitney Young, Kirk McDonald, Stou Sandalski.
+                Whitney Young, Kirk McDonald, Stou Sandalski, Krzysiek Goj.
     :license: BSD, see LICENSE for more details.
 """
 
@@ -27,7 +27,7 @@ from pygments.token import \
 # backwards compatibility
 from pygments.lexers.functional import OcamlLexer
 
-__all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'JavaLexer',
+__all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'JavaLexer', 'ScalaLexer',
            'DylanLexer', 'OcamlLexer', 'ObjectiveCLexer', 'FortranLexer']
 
 
@@ -83,14 +83,16 @@ class CLexer(RegexLexer):
              r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name
              r'(\s*\([^;]*?\))'                      # signature
              r'(' + _ws + r')({)',
-             bygroups(using(this), Name.Function, using(this), using(this), Punctuation),
+             bygroups(using(this), Name.Function, using(this), using(this),
+                      Punctuation),
              'function'),
             # function declarations
             (r'((?:[a-zA-Z0-9_*\s])+?(?:\s|[*]))'    # return arguments
              r'([a-zA-Z_][a-zA-Z0-9_]*)'             # method name
              r'(\s*\([^;]*?\))'                      # signature
              r'(' + _ws + r')(;)',
-             bygroups(using(this), Name.Function, using(this), using(this), Punctuation)),
+             bygroups(using(this), Name.Function, using(this), using(this),
+                      Punctuation)),
             ('', Text, 'statement'),
         ],
         'statement' : [
@@ -924,6 +926,63 @@ class JavaLexer(RegexLexer):
         ],
     }
 
+class ScalaLexer(RegexLexer):
+    """
+    For `Scala <http://www.scala-lang.org>`_ source code.
+    """
+
+    name = 'Scala'
+    aliases = ['scala']
+    filenames = ['*.scala']
+    mimetypes = ['text/x-scala']
+
+    flags = re.MULTILINE | re.DOTALL
+
+    #: optional Comment or Whitespace
+    _ws = r'(?:\s|//.*?\n|/[*].*?[*]/)+'
+
+    tokens = {
+        'root': [
+            # method names
+            (r'(class|interface|trait|object)(\s+)', bygroups(Keyword, Text), 'class'),
+            (r'^(\s*def)'
+             r'([a-zA-Z_][a-zA-Z0-9_]*)'                    # method name
+             r'(\s*)(\()',                                  # signature start
+             bygroups(using(this), Name.Function, Text, Operator)),
+            (r"'([a-zA-Z_][a-zA-Z0-9_]*)", Text.Symbol),
+            (r'[^\S\n]+', Text),
+            (r'//.*?\n', Comment),
+            (r'/\*.*?\*/', Comment),
+            (r'@[a-zA-Z_][a-zA-Z0-9_\.]*', Name.Decorator),
+            (r'(abstract|case|catch|do|else|extends|final|finally|for|forSome'
+             r'|if|implicit|lazy|match|new|null|override|private|protected'
+             r'|requires|return|sealed|super|this|throw|try|type|while|with'
+             r'|yield|let|def|var|println|=>|<-|_)\b', Keyword),
+            (r'(boolean|byte|char|double|float|int|long|short|void)\b',
+             Keyword.Type),
+            (r'(String|Int|Array|HashMap)\b', Keyword.Type),
+            (r'(true|false|null)\b', Keyword.Constant),
+            (r'(import)(\s+)', bygroups(Keyword, Text), 'import'),
+            (r'"(\\\\|\\"|[^"])*"', String),
+            (r"'\\.'|'[^\\]'|'\\u[0-9a-f]{4}'", String.Char),
+            (r'(\.)([a-zA-Z_][a-zA-Z0-9_]*)', bygroups(Operator, Name.Attribute)),
+            (r'[a-zA-Z_\$][a-zA-Z0-9_]*', Name),
+            (r'[~\^\*!%&\[\]\(\)\{\}<>\|+=:;,./?-]', Operator),
+            (r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Number.Float),
+            (r'0x[0-9a-f]+', Number.Hex),
+            (r'[0-9]+L?', Number.Integer),
+            (r'\n', Text)
+        ],
+        'class': [
+            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Class, '#pop'),
+            (r'([a-zA-Z_][a-zA-Z0-9_]*)(\s*)(\()',
+             bygroups(Name.Class, Text, Operator), '#pop'),
+        ],
+        'import': [
+            (r'[a-zA-Z0-9_.]+\*?', Name.Namespace, '#pop')
+        ],
+    }
+
 
 class DylanLexer(RegexLexer):
     """
@@ -986,8 +1045,8 @@ class ObjectiveCLexer(RegexLexer):
 
     tokens = {
         'whitespace': [
-            (r'^\s*#if\s+0', Comment.Preproc, 'if0'),
-            (r'^\s*#', Comment.Preproc, 'macro'),
+            (r'^(\s*)(#if\s+0)', bygroups(Text, Comment.Preproc), 'if0'),
+            (r'^(\s*)(#)', bygroups(Text, Comment.Preproc), 'macro'),
             (r'\n', Text),
             (r'\s+', Text),
             (r'\\\n', Text), # line continuation
@@ -1006,9 +1065,10 @@ class ObjectiveCLexer(RegexLexer):
             (r'[()\[\],.]', Punctuation),
             (r'(auto|break|case|const|continue|default|do|else|enum|extern|'
              r'for|goto|if|register|restricted|return|sizeof|static|struct|'
-             r'switch|typedef|union|volatile|virtual|while|@selector|'
+             r'switch|typedef|union|volatile|virtual|while|in|@selector|'
              r'@private|@protected|@public|@encode|'
-             r'@synchronized|@try|@throw|@catch|@finally|@end)\b', Keyword),
+             r'@synchronized|@try|@throw|@catch|@finally|@end|@property|'
+             r'@synthesize|@dynamic)\b', Keyword),
             (r'(int|long|float|short|double|char|unsigned|signed|void|'
              r'id|BOOL|IBOutlet|IBAction|SEL)\b', Keyword.Type),
             (r'(_{0,2}inline|naked|restrict|thread|typename)\b', Keyword.Reserved),
@@ -1043,7 +1103,7 @@ class ObjectiveCLexer(RegexLexer):
             ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*:\s*)([a-zA-Z_][a-zA-Z0-9_]*)?',
              bygroups(Name.Class, Text, Name.Class), '#pop'),
             # interface definition for a category
-            ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*)(\([a-zA-Z_][a-zA-Z0-9_]\)*)',
+            ('([a-zA-Z_][a-zA-Z0-9_]*)(\s*)(\([a-zA-Z_][a-zA-Z0-9_]*\))',
              bygroups(Name.Class, Text, Name.Label), '#pop'),
             # simple interface / implementation
             ('([a-zA-Z_][a-zA-Z0-9_]*)', Name.Class, '#pop')

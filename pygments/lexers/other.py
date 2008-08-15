@@ -12,15 +12,19 @@
 
 import re
 
-from pygments.lexer import RegexLexer, include, bygroups, using, this
+from pygments.lexer import Lexer, RegexLexer, include, bygroups, using, this, \
+                           do_insertions
 from pygments.token import Error, Punctuation, \
-     Text, Comment, Operator, Keyword, Name, String, Number
+     Text, Comment, Operator, Keyword, Name, String, Number, Generic
 from pygments.util import shebang_matches
 
 
-__all__ = ['SqlLexer', 'MySqlLexer', 'BrainfuckLexer', 'BashLexer',
-           'BatchLexer', 'BefungeLexer', 'RedcodeLexer', 'MOOCodeLexer',
-           'SmalltalkLexer', 'TcshLexer', 'LogtalkLexer', 'GnuplotLexer']
+__all__ = ['SqlLexer', 'MySqlLexer', 'SqliteConsoleLexer', 'BrainfuckLexer',
+           'BashLexer', 'BatchLexer', 'BefungeLexer', 'RedcodeLexer',
+           'MOOCodeLexer', 'SmalltalkLexer', 'TcshLexer', 'LogtalkLexer',
+           'GnuplotLexer', 'PovrayLexer']
+
+line_re  = re.compile('.*?\n')
 
 
 class SqlLexer(RegexLexer):
@@ -210,6 +214,46 @@ class MySqlLexer(RegexLexer):
     }
 
 
+class SqliteConsoleLexer(Lexer):
+    """
+    Lexer for example sessions using sqlite3.
+
+    *New in Pygments 0.11.*
+    """
+
+    name = 'sqlite3con'
+    aliases = []
+    filenames = ['*.sqlite3-console']
+    mimetypes = ['text/x-sqlite3-console']
+
+    def get_tokens_unprocessed(self, data):
+        sql = SqlLexer(**self.options)
+
+        curcode = ''
+        insertions = []
+        for match in line_re.finditer(data):
+            line = match.group()
+            if line.startswith('sqlite> ') or line.startswith('   ...> '):
+                insertions.append((len(curcode),
+                                   [(0, Generic.Prompt, line[:8])]))
+                curcode += line[8:]
+            else:
+                if curcode:
+                    for item in do_insertions(insertions,
+                                              sql.get_tokens_unprocessed(curcode)):
+                        yield item
+                    curcode = ''
+                    insertions = []
+                if line.startswith('SQL error: '):
+                    yield (match.start(), Generic.Traceback, line)
+                else:
+                    yield (match.start(), Generic.Output, line)
+        if curcode:
+            for item in do_insertions(insertions,
+                                      sql.get_tokens_unprocessed(curcode)):
+                yield item
+
+
 class BrainfuckLexer(RegexLexer):
     """
     Lexer for the esoteric `BrainFuck <http://www.muppetlabs.com/~breadbox/bf/>`_
@@ -316,9 +360,10 @@ class BashLexer(RegexLexer):
             (r"\$?'(\\\\|\\[0-7]+|\\.|[^'])*'", String.Single),
             (r';', Text),
             (r'\s+', Text),
-            (r'[^=\s\n\[\]{}()$"\'`\\]+', Text),
+            (r'[^=\s\n\[\]{}()$"\'`\\<]+', Text),
             (r'\d+(?= |\Z)', Number),
             (r'\$#?(\w+|.)', Name.Variable),
+            (r'<', Text),
         ],
         'curly': [
             (r'}', Keyword, '#pop'),
@@ -983,4 +1028,90 @@ class GnuplotLexer(RegexLexer):
              Name.Builtin),
             include('genericargs'),
         ],
+    }
+
+
+class PovrayLexer(RegexLexer):
+    """
+    For `Persistence of Vision Raytracer http://www.povray.org/>`_ files.
+
+    *New in Pygments 0.11.*
+    """
+    name = 'POVRay'
+    aliases = ['pov']
+    filenames = ['*.pov', '*.inc']
+    mimetypes = ['text/x-povray']
+
+    tokens = {
+        'root': [
+            (r'/\*[\w\W]*?\*/', Comment.Multiline),
+            (r'//.*\n', Comment.Single),
+            (r'"(?:\\.|[^"])+"', String.Double),
+            (r'#(debug|default|else|end|error|fclose|fopen|if|ifdef|ifndef|'
+             r'include|range|read|render|statistics|switch|undef|version|'
+             r'warning|while|write|define|macro|local|declare)',
+             Comment.Preproc),
+            (r'\b(aa_level|aa_threshold|abs|acos|acosh|adaptive|adc_bailout|'
+             r'agate|agate_turb|all|alpha|ambient|ambient_light|angle|'
+             r'aperture|arc_angle|area_light|asc|asin|asinh|assumed_gamma|'
+             r'atan|atan2|atanh|atmosphere|atmospheric_attenuation|'
+             r'attenuating|average|background|black_hole|blue|blur_samples|'
+             r'bounded_by|box_mapping|bozo|break|brick|brick_size|'
+             r'brightness|brilliance|bumps|bumpy1|bumpy2|bumpy3|bump_map|'
+             r'bump_size|case|caustics|ceil|checker|chr|clipped_by|clock|'
+             r'color|color_map|colour|colour_map|component|composite|concat|'
+             r'confidence|conic_sweep|constant|control0|control1|cos|cosh|'
+             r'count|crackle|crand|cube|cubic_spline|cylindrical_mapping|'
+             r'debug|declare|default|degrees|dents|diffuse|direction|'
+             r'distance|distance_maximum|div|dust|dust_type|eccentricity|'
+             r'else|emitting|end|error|error_bound|exp|exponent|'
+             r'fade_distance|fade_power|falloff|falloff_angle|false|'
+             r'file_exists|filter|finish|fisheye|flatness|flip|floor|'
+             r'focal_point|fog|fog_alt|fog_offset|fog_type|frequency|gif|'
+             r'global_settings|glowing|gradient|granite|gray_threshold|'
+             r'green|halo|hexagon|hf_gray_16|hierarchy|hollow|hypercomplex|'
+             r'if|ifdef|iff|image_map|incidence|include|int|interpolate|'
+             r'inverse|ior|irid|irid_wavelength|jitter|lambda|leopard|'
+             r'linear|linear_spline|linear_sweep|location|log|looks_like|'
+             r'look_at|low_error_factor|mandel|map_type|marble|material_map|'
+             r'matrix|max|max_intersections|max_iteration|max_trace_level|'
+             r'max_value|metallic|min|minimum_reuse|mod|mortar|'
+             r'nearest_count|no|normal|normal_map|no_shadow|number_of_waves|'
+             r'octaves|off|offset|omega|omnimax|on|once|onion|open|'
+             r'orthographic|panoramic|pattern1|pattern2|pattern3|'
+             r'perspective|pgm|phase|phong|phong_size|pi|pigment|'
+             r'pigment_map|planar_mapping|png|point_at|pot|pow|ppm|'
+             r'precision|pwr|quadratic_spline|quaternion|quick_color|'
+             r'quick_colour|quilted|radial|radians|radiosity|radius|rainbow|'
+             r'ramp_wave|rand|range|reciprocal|recursion_limit|red|'
+             r'reflection|refraction|render|repeat|rgb|rgbf|rgbft|rgbt|'
+             r'right|ripples|rotate|roughness|samples|scale|scallop_wave|'
+             r'scattering|seed|shadowless|sin|sine_wave|sinh|sky|sky_sphere|'
+             r'slice|slope_map|smooth|specular|spherical_mapping|spiral|'
+             r'spiral1|spiral2|spotlight|spotted|sqr|sqrt|statistics|str|'
+             r'strcmp|strength|strlen|strlwr|strupr|sturm|substr|switch|sys|'
+             r't|tan|tanh|test_camera_1|test_camera_2|test_camera_3|'
+             r'test_camera_4|texture|texture_map|tga|thickness|threshold|'
+             r'tightness|tile2|tiles|track|transform|translate|transmit|'
+             r'triangle_wave|true|ttf|turbulence|turb_depth|type|'
+             r'ultra_wide_angle|up|use_color|use_colour|use_index|u_steps|'
+             r'val|variance|vaxis_rotate|vcross|vdot|version|vlength|'
+             r'vnormalize|volume_object|volume_rendered|vol_with_light|'
+             r'vrotate|v_steps|warning|warp|water_level|waves|while|width|'
+             r'wood|wrinkles|yes)\b', Keyword),
+            (r'bicubic_patch|blob|box|camera|cone|cubic|cylinder|difference|'
+             r'disc|height_field|intersection|julia_fractal|lathe|'
+             r'light_source|merge|mesh|object|plane|poly|polygon|prism|'
+             r'quadric|quartic|smooth_triangle|sor|sphere|superellipsoid|'
+             r'text|torus|triangle|union', Name.Builtin),
+            #TODO: <=, etc
+            (r'[\[\](){}<>;,]', Punctuation),
+            (r'[-+*/=]', Operator),
+            (r'\b(x|y|z|u|v)\b', Name.Builtin.Pseudo),
+            (r'[a-zA-Z_][a-zA-Z_0-9]*', Name),
+            (r'[0-9]+\.[0-9]*', Number.Float),
+            (r'\.[0-9]+', Number.Float),
+            (r'[0-9]+', Number.Integer),
+            (r'\s+', Text),
+        ]
     }
