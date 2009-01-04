@@ -8,8 +8,8 @@
     the text where Error tokens are being generated, along
     with some context.
 
-    :copyright: 2006-2007 by Tim Hatch <tim@timhatch.com>.
-    :license: BSD, see LICENSE for more details.
+    :copyright: Copyright 2006-2009 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
 """
 
 import sys, os
@@ -42,8 +42,9 @@ def main(fn):
             print "Error parsing", fn
             print "\n".join(['   ' + repr(x) for x in ntext[-num:]])
             print `val` + "<<<"
-            return
+            return 1
         ntext.append((type,val))
+    return 0
 
 
 num = 10
@@ -52,5 +53,7 @@ if __name__ == "__main__":
     if sys.argv[1][:2] == '-n':
         num = int(sys.argv[1][2:])
         del sys.argv[1]
+    ret = 0
     for f in sys.argv[1:]:
-        main(f)
+        ret += main(f)
+    sys.exit(bool(ret))

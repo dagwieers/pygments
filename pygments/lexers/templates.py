@@ -5,9 +5,8 @@
 
     Lexers for various template engines' markup.
 
-    :copyright: 2006-2009 by Armin Ronacher, Georg Brandl, Matt Good,
-                Ben Bangert.
-    :license: BSD, see LICENSE for more details.
+    :copyright: Copyright 2006-2009 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
 """
 
 import re
@@ -425,17 +424,25 @@ class MakoLexer(RegexLexer):
             (r'(\$\{)(.*?)(\})',
              bygroups(Comment.Preproc, using(PythonLexer), Comment.Preproc)),
             (r'''(?sx)
-                (.+?)               # anything, followed by:
+                (.+?)                # anything, followed by:
                 (?:
+<<<<<<< local
                  (?<=\n)(?=%|\#\#) |# an eval or comment line
                  (?=\#\*) |         # multiline comment
                  (?=</?%) |         # a python block
                                     # call start or end
                  (?=\$\{) |         # a substitution
+=======
+                 (?<=\n)(?=%|\#\#) | # an eval or comment line
+                 (?=\#\*) |          # multiline comment
+                 (?=</?%) |          # a python block
+                                     # call start or end
+                 (?=\$\{) |          # a substitution
+>>>>>>> other
                  (?<=\n)(?=\s*%) |
-                                    # - don't consume
-                 (\\\n) |           # an escaped newline
-                 \Z                 # end of string
+                                     # - don't consume
+                 (\\\n) |            # an escaped newline
+                 \Z                  # end of string
                 )
             ''', bygroups(Other, Operator)),
             (r'\s+', Text),
