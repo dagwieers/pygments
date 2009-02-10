@@ -12,6 +12,13 @@ Version 1.1
   * Erlang shell
   * GLSL
   * Prolog
+  * Evoque
+  * Modelica
+  * Rebol
+  * MXML
+  * Cython
+
+- Added "anchorlinenos" option to HTML formatter.
 
 - Fix a bug lexing extended Ruby strings.
 
