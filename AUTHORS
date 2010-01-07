@@ -18,6 +18,7 @@ Other contributors, listed alphabetically, are:
 * Pierre Bourdon -- bugfixes
 * Christopher Creutzig -- MuPAD lexer
 * Pete Curry -- bugfixes
+* Owen Durni -- haXe lexer
 * Nick Efford -- Python 3 lexer
 * Artem Egorkine -- terminal256 formatter
 * Laurent Gautier -- R/S lexer
@@ -37,7 +38,7 @@ Other contributors, listed alphabetically, are:
 * Kirk McDonald -- D lexer
 * Lukas Meuser -- BBCode formatter, Lua lexer
 * Paulo Moura -- Logtalk lexer
-* Ana Nelson -- Ragel, ANTLR lexers
+* Ana Nelson -- Ragel, ANTLR, R console lexers
 * Nam T. Nguyen -- Monokai style
 * Jesper Noehr -- HTML formatter "anchorlinenos"
 * Jonas Obrist -- BBCode lexer
@@ -56,6 +57,7 @@ Other contributors, listed alphabetically, are:
 * Kirill Simonov -- YAML lexer
 * Tiberius Teng -- default style overhaul
 * Jeremy Thurgood -- Erlang, Squid config lexers
+* Erick Tryzelaar -- Felix lexer
 * Whitney Young -- ObjectiveC lexer
 * Dietmar Winkler -- Modelica lexer
 * Nils Winter -- Smalltalk lexer
