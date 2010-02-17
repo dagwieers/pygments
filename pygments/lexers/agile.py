@@ -5,7 +5,7 @@
 
     Lexers for agile languages.
 
-    :copyright: Copyright 2006-2009 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2010 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -17,7 +17,7 @@ except NameError:
 
 from pygments.lexer import Lexer, RegexLexer, ExtendedRegexLexer, \
      LexerContext, include, combined, do_insertions, bygroups, using
-from pygments.token import Error, Text, \
+from pygments.token import Error, Text, Other, \
      Comment, Operator, Keyword, Name, String, Number, Generic, Punctuation
 from pygments.util import get_bool_opt, get_list_opt, shebang_matches
 from pygments import unistring as uni
@@ -41,7 +41,7 @@ class PythonLexer(RegexLexer):
 
     name = 'Python'
     aliases = ['python', 'py']
-    filenames = ['*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript']
+    filenames = ['*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac']
     mimetypes = ['text/x-python', 'application/x-python']
 
     tokens = {
@@ -319,8 +319,10 @@ class PythonConsoleLexer(Lexer):
                 insertions.append((len(curcode),
                                    [(0, Generic.Prompt, line[:4])]))
                 curcode += line[4:]
-            elif line.rstrip() == '...':
-                tb = 0
+            elif line.rstrip() == '...' and not tb:
+                # only a new >>> prompt can end an exception block
+                # otherwise an ellipsis in place of the traceback frames
+                # will be mishandled
                 insertions.append((len(curcode),
                                    [(0, Generic.Prompt, '...')]))
                 curcode += line[3:]
@@ -368,7 +370,8 @@ class PythonTracebackLexer(RegexLexer):
         'root': [
             (r'^Traceback \(most recent call last\):\n', Generic.Traceback, 'intb'),
             # SyntaxError starts with this.
-            (r'^(?=  File "[^"]+", line \d+\n)', Generic.Traceback, 'intb'),
+            (r'^(?=  File "[^"]+", line \d+)', Generic.Traceback, 'intb'),
+            (r'^.*\n', Other),
         ],
         'intb': [
             (r'^(  File )("[^"]+")(, line )(\d+)(, in )(.+)(\n)',
@@ -559,22 +562,22 @@ class RubyLexer(ExtendedRegexLexer):
         # these must come after %<brace>!
         states['strings'] += [
             # %r regex
-            (r'(%r([^a-zA-Z0-9]))([^\2\\]*(?:\\.[^\2\\]*)*)(\2[mixounse]*)',
+            (r'(%r([^a-zA-Z0-9]))((?:\\\2|(?!\2).)*)(\2[mixounse]*)',
              intp_regex_callback),
             # regular fancy strings with qsw
-            (r'%[qsw]([^a-zA-Z0-9])([^\1\\]*(?:\\.[^\1\\]*)*)\1', String.Other),
-            (r'(%[QWx]([^a-zA-Z0-9]))([^\2\\]*(?:\\.[^\2\\]*)*)(\2)',
+            (r'%[qsw]([^a-zA-Z0-9])((?:\\\1|(?!\1).)*)\1', String.Other),
+            (r'(%[QWx]([^a-zA-Z0-9]))((?:\\\2|(?!\2).)*)(\2)',
              intp_string_callback),
             # special forms of fancy strings after operators or
             # in method calls with braces
-            (r'(?<=[-+/*%=<>&!^|~,(])(\s*)(%([\t ])(?:[^\3\\]*(?:\\.[^\3\\]*)*)\3)',
+            (r'(?<=[-+/*%=<>&!^|~,(])(\s*)(%([\t ])(?:(?:\\\3|(?!\3).)*)\3)',
              bygroups(Text, String.Other, None)),
             # and because of fixed width lookbehinds the whole thing a
             # second time for line startings...
-            (r'^(\s*)(%([\t ])(?:[^\3\\]*(?:\\.[^\3\\]*)*)\3)',
+            (r'^(\s*)(%([\t ])(?:(?:\\\3|(?!\3).)*)\3)',
              bygroups(Text, String.Other, None)),
             # all regular fancy strings without qsw
-            (r'(%([^a-zA-Z0-9\s]))([^\2\\]*(?:\\.[^\2\\]*)*)(\2)',
+            (r'(%([^a-zA-Z0-9\s]))((?:\\\2|(?!\2).)*)(\2)',
              intp_string_callback),
         ]
 
@@ -1309,12 +1312,12 @@ class TclLexer(RegexLexer):
         ],
         'string': [
             (r'\[', String.Double, 'string-square'),
-            (r'(\\\\|\\[0-7]+|\\.|[^"])', String.Double),
+            (r'(?s)(\\\\|\\[0-7]+|\\.|[^"\\])', String.Double),
             (r'"', String.Double, '#pop')
         ],
         'string-square': [
             (r'\[', String.Double, 'string-square'),
-            (r'(\\\\|\\[0-7]+|\\.|[^\]])', String.Double),
+            (r'(?s)(\\\\|\\[0-7]+|\\.|\\\n|[^\]\\])', String.Double),
             (r'\]', String.Double, '#pop')
         ],
         'brace': [
