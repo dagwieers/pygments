@@ -10,10 +10,6 @@
 """
 
 import re
-try:
-    set
-except NameError:
-    from sets import Set as set
 
 from pygments.lexer import Lexer, RegexLexer, bygroups, include, do_insertions
 from pygments.token import Text, Comment, Operator, Keyword, Name, \
@@ -474,7 +470,7 @@ class LiterateHaskellLexer(Lexer):
 
         style = self.options.get('litstyle')
         if style is None:
-            style = (text.lstrip()[0] in '%\\') and 'latex' or 'bird'
+            style = (text.lstrip()[0:1] in '%\\') and 'latex' or 'bird'
 
         code = ''
         insertions = []
@@ -554,7 +550,7 @@ class OcamlLexer(RegexLexer):
 
     tokens = {
         'escape-sequence': [
-            (r'\\[\"\'ntbr]', String.Escape),
+            (r'\\[\\\"\'ntbr]', String.Escape),
             (r'\\[0-9]{3}', String.Escape),
             (r'\\x[0-9a-fA-F]{2}', String.Escape),
         ],

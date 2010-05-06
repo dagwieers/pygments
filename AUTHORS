@@ -9,6 +9,7 @@ Other contributors, listed alphabetically, are:
 * Kumar Appaiah -- Debian control lexer
 * Ali Afshar -- image formatter
 * Andreas Amann -- AppleScript lexer
+* Jeremy Ashkenas -- CoffeeScript lexer
 * Stefan Matthias Aust -- Smalltalk lexer
 * Ben Bangert -- Mako lexers
 * Max Battcher -- Darcs patch lexer
@@ -26,6 +27,7 @@ Other contributors, listed alphabetically, are:
 * Laurent Gautier -- R/S lexer
 * Krzysiek Goj -- Scala lexer
 * Matt Good -- Genshi, Cheetah lexers
+* Patrick Gotthardt -- PHP namespaces support
 * Olivier Guibe -- Asymptote lexer
 * Matthew Harrison -- SVG formatter
 * Steven Hazel -- Tcl lexer
@@ -33,6 +35,7 @@ Other contributors, listed alphabetically, are:
 * David Hess, Fish Software, Inc. -- Objective-J lexer
 * Varun Hiremath -- Debian control lexer
 * Dennis Kaarsemaker -- sources.list lexer
+* Benjamin Kowarsch -- Modula-2 lexer
 * Marek Kubica -- Scheme lexer
 * Jochen Kupperschmidt -- Markdown processor
 * Gerd Kurzbach -- Modelica lexer
@@ -54,6 +57,7 @@ Other contributors, listed alphabetically, are:
 * Mario Ruggier -- Evoque lexers
 * Stou Sandalski -- NumPy, FORTRAN, tcsh and XSLT lexers
 * Matteo Sasso -- Common Lisp lexer
+* Joe Schafer -- Ada lexer
 * Ken Schutte -- Matlab lexers
 * Tassilo Schweyer -- Io, MOOCode lexers
 * Joerg Sieker -- ABAP lexer

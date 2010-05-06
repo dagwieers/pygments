@@ -10,10 +10,6 @@
 """
 
 import re
-try:
-    set
-except NameError:
-    from sets import Set as set
 
 from pygments.lexer import Lexer, RegexLexer, ExtendedRegexLexer, \
      LexerContext, include, combined, do_insertions, bygroups, using
@@ -659,7 +655,7 @@ class RubyLexer(ExtendedRegexLexer):
                  r'(?<=^match\s)|'
                  r'(?<=^if\s)|'
                  r'(?<=^elsif\s)'
-             r')(\s*)(/)(?!=)', bygroups(Text, String.Regex), 'multiline-regex'),
+             r')(\s*)(/)', bygroups(Text, String.Regex), 'multiline-regex'),
             # multiline regex (in method calls)
             (r'(?<=\(|,)/', String.Regex, 'multiline-regex'),
             # multiline regex (this time the funny no whitespace rule)
@@ -835,7 +831,6 @@ class PerlLexer(RegexLexer):
             (r'@(\\\\|\\\@|[^\@])*@[egimosx]*', String.Regex, '#pop'),
             (r'%(\\\\|\\\%|[^\%])*%[egimosx]*', String.Regex, '#pop'),
             (r'\$(\\\\|\\\$|[^\$])*\$[egimosx]*', String.Regex, '#pop'),
-            (r'!(\\\\|\\!|[^!])*![egimosx]*', String.Regex, '#pop'),
         ],
         'root': [
             (r'\#.*?$', Comment.Single),
@@ -859,6 +854,7 @@ class PerlLexer(RegexLexer):
             (r's\((\\\\|\\\)|[^\)])*\)\s*', String.Regex, 'balanced-regex'),
 
             (r'm?/(\\\\|\\/|[^/\n])*/[gcimosx]*', String.Regex),
+            (r'm(?=[/!\\{<\[\(@%\$])', String.Regex, 'balanced-regex'),
             (r'((?<==~)|(?<=\())\s*/(\\\\|\\/|[^/])*/[gcimosx]*', String.Regex),
             (r'\s+', Text),
             (r'(abs|accept|alarm|atan2|bind|binmode|bless|caller|chdir|'
@@ -906,7 +902,7 @@ class PerlLexer(RegexLexer):
             (r'(q|qq|qw|qr|qx)\(', String.Other, 'rb-string'),
             (r'(q|qq|qw|qr|qx)\[', String.Other, 'sb-string'),
             (r'(q|qq|qw|qr|qx)\<', String.Other, 'lt-string'),
-            (r'(q|qq|qw|qr|qx)(.)[.\n]*?\1', String.Other),
+            (r'(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2', String.Other),
             (r'package\s+', Keyword, 'modulename'),
             (r'sub\s+', Keyword, 'funcname'),
             (r'(\[\]|\*\*|::|<<|>>|>=|<=|<=>|={3}|!=|=~|'
@@ -970,7 +966,7 @@ class PerlLexer(RegexLexer):
             (r'\\', String.Other),
             (r'\<', String.Other, 'lt-string'),
             (r'\>', String.Other, '#pop'),
-            (r'[^\<\>]]+', String.Other)
+            (r'[^\<\>]+', String.Other)
         ],
         'end-part': [
             (r'.+', Comment.Preproc, '#pop')
@@ -1010,11 +1006,16 @@ class LuaLexer(RegexLexer):
 
     name = 'Lua'
     aliases = ['lua']
-    filenames = ['*.lua']
+    filenames = ['*.lua', '*.wlua']
     mimetypes = ['text/x-lua', 'application/x-lua']
 
     tokens = {
         'root': [
+            # lua allows a file to start with a shebang
+            (r'#!(.*?)$', Comment.Preproc),
+            (r'', Text, 'base'),
+        ],
+        'base': [
             (r'(?s)--\[(=*)\[.*?\]\1\]', Comment.Multiline),
             ('--.*$', Comment.Single),
 
@@ -1025,7 +1026,8 @@ class LuaLexer(RegexLexer):
 
             (r'\n', Text),
             (r'[^\S\n]', Text),
-            (r'(?s)\[(=*)\[.*?\]\1\]', String.Multiline),
+            # multiline strings
+            (r'(?s)\[(=*)\[.*?\]\1\]', String),
             (r'[\[\]\{\}\(\)\.,:;]', Punctuation),
 
             (r'(==|~=|<=|>=|\.\.|\.\.\.|[=+\-*/%^<>#])', Operator),
@@ -1041,8 +1043,6 @@ class LuaLexer(RegexLexer):
 
             (r'[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?', Name),
 
-            # multiline strings
-            (r'(?s)\[(=*)\[(.*?)\]\1\]', String),
             ("'", String.Single, combined('stringescape', 'sqs')),
             ('"', String.Double, combined('stringescape', 'dqs'))
         ],
@@ -1263,6 +1263,7 @@ class TclLexer(RegexLexer):
             include('command'),
             include('basic'),
             include('data'),
+            (r'}', Keyword),  # HACK: somehow we miscounted our braces
         ],
         'command': _gen_command_rules(keyword_cmds_re, builtin_cmds_re),
         'command-in-brace': _gen_command_rules(keyword_cmds_re,
@@ -1441,7 +1442,7 @@ class ClojureLexer(RegexLexer):
             # strings, symbols and characters
             (r'"(\\\\|\\"|[^"])*"', String),
             (r"'" + valid_name, String.Symbol),
-            (r"\\([()/'\".'_!Â§$%& ?;=+-]{1}|[a-zA-Z0-9]+)", String.Char),
+            (r"\\([()/'\".'_!Â§$%& ?;=#+-]{1}|[a-zA-Z0-9]+)", String.Char),
 
             # constants
             (r'(#t|#f)', Name.Constant),

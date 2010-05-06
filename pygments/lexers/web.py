@@ -10,12 +10,9 @@
 """
 
 import re
-try:
-    set
-except NameError:
-    from sets import Set as set
 
-from pygments.lexer import RegexLexer, ExtendedRegexLexer, bygroups, using, include, this
+from pygments.lexer import RegexLexer, ExtendedRegexLexer, bygroups, using, \
+     include, this
 from pygments.token import \
      Text, Comment, Operator, Keyword, Name, String, Number, Other, Punctuation
 from pygments.util import get_bool_opt, get_list_opt, looks_like_xml, \
@@ -25,7 +22,8 @@ from pygments.lexers.agile import RubyLexer
 
 __all__ = ['HtmlLexer', 'XmlLexer', 'JavascriptLexer', 'CssLexer',
            'PhpLexer', 'ActionScriptLexer', 'XsltLexer', 'ActionScript3Lexer',
-           'MxmlLexer', 'HaxeLexer', 'HamlLexer', 'SassLexer', 'ObjectiveJLexer']
+           'MxmlLexer', 'HaxeLexer', 'HamlLexer', 'SassLexer',
+           'ObjectiveJLexer', 'CoffeeScriptLexer']
 
 
 class JavascriptLexer(RegexLexer):
@@ -718,7 +716,7 @@ class PhpLexer(RegexLexer):
         ],
         'php': [
             (r'\?>', Comment.Preproc, '#pop'),
-            (r'<<<([a-zA-Z_][a-zA-Z0-9_]*)\n.*?\n\1\;?\n', String),
+            (r'<<<(\'?)([a-zA-Z_][a-zA-Z0-9_]*)\1\n.*?\n\2\;?\n', String),
             (r'\s+', Text),
             (r'#.*?\n', Comment.Single),
             (r'//.*?\n', Comment.Single),
@@ -732,6 +730,7 @@ class PhpLexer(RegexLexer):
             (r'[~!%^&*+=|:.<>/?@-]+', Operator),
             (r'[\[\]{}();,]+', Punctuation),
             (r'(class)(\s+)', bygroups(Keyword, Text), 'classname'),
+            (r'(function)(\s*)(?=\()', bygroups(Keyword, Text)),
             (r'(function)(\s+)(&?)(\s*)',
               bygroups(Keyword, Text, Operator, Text), 'functionname'),
             (r'(const)(\s+)([a-zA-Z_][a-zA-Z0-9_]*)',
@@ -745,11 +744,11 @@ class PhpLexer(RegexLexer):
              r'endif|list|__LINE__|endswitch|new|__sleep|endwhile|not|'
              r'array|__wakeup|E_ALL|NULL|final|php_user_filter|interface|'
              r'implements|public|private|protected|abstract|clone|try|'
-             r'catch|throw|this)\b', Keyword),
+             r'catch|throw|this|use|namespace)\b', Keyword),
             ('(true|false|null)\b', Keyword.Constant),
             (r'\$\{\$+[a-zA-Z_][a-zA-Z0-9_]*\}', Name.Variable),
             (r'\$+[a-zA-Z_][a-zA-Z0-9_]*', Name.Variable),
-            ('[a-zA-Z_][a-zA-Z0-9_]*', Name.Other),
+            (r'[\\a-zA-Z_][\\a-zA-Z0-9_]*', Name.Other),
             (r"[0-9](\.[0-9]*)?(eE[+-][0-9])?[flFLdD]?|"
              r"0[xX][0-9a-fA-F]+[Ll]?", Number),
             (r"'([^'\\]*(?:\\.[^'\\]*)*)'", String.Single),
@@ -757,7 +756,7 @@ class PhpLexer(RegexLexer):
             (r'"', String.Double, 'string'),
         ],
         'classname': [
-            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Class, '#pop')
+            (r'[a-zA-Z_][\\a-zA-Z0-9_]*', Name.Class, '#pop')
         ],
         'functionname': [
             (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Function, '#pop')
@@ -1558,4 +1557,66 @@ class SassLexer(ExtendedRegexLexer):
             (r'#\{', String.Interpol, 'interpolation'),
             (r'', Text, '#pop'),
         ],
+    }
+
+
+class CoffeeScriptLexer(RegexLexer):
+    """
+    For `CoffeeScript`_ source code.
+
+    .. _CoffeeScript: http://coffeescript.org
+
+    *New in Pygments 1.3.*
+    """
+
+    name = 'CoffeeScript'
+    aliases = ['coffee-script', 'coffeescript']
+    filenames = ['*.coffee']
+    mimetypes = ['text/coffeescript']
+
+    flags = re.DOTALL
+    tokens = {
+        'commentsandwhitespace': [
+            (r'\s+', Text),
+            (r'#.*?\n', Comment.Single),
+        ],
+        'slashstartsregex': [
+            include('commentsandwhitespace'),
+            (r'/(\\.|[^[/\\\n]|\[(\\.|[^\]\\\n])*])+/'
+             r'([gim]+\b|\B)', String.Regex, '#pop'),
+            (r'(?=/)', Text, ('#pop', 'badregex')),
+            (r'', Text, '#pop'),
+        ],
+        'badregex': [
+            ('\n', Text, '#pop'),
+        ],
+        'root': [
+            (r'^(?=\s|/|<!--)', Text, 'slashstartsregex'),
+            include('commentsandwhitespace'),
+            (r'\+\+|--|~|&&|\band\b|\bor\b|\bis\b|\bisnt\b|\bnot\b|\?|:|'
+             r'\|\||\\(?=\n)|(<<|>>>?|==?|!=?|[-<>+*`%&\|\^/])=?',
+             Operator, 'slashstartsregex'),
+            (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
+            (r'[})\].]', Punctuation),
+            (r'(for|in|of|while|break|return|continue|switch|when|then|if|else|'
+             r'throw|try|catch|finally|new|delete|typeof|instanceof|super|'
+             r'extends|this)\b', Keyword, 'slashstartsregex'),
+            (r'(true|false|yes|no|on|off|null|NaN|Infinity|undefined)\b',
+             Keyword.Constant),
+            (r'(Array|Boolean|Date|Error|Function|Math|netscape|'
+             r'Number|Object|Packages|RegExp|String|sun|decodeURI|'
+             r'decodeURIComponent|encodeURI|encodeURIComponent|'
+             r'Error|eval|isFinite|isNaN|parseFloat|parseInt|document|this|'
+             r'window)\b', Name.Builtin),
+            (r'[$a-zA-Z_][a-zA-Z0-9_\.:]*\s*:\s', Name.Variable,
+              'slashstartsregex'),
+            (r'@[$a-zA-Z_][a-zA-Z0-9_\.:]*\s*:\s', Name.Variable.Instance,
+              'slashstartsregex'),
+            (r'@?[$a-zA-Z_][a-zA-Z0-9_]*', Name.Other, 'slashstartsregex'),
+            (r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Number.Float),
+            (r'0x[0-9a-fA-F]+', Number.Hex),
+            (r'[0-9]+', Number.Integer),
+            (r'"(\\\\|\\"|[^"])*"', String.Double),
+            (r"'(\\\\|\\'|[^'])*'", String.Single),
+        ]
     }
