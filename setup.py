@@ -29,6 +29,7 @@
 
 try:
     from setuptools import setup, find_packages
+    have_setuptools = True
 except ImportError:
     from distutils.core import setup
     def find_packages():
@@ -39,15 +40,27 @@ except ImportError:
             'pygments.styles',
             'pygments.filters',
         ]
+    have_setuptools = False
 
 try:
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:
     from distutils.command.build_py import build_py
 
+if have_setuptools:
+    add_keywords = dict(
+        entry_points = {
+            'console_scripts': ['pygmentize = pygments.cmdline:main'],
+        },
+    )
+else:
+    add_keywords = dict(
+        scripts = ['pygmentize'],
+    )
+
 setup(
     name = 'Pygments',
-    version = '1.2.2',
+    version = '1.3.1',
     url = 'http://pygments.org/',
     license = 'BSD License',
     author = 'Georg Brandl',
@@ -56,7 +69,6 @@ setup(
     long_description = __doc__,
     keywords = 'syntax highlighting',
     packages = find_packages(),
-    scripts = ['pygmentize'],
     platforms = 'any',
     zip_safe = False,
     include_package_data = True,
@@ -72,4 +84,5 @@ setup(
         'Operating System :: OS Independent',
     ],
     cmdclass = {'build_py': build_py},
+    **add_keywords
 )
