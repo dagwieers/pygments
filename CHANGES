@@ -12,6 +12,8 @@ Version 1.4
 
 - Three fixes to the Lua lexer (#480, #481, #482).
 
+- More context-sensitive Gherkin lexer with support for more i18n translations.
+
 - A bugfix for backslashes in ocaml strings (#499)
 
 - Fix unicode/raw docstrings in the Python lexer (#489)
