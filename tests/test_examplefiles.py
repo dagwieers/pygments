@@ -25,6 +25,9 @@ def test_example_files():
     if STORE_OUTPUT and not os.path.isdir(outdir):
         os.makedirs(outdir)
     for fn in os.listdir(os.path.join(testdir, 'examplefiles')):
+        if fn.startswith('.') or fn.endswith('#'):
+            continue
+
         absfn = os.path.join(testdir, 'examplefiles', fn)
         if not os.path.isfile(absfn):
             continue
