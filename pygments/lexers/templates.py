@@ -36,7 +36,8 @@ __all__ = ['HtmlPhpLexer', 'XmlPhpLexer', 'CssPhpLexer',
            'CheetahXmlLexer', 'CheetahJavascriptLexer',
            'EvoqueLexer', 'EvoqueHtmlLexer', 'EvoqueXmlLexer',
            'ColdfusionLexer', 'ColdfusionHtmlLexer',
-           'VelocityLexer','VelocityHtmlLexer','VelocityXmlLexer']
+           'VelocityLexer', 'VelocityHtmlLexer', 'VelocityXmlLexer',
+           'SspLexer']
 
 
 class ErbLexer(Lexer):
@@ -204,7 +205,7 @@ class VelocityLexer(RegexLexer):
     flags = re.MULTILINE | re.DOTALL
 
     identifier = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    
+
     tokens = {
         'root': [
             (r'[^{#$]+', Other),
@@ -295,8 +296,8 @@ class VelocityXmlLexer(DelegatingLexer):
 
     def __init__(self, **options):
         super(VelocityXmlLexer, self).__init__(XmlLexer, VelocityLexer,
-                                             **options)
-    
+                                               **options)
+
     def analyse_text(text):
         rv = VelocityLexer.analyse_text(text) - 0.01
         if looks_like_xml(text):
@@ -355,7 +356,7 @@ class DjangoLexer(RegexLexer):
              r'with(?:(?:out)?\s*context)?|scoped|ignore\s+missing)\b',
              Keyword),
             (r'(loop|block|super|forloop)\b', Name.Builtin),
-            (r'[a-zA-Z][a-zA-Z0-9_]*', Name.Variable),
+            (r'[a-zA-Z][a-zA-Z0-9_-]*', Name.Variable),
             (r'\.[a-zA-Z0-9_]+', Name.Variable),
             (r':?"(\\\\|\\"|[^"])*"', String.Double),
             (r":?'(\\\\|\\'|[^'])*'", String.Single),
@@ -1556,3 +1557,27 @@ class ColdfusionHtmlLexer(DelegatingLexer):
         super(ColdfusionHtmlLexer, self).__init__(HtmlLexer, ColdfusionMarkupLexer,
                                                   **options)
 
+
+class SspLexer(DelegatingLexer):
+    """
+    Lexer for Scalate Server Pages.
+
+    *New in Pygments 1.4.*
+    """
+    name = 'Scalate Server Page'
+    aliases = ['ssp']
+    filenames = ['*.ssp']
+    mimetypes = ['application/x-ssp']
+
+    def __init__(self, **options):
+        super(SspLexer, self).__init__(XmlLexer, JspRootLexer, **options)
+
+    def analyse_text(text):
+        rv = 0.0
+        if re.search('val \w+\s*:', text):
+            rv += 0.6
+        if looks_like_xml(text):
+            rv += 0.2
+        if '<%' in text and '%>' in text:
+            rv += 0.1
+        return rv

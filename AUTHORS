@@ -27,6 +27,7 @@ Other contributors, listed alphabetically, are:
 * Nick Efford -- Python 3 lexer
 * Artem Egorkine -- terminal256 formatter
 * James H. Fisher -- PostScript lexer
+* Naveen Garg - Autohotkey lexer
 * Laurent Gautier -- R/S lexer
 * Krzysiek Goj -- Scala lexer
 * Matt Good -- Genshi, Cheetah lexers
@@ -58,6 +59,7 @@ Other contributors, listed alphabetically, are:
 * Ronny Pfannschmidt -- BBCode lexer
 * Benjamin Peterson -- Test suite refactoring
 * Justin Reidy -- MXML lexer
+* Lubomir Rintel -- GoodData MAQL and CL lexers
 * Andre Roberge -- Tango style
 * Konrad Rudolph -- LaTeX formatter enhancements
 * Mario Ruggier -- Evoque lexers
