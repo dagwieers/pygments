@@ -204,13 +204,21 @@ class NemerleLexer(RegexLexer):
                 (r'\$\s*"', String, 'splice-string'),
                 (r'\$\s*<#', String, 'splice-string2'),
                 (r'<#', String, 'recursive-string'),
+
+                (r'(<\[)\s*(' + cs_ident + ':)?', Keyword),
+                (r'\]\>', Keyword),
+
+                # quasiquotation only
+                (r'\$' + cs_ident, Name), 
+                (r'(\$)(\()', bygroups(Name, Punctuation), 'splice-string-content'),
+
                 (r'[~!%^&*()+=|\[\]:;,.<>/?-]', Punctuation),
                 (r'[{}]', Punctuation),
                 (r'@"(\\\\|\\"|[^"])*"', String),
                 (r'"(\\\\|\\"|[^"\n])*["\n]', String),
                 (r"'\\.'|'[^\\]'", String.Char),
-                (r"[0-9](\.[0-9]*)?([eE][+-][0-9]+)?"
-                 r"[flFLdD]?|0[xX][0-9a-fA-F]+[Ll]?", Number),
+		(r"0[xX][0-9a-fA-F]+[Ll]?", Number),
+                (r"[0-9](\.[0-9]*)?([eE][+-][0-9]+)?[flFLdD]?", Number),
                 (r'#[ \t]*(if|endif|else|elif|define|undef|'
                  r'line|error|warning|region|endregion|pragma)\b.*?\n',
                  Comment.Preproc),
@@ -230,9 +238,12 @@ class NemerleLexer(RegexLexer):
                  r'unchecked|unless|using|while|yield)\b', Keyword),
                 (r'(global)(::)', bygroups(Keyword, Punctuation)),
                 (r'(bool|byte|char|decimal|double|float|int|long|object|sbyte|'
-                 r'short|string|uint|ulong|ushort)\b\??', Keyword.Type),
-                (r'(class|struct|variant|module)(\s+)', bygroups(Keyword, Text),
-                 'class'),
+                 r'short|string|uint|ulong|ushort|void|array|list)\b\??',
+                 Keyword.Type),
+                (r'(:>?)\s*(' + cs_ident + r'\??)',
+                 bygroups(Punctuation, Keyword.Type)),
+                (r'(class|struct|variant|module)(\s+)',
+                 bygroups(Keyword, Text), 'class'),
                 (r'(namespace|using)(\s+)', bygroups(Keyword, Text),
                  'namespace'),
                 (cs_ident, Name),
@@ -245,16 +256,18 @@ class NemerleLexer(RegexLexer):
                 ('(' + cs_ident + r'|\.)+', Name.Namespace, '#pop')
             ],
             'splice-string': [
-                (r'[^"$]',  String),
-                (r'\$\(', Name, 'splice-string-content'),
-                (r'\$', Name, 'splice-string-ident'),
+                (r'[^"$]',  String), 
+                (r'\$' + cs_ident, Name),
+                (r'(\$)(\()', bygroups(Name, Punctuation),
+                 'splice-string-content'),
                 (r'\\"',  String),
                 (r'"',  String, '#pop')
             ],
             'splice-string2': [
-                (r'[^#<>$]',  String),
-                (r'\$\(', Name, 'splice-string-content'),
-                (r'\$', Name, 'splice-string-ident'),
+                (r'[^#<>$]',  String), 
+                (r'\$' + cs_ident, Name),
+                (r'(\$)(\()', bygroups(Name, Punctuation),
+                 'splice-string-content'),
                 (r'<#',  String, '#push'),
                 (r'#>',  String, '#pop')
             ],
@@ -266,14 +279,10 @@ class NemerleLexer(RegexLexer):
             'splice-string-content': [
                 (r'if|match', Keyword),
                 (r'[~!%^&*+=|\[\]:;,.<>/?-]', Punctuation),
-                (cs_ident, Name),
-                (r'\(', Name, '#push'),
-                (r'\)', Name, '#pop')
-            ],
-            'splice-string-ident': [
-                (cs_ident,  Name, '#pop'),
-                (r'.',  String, '#pop')
-            ],
+                (cs_ident, Name), 
+                (r'\(', Punctuation, '#push'),
+                (r'\)', Punctuation, '#pop')
+            ]
         }
 
     def __init__(self, **options):
