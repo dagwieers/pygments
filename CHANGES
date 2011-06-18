@@ -17,6 +17,7 @@ Version 1.5
   * Nimrod
   * Nemerle (#667)
   * F# (#353)
+  * Groovy (#501)
 
 - In the LaTeX formatter, escape special &, < and > chars (#648).
 
