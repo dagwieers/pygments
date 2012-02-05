@@ -1493,7 +1493,7 @@ class ClojureLexer(RegexLexer):
         'val', 'vals', 'var-get', 'var-set', 'var?', 'vector', 'vector-zip',
         'vector?', 'when', 'when-first', 'when-let', 'when-not',
         'with-local-vars', 'with-meta', 'with-open', 'with-out-str',
-        'xml-seq', 'xml-zip', 'zero?', 'zipmap', 'zipper']
+        'xml-seq', 'xml-zip', 'zero?', 'zipmap', 'zipper', 'ns']
 
     # valid names for identifiers
     # well, names can only not consist fully of numbers
@@ -1501,14 +1501,14 @@ class ClojureLexer(RegexLexer):
 
     # TODO / should divide keywords/symbols into namespace/rest
     # but that's hard, so just pretend / is part of the name
-    valid_name = r'[\w!$%*+,<=>?/.-]+'
+    valid_name = r'(?!#)[\w!$%*+<=>?/.#-]+'
 
     def _multi_escape(entries):
-        return '(?:' + '|'.join(map(re.escape, entries)) + \
-               ')?![\\w!$%*+,<=>?/.-]'
+        return '(%s)' % ('|'.join(
+            [re.escape(entry) + ' ' for entry in entries]))
 
     tokens = {
-        'root' : [
+        'root': [
             # the comments - always starting with semicolon
             # and going to the end of the line
             (r';.*$', Comment.Single),
@@ -1540,6 +1540,7 @@ class ClojureLexer(RegexLexer):
 
             # the remaining functions
             (r'(?<=\()' + valid_name, Name.Function),
+
             # find the remaining variables
             (valid_name, Name.Variable),
 
