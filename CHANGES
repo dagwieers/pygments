@@ -36,6 +36,7 @@ Version 1.5
   * Coq (#734)
   * PowerShell (#654)
   * Dart (#715)
+  * Fantom (PR#36)
 
 - In the LaTeX formatter, escape special &, < and > chars (#648).
 
