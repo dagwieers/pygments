@@ -38,6 +38,7 @@ Version 1.5
   * Dart (#715)
   * Fantom (PR#36)
   * Bro (PR#5)
+  * NewLISP (PR#26)
 
 - In the LaTeX formatter, escape special &, < and > chars (#648).
 
