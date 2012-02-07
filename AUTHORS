@@ -48,6 +48,7 @@ Other contributors, listed alphabetically, are:
 * Tim Howard -- BlitzMax lexer
 * Ivan Inozemtsev -- Fantom lexer
 * Dennis Kaarsemaker -- sources.list lexer
+* Igor Kalnitsky -- vhdl lexer
 * Adam Koprowski -- Opa lexer
 * Benjamin Kowarsch -- Modula-2 lexer
 * Marek Kubica -- Scheme lexer
