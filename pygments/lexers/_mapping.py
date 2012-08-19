@@ -165,6 +165,7 @@ LEXERS = {
     'Modula2Lexer': ('pygments.lexers.compiled', 'Modula-2', ('modula2', 'm2'), ('*.def', '*.mod'), ('text/x-modula2',)),
     'MoinWikiLexer': ('pygments.lexers.text', 'MoinMoin/Trac Wiki markup', ('trac-wiki', 'moin'), (), ('text/x-trac-wiki',)),
     'MoonScriptLexer': ('pygments.lexers.agile', 'MoonScript', ('moon', 'moonscript'), ('*.moon',), ('text/x-moonscript', 'application/x-moonscript')),
+    'MscgenLexer': ('pygments.lexers.other', 'Mscgen', ('mscgen', 'msc'), ('*.msc',), ()),
     'MuPADLexer': ('pygments.lexers.math', 'MuPAD', ('mupad',), ('*.mu',), ()),
     'MxmlLexer': ('pygments.lexers.web', 'MXML', ('mxml',), ('*.mxml',), ()),
     'MySqlLexer': ('pygments.lexers.sql', 'MySQL', ('mysql',), (), ('text/x-mysql',)),
