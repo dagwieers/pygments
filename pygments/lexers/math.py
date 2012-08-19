@@ -23,7 +23,6 @@ __all__ = ['JuliaLexer', 'JuliaConsoleLexer', 'MuPADLexer', 'MatlabLexer',
            'MatlabSessionLexer', 'OctaveLexer', 'ScilabLexer', 'NumPyLexer',
            'RConsoleLexer', 'SLexer']
 
-
 class JuliaLexer(RegexLexer):
     name = 'Julia'
     aliases = ['julia','jl']
@@ -1076,3 +1075,4 @@ class SLexer(RegexLexer):
 
     def analyse_text(text):
         return '<-' in text
+
