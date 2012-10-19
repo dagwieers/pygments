@@ -18,12 +18,12 @@ from pygments.token import Comment, String, Punctuation, Keyword, Name, \
 
 from pygments.lexers.agile import PythonLexer
 from pygments.lexers import _scilab_builtins
+from pygments.lexers import _stan_builtins
 
 __all__ = ['JuliaLexer', 'JuliaConsoleLexer', 'MuPADLexer', 'MatlabLexer',
            'MatlabSessionLexer', 'OctaveLexer', 'ScilabLexer', 'NumPyLexer',
            'RConsoleLexer', 'SLexer', 'JagsLexer', 'BugsLexer', 'StanLexer',
-           'IDLLexer']
-
+           'IDLLexer', 'RdLexer']
 
 class JuliaLexer(RegexLexer):
     name = 'Julia'
@@ -1282,47 +1282,11 @@ class StanLexer(RegexLexer):
     filenames = ['*.stan']
 
     _RESERVED = ('for', 'in', 'while', 'repeat', 'until', 'if',
-                'then', 'else', 'true', 'false', 'T')
+                 'then', 'else', 'true', 'false', 'T', 
+                 'lower', 'upper', 'print')
 
     _TYPES = ('int', 'real', 'vector', 'simplex', 'ordered', 'row_vector',
-              'matrix', 'corr_matrix', 'cov_matrix')
-
-    # STAN 1.0 Manual, Chapter 20
-    _CONSTANTS = ['pi', 'e', 'sqrt2', 'log2', 'log10', 'nan', 'infinity',
-                  'epsilon', 'negative_epsilon']
-    _FUNCTIONS = ['abs', 'int_step', 'min', 'max',
-                  'if_else', 'step',
-                  'fabs', 'fdim',
-                  'fmin', 'fmax',
-                  'fmod',
-                  'floor', 'ceil', 'round', 'trunc',
-                  'sqrt', 'cbrt', 'square', 'exp', 'exp2', 'expm1',
-                  'log', 'log2', 'log10', 'pow', 'logit', 'inv_logit',
-                  'inv_cloglog', 'hypot', 'cos', 'sin', 'tan', 'acos',
-                  'asin', 'atan', 'atan2', 'cosh', 'sinh', 'tanh',
-                  'acosh', 'asinh', 'atanh', 'erf', 'erfc', 'Phi',
-                  'log_loss', 'tgamma', 'lgamma', 'lmgamma', 'lbeta',
-                  'binomial_coefficient_log',
-                  'fma', 'multiply_log', 'log1p', 'log1m', 'log1p_exp',
-                  'log_sum_exp',
-                  'rows', 'cols',
-                  'dot_product', 'prod', 'mean', 'variance', 'sd',
-                  'diagonal', 'diag_matrix', 'col', 'row',
-                  'softmax', 'trace', 'determinant', 'inverse', 'eigenvalue',
-                  'eigenvalues_sym', 'cholesky', 'singular_values',
-                  '(log)?normal_p', 'exponential_p', 'gamma_p', 'weibull_p']
-    _DISTRIBUTIONS = ['bernoulli', 'bernoulli_logit', 'binomial',
-                      'beta_binomial', 'hypergeometric', 'categorical',
-                      'ordered_logistic', 'neg_binomial', 'poisson',
-                      'multinomial', 'normal', 'student_t',
-                      'cauchy', 'double_exponential', 'logistic',
-                      'lognormal', 'chi_square', 'inv_chi_square',
-                      'scaled_inv_chi_square', 'exponential',
-                      'gamma', 'inv_gamma', 'weibull', 'pareto',
-                      'beta', 'uniform', 'dirichlet', 'multi_normal',
-                      'multi_normal_cholesky', 'multi_student_t',
-                      'wishart', 'inv_wishart', 'lkj_cov',
-                      'lkj_corr_cholesky']
+              'matrix', 'corr_matrix', 'cov_matrix', 'positive_ordered')
 
     tokens = {
         'whitespace' : [
@@ -1334,6 +1298,8 @@ class StanLexer(RegexLexer):
             (r'(//|#).*$', Comment.Single),
             ],
         'root': [
+            # Stan is more restrictive on strings than this regex
+            (r'"[^"]*"', String),
             # Comments
             include('comments'),
             # block start
@@ -1352,13 +1318,11 @@ class StanLexer(RegexLexer):
             (r"[;:,\[\]()<>]", Punctuation),
             # Builtin
             (r'(%s)(?=\s*\()'
-             % r'|'.join(_FUNCTIONS
-                         + _DISTRIBUTIONS 
-                         + ['%s_log' % x for x in _DISTRIBUTIONS]),
+             % r'|'.join(_stan_builtins.FUNCTIONS
+                         + _stan_builtins.DISTRIBUTIONS),
              Name.Builtin),
             (r'(%s)(?=\s*\()'
-             % r'|'.join(_CONSTANTS),
-             Keyword.Constant),
+             % r'|'.join(_stan_builtins.CONSTANTS), Keyword.Constant),
             # Special names ending in __, like lp__
             (r'[A-Za-z][A-Za-z0-9_]*__\b', Name.Builtin.Pseudo),
             # Regular variable names
@@ -1621,3 +1585,42 @@ class IDLLexer(RegexLexer):
             (r'.', Text),
         ]
     }
+
+
+class RdLexer(RegexLexer):
+    """
+    Pygments Lexer for R documentation (Rd) files
+
+    This is a very minimal implementation, highlighting little more
+    than the macros. A description of Rd syntax is found in `Writing R
+    Extensions <http://cran.r-project.org/doc/manuals/R-exts.html>`_
+    and `Parsing Rd files <developer.r-project.org/parseRd.pdf>`_.
+
+    *New in Pygments 1.6.*
+    """
+    name = 'Rd'
+    aliases = ['rd']
+    filenames = ['*.Rd']
+    mimetypes = ['text/x-r-doc']
+
+    # To account for verbatim / LaTeX-like / and R-like areas
+    # would require parsing.
+    tokens = {
+        'root' : [
+            # catch escaped brackets and percent sign
+            (r'\\[\\{}%]', String.Escape),
+            # comments
+            (r'%.*$', Comment),
+            # special macros with no arguments
+            (r'\\(?:cr|l?dots|R|tab)\b', Keyword.Constant),
+            # macros
+            (r'\\[a-zA-Z]+\b', Keyword),
+            # special preprocessor macros
+            (r'^\s*#(?:ifn?def|endif).*\b', Comment.Preproc),
+            # non-escaped brackets
+            (r'[{}]', Name.Builtin),
+            # everything else
+            (r'[^\\%\n{}]+', Text),
+            (r'.', Text),
+            ]
+        }
