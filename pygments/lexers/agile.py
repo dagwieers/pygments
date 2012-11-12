@@ -393,7 +393,7 @@ class PythonTracebackLexer(RegexLexer):
              bygroups(Text, using(PythonLexer), Text)),
             (r'^([ \t]*)(\.\.\.)(\n)',
              bygroups(Text, Comment, Text)), # for doctests...
-            (r'^(.+)(: )(.+)(\n)',
+            (r'^([^:]+)(: )(.+)(\n)',
              bygroups(Generic.Error, Text, Name, Text), '#pop'),
             (r'^([a-zA-Z_][a-zA-Z0-9_]*)(:?\n)',
              bygroups(Generic.Error, Text), '#pop')
@@ -429,7 +429,7 @@ class Python3TracebackLexer(RegexLexer):
              bygroups(Text, using(Python3Lexer), Text)),
             (r'^([ \t]*)(\.\.\.)(\n)',
              bygroups(Text, Comment, Text)), # for doctests...
-            (r'^(.+)(: )(.+)(\n)',
+            (r'^([^:]+)(: )(.+)(\n)',
              bygroups(Generic.Error, Text, Name, Text), '#pop'),
             (r'^([a-zA-Z_][a-zA-Z0-9_]*)(:?\n)',
              bygroups(Generic.Error, Text), '#pop')
