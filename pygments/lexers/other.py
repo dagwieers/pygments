@@ -34,7 +34,7 @@ __all__ = ['BrainfuckLexer', 'BefungeLexer', 'RedcodeLexer', 'MOOCodeLexer',
            'HybrisLexer', 'AwkLexer', 'Cfengine3Lexer', 'SnobolLexer',
            'ECLLexer', 'UrbiscriptLexer', 'OpenEdgeLexer', 'BroLexer',
            'MscgenLexer', 'KconfigLexer', 'VGLLexer', 'SourcePawnLexer',
-           'RobotFrameworkLexer', 'PuppetLexer', 'NSISLexer']
+           'RobotFrameworkLexer', 'PuppetLexer', 'NSISLexer', 'RPMSpecLexer']
 
 
 class ECLLexer(RegexLexer):
@@ -3354,4 +3354,72 @@ class NSISLexer(RegexLexer):
             include('interpol'),
             (r'.', String.Double),
         ],
+    }
+
+
+class RPMSpecLexer(RegexLexer):
+    """
+    For RPM *.spec files
+
+    *New in Pygments 1.6.*
+    """
+
+    name = 'RPMSpec'
+    aliases = ['spec']
+    filenames = ['*.spec']
+    mimetypes = ['text/x-rpm-spec']
+
+    _directives = '(?:package|prep|build|install|clean|check|pre[a-z]*|post[a-z]*|trigger[a-z]*|files)'
+
+    tokens = {
+        'root': [
+            (r'#.*\n', Comment),
+            include('basic'),
+        ],
+        'description': [
+            (r'^(%' + _directives + ')(.*)$', bygroups(Name.Decorator, Text), '#pop'),
+            (r'\n', Text),
+            (r'.', Text),
+        ],
+        'changelog': [
+            (r'\*.*\n', Generic.Subheading),
+            (r'^(%' + _directives + ')(.*)$', bygroups(Name.Decorator, Text), '#pop'),
+            (r'\n', Text),
+            (r'.', Text),
+        ],
+        'string': [
+            (r'"', String.Double, '#pop'),
+            (r'\\([\\abfnrtv"\']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})', String.Escape),
+            include('interpol'),
+            (r'.', String.Double),
+        ],
+        'basic': [
+            include('macro'),
+            (r'(?i)^(Name|Version|Release|Epoch|Summary|Group|License|Packager|Vendor|Icon|URL|'
+             r'Distribution|Prefix|Patch[0-9]*|Source[0-9]*|Requires\(?[a-z]*\)?|[A-Za-z]+Req|'
+             r'Obsoletes|Provides|Conflicts|Build[A-Za-z]+|[A-Za-z]+Arch|Auto[A-Za-z]+)(:)(.*)$',
+             bygroups(Generic.Heading, Punctuation, using(this))),
+            (r'^%description', Name.Decorator, 'description'),
+            (r'^%changelog', Name.Decorator, 'changelog'),
+            (r'^(%' + _directives + ')(.*)$', bygroups(Name.Decorator, Text)),
+            (r'%(attr|defattr|dir|doc(?:dir)?|setup|config(?:ure)?|'
+             r'make(?:install)|ghost|patch[0-9]+|find_lang|exclude|verify)',
+             Keyword),
+            include('interpol'),
+            (r"'.*'", String.Single),
+            (r'"', String.Double, 'string'),
+            (r'.', Text),
+        ],
+        'macro': [
+            (r'%define.*\n', Comment.Preproc),
+            (r'%\{\!\?.*%define.*\}', Comment.Preproc),
+            (r'(%(?:if(?:n?arch)?|else(?:if)?|endif))(.*)$', bygroups(Comment.Preproc, Text)),
+        ],
+        'interpol': [
+            (r'%\{?__[a-z_]+\}?', Name.Function),
+            (r'%\{?_([a-z_]+dir|[a-z_]+path|prefix)\}?', Keyword.Pseudo),
+            (r'%\{\?[A-Za-z0-9_]+\}', Name.Variable),
+            (r'\$\{?RPM_[A-Z0-9_]+\}?', Name.Variable.Global),
+            (r'%\{[a-zA-Z][a-zA-Z0-9_]+\}', Keyword.Constant),
+        ]
     }
