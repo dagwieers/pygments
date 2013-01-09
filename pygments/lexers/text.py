@@ -5,7 +5,7 @@
 
     Lexers for non-source code file types.
 
-    :copyright: Copyright 2006-2012 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2013 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -1824,20 +1824,20 @@ class HxmlLexer(RegexLexer):
             # Targets and other options that take an argument
             (r'(-)(cpp|js|neko|x|as3|swf9?|swf-lib|php|xml|main|lib|D|resource|'
              r'cp|cmd)( +)(.+)',
-             bygroups(Punctuation, Keyword, Whitespace, String)), 
+             bygroups(Punctuation, Keyword, Whitespace, String)),
             # Options that take only numerical arguments
             (r'(-)(swf-version)( +)(\d+)',
              bygroups(Punctuation, Keyword, Number.Integer)),
-            # An Option that defines the size, the fps and the background 
+            # An Option that defines the size, the fps and the background
             # color of an flash movie
-            (r'(-)(swf-header)( +)(\d+)(:)(\d+)(:)(\d+)(:)([A-Fa-f0-9]{6})', 
+            (r'(-)(swf-header)( +)(\d+)(:)(\d+)(:)(\d+)(:)([A-Fa-f0-9]{6})',
              bygroups(Punctuation, Keyword, Whitespace, Number.Integer,
                       Punctuation, Number.Integer, Punctuation, Number.Integer,
-                      Punctuation, Number.Hex)), 
+                      Punctuation, Number.Hex)),
             # options with two dashes that takes arguments
             (r'(--)(js-namespace|php-front|php-lib|remap|gen-hx-classes)( +)'
-             r'(.+)', bygroups(Punctuation, Keyword, Whitespace, String)), 
+             r'(.+)', bygroups(Punctuation, Keyword, Whitespace, String)),
             # Single line comment, multiline ones are not allowed.
-            (r'#.*', Comment.Single) 
+            (r'#.*', Comment.Single)
         ]
     }

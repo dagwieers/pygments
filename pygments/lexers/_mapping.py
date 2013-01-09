@@ -9,7 +9,7 @@
 
     Do not alter the LEXERS dictionary by hand.
 
-    :copyright: Copyright 2006-2012 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2013 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -31,6 +31,7 @@ LEXERS = {
     'AppleScriptLexer': ('pygments.lexers.other', 'AppleScript', ('applescript',), ('*.applescript',), ()),
     'AspectJLexer': ('pygments.lexers.jvm', 'AspectJ', ('aspectj',), ('*.aj',), ('text/x-aspectj',)),
     'AsymptoteLexer': ('pygments.lexers.other', 'Asymptote', ('asy', 'asymptote'), ('*.asy',), ('text/x-asymptote',)),
+    'AutoItLexer': ('pygments.lexers.other', 'AutoIt', ('autoit', 'Autoit'), ('*.au3',), ('text/x-autoit',)),
     'AutohotkeyLexer': ('pygments.lexers.other', 'autohotkey', ('ahk',), ('*.ahk', '*.ahkl'), ('text/x-autohotkey',)),
     'AwkLexer': ('pygments.lexers.other', 'Awk', ('awk', 'gawk', 'mawk', 'nawk'), ('*.awk',), ('application/x-awk',)),
     'BBCodeLexer': ('pygments.lexers.text', 'BBCode', ('bbcode',), (), ('text/x-bbcode',)),
@@ -49,6 +50,8 @@ LEXERS = {
     'CObjdumpLexer': ('pygments.lexers.asm', 'c-objdump', ('c-objdump',), ('*.c-objdump',), ('text/x-c-objdump',)),
     'CSharpAspxLexer': ('pygments.lexers.dotnet', 'aspx-cs', ('aspx-cs',), ('*.aspx', '*.asax', '*.ascx', '*.ashx', '*.asmx', '*.axd'), ()),
     'CSharpLexer': ('pygments.lexers.dotnet', 'C#', ('csharp', 'c#'), ('*.cs',), ('text/x-csharp',)),
+    'Ca65Lexer': ('pygments.lexers.asm', 'ca65', ('ca65',), ('*.s',), ()),
+    'CbmBasicV2Lexer': ('pygments.lexers.other', 'CBM BASIC V2', ('cbmbas',), ('*.bas',), ()),
     'CeylonLexer': ('pygments.lexers.jvm', 'Ceylon', ('ceylon',), ('*.ceylon',), ('text/x-ceylon',)),
     'Cfengine3Lexer': ('pygments.lexers.other', 'CFEngine3', ('cfengine3', 'cf3'), ('*.cf',), ()),
     'CheetahHtmlLexer': ('pygments.lexers.templates', 'HTML+Cheetah', ('html+cheetah', 'html+spitfire'), (), ('text/html+cheetah', 'text/html+spitfire')),
@@ -56,6 +59,8 @@ LEXERS = {
     'CheetahLexer': ('pygments.lexers.templates', 'Cheetah', ('cheetah', 'spitfire'), ('*.tmpl', '*.spt'), ('application/x-cheetah', 'application/x-spitfire')),
     'CheetahXmlLexer': ('pygments.lexers.templates', 'XML+Cheetah', ('xml+cheetah', 'xml+spitfire'), (), ('application/xml+cheetah', 'application/xml+spitfire')),
     'ClojureLexer': ('pygments.lexers.jvm', 'Clojure', ('clojure', 'clj'), ('*.clj',), ('text/x-clojure', 'application/x-clojure')),
+    'CobolFreeformatLexer': ('pygments.lexers.compiled', 'COBOLFree', ('cobolfree',), ('*.cbl', '*.CBL'), ()),
+    'CobolLexer': ('pygments.lexers.compiled', 'COBOL', ('cobol',), ('*.cob', '*.COB', '*.cpy', '*.CPY'), ('text/x-cobol',)),
     'CoffeeScriptLexer': ('pygments.lexers.web', 'CoffeeScript', ('coffee-script', 'coffeescript'), ('*.coffee',), ('text/coffeescript',)),
     'ColdfusionHtmlLexer': ('pygments.lexers.templates', 'Coldfusion HTML', ('cfm',), ('*.cfm', '*.cfml', '*.cfc'), ('application/x-coldfusion',)),
     'ColdfusionLexer': ('pygments.lexers.templates', 'cfstatement', ('cfs',), (), ()),
@@ -102,6 +107,7 @@ LEXERS = {
     'FantomLexer': ('pygments.lexers.compiled', 'Fantom', ('fan',), ('*.fan',), ('application/x-fantom',)),
     'FelixLexer': ('pygments.lexers.compiled', 'Felix', ('felix', 'flx'), ('*.flx', '*.flxh'), ('text/x-felix',)),
     'FortranLexer': ('pygments.lexers.compiled', 'Fortran', ('fortran',), ('*.f', '*.f90', '*.F', '*.F90'), ('text/x-fortran',)),
+    'FoxProLexer': ('pygments.lexers.foxpro', 'FoxPro', ('Clipper', 'XBase'), ('*.PRG', '*.prg'), ()),
     'GLShaderLexer': ('pygments.lexers.compiled', 'GLSL', ('glsl',), ('*.vert', '*.frag', '*.geo'), ('text/x-glslsrc',)),
     'GasLexer': ('pygments.lexers.asm', 'GAS', ('gas',), ('*.s', '*.S'), ('text/x-gas',)),
     'GenshiLexer': ('pygments.lexers.templates', 'Genshi', ('genshi', 'kid', 'xml+genshi', 'xml+kid'), ('*.kid',), ('application/x-genshi', 'application/x-kid')),
@@ -126,6 +132,7 @@ LEXERS = {
     'HttpLexer': ('pygments.lexers.text', 'HTTP', ('http',), (), ()),
     'HxmlLexer': ('pygments.lexers.text', 'Hxml', ('haxeml', 'hxml'), ('*.hxml',), ()),
     'HybrisLexer': ('pygments.lexers.other', 'Hybris', ('hybris', 'hy'), ('*.hy', '*.hyb'), ('text/x-hybris', 'application/x-hybris')),
+    'IDLLexer': ('pygments.lexers.math', 'IDL', ('idl',), ('*.pro',), ('text/idl',)),
     'IniLexer': ('pygments.lexers.text', 'INI', ('ini', 'cfg'), ('*.ini', '*.cfg'), ('text/x-ini',)),
     'IoLexer': ('pygments.lexers.agile', 'Io', ('io',), ('*.io',), ('text/x-iosrc',)),
     'IokeLexer': ('pygments.lexers.jvm', 'Ioke', ('ioke', 'ik'), ('*.ik',), ('text/x-iokesrc',)),
@@ -183,6 +190,7 @@ LEXERS = {
     'MyghtyJavascriptLexer': ('pygments.lexers.templates', 'JavaScript+Myghty', ('js+myghty', 'javascript+myghty'), (), ('application/x-javascript+myghty', 'text/x-javascript+myghty', 'text/javascript+mygthy')),
     'MyghtyLexer': ('pygments.lexers.templates', 'Myghty', ('myghty',), ('*.myt', 'autodelegate'), ('application/x-myghty',)),
     'MyghtyXmlLexer': ('pygments.lexers.templates', 'XML+Myghty', ('xml+myghty',), (), ('application/xml+myghty',)),
+    'NSISLexer': ('pygments.lexers.other', 'NSIS', ('nsis', 'nsi', 'nsh'), ('*.nsi', '*.nsh'), ('text/x-nsis',)),
     'NasmLexer': ('pygments.lexers.asm', 'NASM', ('nasm',), ('*.asm', '*.ASM'), ('text/x-nasm',)),
     'NemerleLexer': ('pygments.lexers.dotnet', 'Nemerle', ('nemerle',), ('*.n',), ('text/x-nemerle',)),
     'NewLispLexer': ('pygments.lexers.functional', 'NewLisp', ('newlisp',), ('*.lsp', '*.nl'), ('text/x-newlisp', 'application/x-newlisp')),
@@ -191,7 +199,8 @@ LEXERS = {
     'NimrodLexer': ('pygments.lexers.compiled', 'Nimrod', ('nimrod', 'nim'), ('*.nim', '*.nimrod'), ('text/x-nimrod',)),
     'NumPyLexer': ('pygments.lexers.math', 'NumPy', ('numpy',), (), ()),
     'ObjdumpLexer': ('pygments.lexers.asm', 'objdump', ('objdump',), ('*.objdump',), ('text/x-objdump',)),
-    'ObjectiveCLexer': ('pygments.lexers.compiled', 'Objective-C', ('objective-c', 'objectivec', 'obj-c', 'objc'), ('*.m',), ('text/x-objective-c',)),
+    'ObjectiveCLexer': ('pygments.lexers.compiled', 'Objective-C', ('objective-c', 'objectivec', 'obj-c', 'objc'), ('*.m', '*.h'), ('text/x-objective-c',)),
+    'ObjectiveCppLexer': ('pygments.lexers.compiled', 'Objective-C++', ('objective-c++', 'objectivec++', 'obj-c++', 'objc++'), ('*.mm', '*.hh'), ('text/x-objective-c++',)),
     'ObjectiveJLexer': ('pygments.lexers.web', 'Objective-J', ('objective-j', 'objectivej', 'obj-j', 'objj'), ('*.j',), ('text/x-objective-j',)),
     'OcamlLexer': ('pygments.lexers.functional', 'OCaml', ('ocaml',), ('*.ml', '*.mli', '*.mll', '*.mly'), ('text/x-ocaml',)),
     'OctaveLexer': ('pygments.lexers.math', 'Octave', ('octave',), ('*.m',), ('text/octave',)),
@@ -209,13 +218,16 @@ LEXERS = {
     'PrologLexer': ('pygments.lexers.compiled', 'Prolog', ('prolog',), ('*.prolog', '*.pro', '*.pl'), ('text/x-prolog',)),
     'PropertiesLexer': ('pygments.lexers.text', 'Properties', ('properties',), ('*.properties',), ('text/x-java-properties',)),
     'ProtoBufLexer': ('pygments.lexers.other', 'Protocol Buffer', ('protobuf',), ('*.proto',), ()),
+    'PuppetLexer': ('pygments.lexers.other', 'Puppet', ('puppet',), ('*.pp',), ()),
     'PyPyLogLexer': ('pygments.lexers.text', 'PyPy Log', ('pypylog', 'pypy'), ('*.pypylog',), ('application/x-pypylog',)),
     'Python3Lexer': ('pygments.lexers.agile', 'Python 3', ('python3', 'py3'), (), ('text/x-python3', 'application/x-python3')),
     'Python3TracebackLexer': ('pygments.lexers.agile', 'Python 3.0 Traceback', ('py3tb',), ('*.py3tb',), ('text/x-python3-traceback',)),
     'PythonConsoleLexer': ('pygments.lexers.agile', 'Python console session', ('pycon',), (), ('text/x-python-doctest',)),
     'PythonLexer': ('pygments.lexers.agile', 'Python', ('python', 'py', 'sage'), ('*.py', '*.pyw', '*.sc', 'SConstruct', 'SConscript', '*.tac', '*.sage'), ('text/x-python', 'application/x-python')),
     'PythonTracebackLexer': ('pygments.lexers.agile', 'Python Traceback', ('pytb',), ('*.pytb',), ('text/x-python-traceback',)),
+    'QmlLexer': ('pygments.lexers.web', 'QML', ('qml', 'Qt Meta Language', 'Qt modeling Language'), ('*.qml',), ('application/x-qml',)),
     'RConsoleLexer': ('pygments.lexers.math', 'RConsole', ('rconsole', 'rout'), ('*.Rout',), ()),
+    'RPMSpecLexer': ('pygments.lexers.other', 'RPMSpec', ('spec',), ('*.spec',), ('text/x-rpm-spec',)),
     'RacketLexer': ('pygments.lexers.functional', 'Racket', ('racket', 'rkt'), ('*.rkt', '*.rktl'), ('text/x-racket', 'application/x-racket')),
     'RagelCLexer': ('pygments.lexers.parsers', 'Ragel in C Host', ('ragel-c',), ('*.rl',), ()),
     'RagelCppLexer': ('pygments.lexers.parsers', 'Ragel in CPP Host', ('ragel-cpp',), ('*.rl',), ()),
@@ -262,6 +274,7 @@ LEXERS = {
     'TexLexer': ('pygments.lexers.text', 'TeX', ('tex', 'latex'), ('*.tex', '*.aux', '*.toc'), ('text/x-tex', 'text/x-latex')),
     'TextLexer': ('pygments.lexers.special', 'Text only', ('text',), ('*.txt',), ('text/plain',)),
     'TreetopLexer': ('pygments.lexers.parsers', 'Treetop', ('treetop',), ('*.treetop', '*.tt'), ()),
+    'TypeScriptLexer': ('pygments.lexers.web', 'TypeScript', ('ts',), ('*.ts',), ('text/x-typescript',)),
     'UrbiscriptLexer': ('pygments.lexers.other', 'UrbiScript', ('urbiscript',), ('*.u',), ('application/x-urbiscript',)),
     'VGLLexer': ('pygments.lexers.other', 'VGL', ('vgl',), ('*.rpf',), ()),
     'ValaLexer': ('pygments.lexers.compiled', 'Vala', ('vala', 'vapi'), ('*.vala', '*.vapi'), ('text/x-vala',)),
@@ -318,9 +331,8 @@ if __name__ == '__main__':
     footer = content[content.find("if __name__ == '__main__':"):]
 
     # write new file
-    f = open(__file__, 'w')
+    f = open(__file__, 'wb')
     f.write(header)
     f.write('LEXERS = {\n    %s,\n}\n\n' % ',\n    '.join(found_lexers))
     f.write(footer)
     f.close()
-
