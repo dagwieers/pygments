@@ -23,14 +23,14 @@ from pygments.scanner import Scanner
 from pygments.lexers.functional import OcamlLexer
 from pygments.lexers.jvm import JavaLexer, ScalaLexer
 
-__all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'ECLexer', 'DylanLexer',
-           'ObjectiveCLexer', 'ObjectiveCppLexer', 'FortranLexer', 'GLShaderLexer',
-           'PrologLexer', 'CythonLexer', 'ValaLexer', 'OocLexer', 'GoLexer',
-           'FelixLexer', 'AdaLexer', 'Modula2Lexer', 'BlitzMaxLexer',
-           'NimrodLexer', 'FantomLexer', 'RustLexer', 'CudaLexer', 'MonkeyLexer',
+__all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'ECLexer',
+           'NesCLexer', 'DylanLexer', 'ObjectiveCLexer', 'ObjectiveCppLexer',
+           'FortranLexer', 'GLShaderLexer', 'PrologLexer', 'CythonLexer',
+           'ValaLexer', 'OocLexer', 'GoLexer', 'FelixLexer', 'AdaLexer',
+           'Modula2Lexer', 'BlitzMaxLexer', 'BlitzBasicLexer', 'NimrodLexer',
+           'FantomLexer', 'RustLexer', 'CudaLexer', 'MonkeyLexer', 'SwigLexer',
            'DylanLidLexer', 'DylanConsoleLexer', 'CobolLexer',
-           'SwigLexer', 'CobolFreeformatLexer', 'LogosLexer']
-
+           'CobolFreeformatLexer', 'LogosLexer', 'ClayLexer']
 
 class CFamilyLexer(RegexLexer):
     """
