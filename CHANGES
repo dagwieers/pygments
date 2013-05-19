@@ -41,6 +41,8 @@ Version 1.7
 
 - HTTP lexer: support for PATCH method (PR#190).
 
+- Koka lexer: update to newest language spec (PR#201).
+
 
 Version 1.6
 -----------
