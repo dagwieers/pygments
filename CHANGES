@@ -17,6 +17,7 @@ Version 1.7
   * Swig (PR#168)
   * nesC (PR#166)
   * BlitzBasic (PR#197)
+  * EBNF (PR#193)
 
 - Pygments will now recognize "vim" modelines when guessing the lexer for
   a file based on content (PR#118).

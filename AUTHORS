@@ -29,6 +29,7 @@ Other contributors, listed alphabetically, are:
 * Christian Jann -- ShellSession lexer
 * Christopher Creutzig -- MuPAD lexer
 * Pete Curry -- bugfixes
+* Bryan Davis -- EBNF lexer
 * Owen Durni -- haXe lexer
 * Nick Efford -- Python 3 lexer
 * Sven Efftinge -- Xtend lexer
