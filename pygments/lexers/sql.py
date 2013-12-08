@@ -34,12 +34,11 @@
     The ``tests/examplefiles`` contains a few test files with data to be
     parsed by these lexers.
 
-    :copyright: Copyright 2006-2012 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2013 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 import re
-from copy import deepcopy
 
 from pygments.lexer import Lexer, RegexLexer, do_insertions, bygroups
 from pygments.token import Punctuation, \
@@ -61,9 +60,6 @@ def language_callback(lexer, match):
     """Parse the content of a $-string using a lexer
 
     The lexer is chosen looking for a nearby LANGUAGE.
-
-    Note: this function should have been a `PostgresBase` method, but the
-    rules deepcopy fails in this case.
     """
     l = None
     m = language_re.match(lexer.text[match.end():match.end()+100])
@@ -93,8 +89,6 @@ class PostgresBase(object):
     had, _tokens could be created on this ancestor and not updated for the
     other classes, resulting e.g. in PL/pgSQL parsed as SQL. This shortcoming
     seem to suggest that regexp lexers are not really subclassable.
-
-    `language_callback` should really be our method, but this breaks deepcopy.
     """
     def get_tokens_unprocessed(self, text, *args):
         # Have a copy of the entire text to be used by `language_callback`.
@@ -182,7 +176,7 @@ class PlPgsqlLexer(PostgresBase, RegexLexer):
     mimetypes = ['text/x-plpgsql']
 
     flags = re.IGNORECASE
-    tokens = deepcopy(PostgresLexer.tokens)
+    tokens = dict((k, l[:]) for (k, l) in PostgresLexer.tokens.iteritems())
 
     # extend the keywords list
     for i, pattern in enumerate(tokens['root']):
@@ -216,7 +210,7 @@ class PsqlRegexLexer(PostgresBase, RegexLexer):
     aliases = []    # not public
 
     flags = re.IGNORECASE
-    tokens = deepcopy(PostgresLexer.tokens)
+    tokens = dict((k, l[:]) for (k, l) in PostgresLexer.tokens.iteritems())
 
     tokens['root'].append(
         (r'\\[^\s]+', Keyword.Pseudo, 'psql-command'))
@@ -381,7 +375,7 @@ class SqlLexer(RegexLexer):
              r'DIAGNOSTICS|DICTIONARY|DISCONNECT|DISPATCH|DISTINCT|DO|'
              r'DOMAIN|DROP|DYNAMIC|DYNAMIC_FUNCTION|DYNAMIC_FUNCTION_CODE|'
              r'EACH|ELSE|ENCODING|ENCRYPTED|END|END-EXEC|EQUALS|ESCAPE|EVERY|'
-             r'EXCEPT|ESCEPTION|EXCLUDING|EXCLUSIVE|EXEC|EXECUTE|EXISTING|'
+             r'EXCEPTION|EXCEPT|EXCLUDING|EXCLUSIVE|EXEC|EXECUTE|EXISTING|'
              r'EXISTS|EXPLAIN|EXTERNAL|EXTRACT|FALSE|FETCH|FINAL|FIRST|FOR|'
              r'FORCE|FOREIGN|FORTRAN|FORWARD|FOUND|FREE|FREEZE|FROM|FULL|'
              r'FUNCTION|G|GENERAL|GENERATED|GET|GLOBAL|GO|GOTO|GRANT|GRANTED|'
