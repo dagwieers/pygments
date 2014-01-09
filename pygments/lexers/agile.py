@@ -1941,7 +1941,7 @@ class Perl6Lexer(ExtendedRegexLexer):
     mimetypes = ['text/x-perl6', 'application/x-perl6']
     flags     = re.MULTILINE | re.DOTALL | re.UNICODE
 
-    PERL6_IDENTIFIER_RANGE = "['a-zA-Z0-9_:-]"
+    PERL6_IDENTIFIER_RANGE = "['a-zA-Z0-9_:-]" # if you alter this, search for a copy made of it below
 
     PERL6_KEYWORDS = (
         'BEGIN', 'CATCH', 'CHECK', 'CONTROL', 'END', 'ENTER', 'FIRST', 'INIT',
@@ -2273,15 +2273,22 @@ class Perl6Lexer(ExtendedRegexLexer):
             return 0.91
         if re.search(r'[$@%]\?[A-Z]+', text): # Perl 6 compiler variables ($?PACKAGE)
             return 0.91
-        if re.search(r'[$@%][!.][A-Za-z0-9_-]+', text): # Perl 6 member variables
+        if re.search(r'[$@%][!.][A-Za-z_][A-Za-z0-9_-]*', text): # Perl 6 member variables
+            return 0.91
+        if re.search(r'[*][@%&]', text): # Slurpy parameters
+            # Scalar slurpies (*$slurp) are not included because they're more rare
+            # in Perl 6, and also (more importantly) they are a glob deference in
+            # Perl 5.
+            return 0.91
+        if re.search(r'sub\s+\w+:\w*[^a-zA-Z0-9{(: ]', text): # Special sub/method syntax (ex. sub postcircumfix:<[ ]>)
+            return 0.91
+        # XXX I don't like the copy+pasting of PERL6_IDENTIFIER_RANGE from above, but I don't know how to access it
+        #     otherwise
+        if re.search(r'my\s+[\'a-zA-Z0-9_:-]+\s+[$@%(]', text): # my TYPE [$scalar|@array|%hash|($list, $of, $vars)]
             return 0.91
 
         for line in text.splitlines():
-            if re.match(r'\s*(?:my|our)?\s*module', line): # module declarations
-                return 0.91
-            if re.match(r'\s*(?:my|our)?\s*role', line): # role declarations
-                return 0.91
-            if re.match(r'\s*(?:my|our)?\s*class\b', line): # class declarations
+            if re.match(r'\s*(?:my|our)?\s*(?:module|role|class)\b', line): # module, role, class declarations
                 return 0.91
         return False
 
