@@ -47,8 +47,8 @@ class BashLexer(RegexLexer):
         ],
         'basic': [
             (r'\b(if|fi|else|while|do|done|for|then|return|function|case|'
-             r'select|continue|until|esac|elif)\s*\b',
-             Keyword),
+             r'select|continue|until|esac|elif)(\s*)\b',
+             bygroups(Keyword, Text)),
             (r'\b(alias|bg|bind|break|builtin|caller|cd|command|compgen|'
              r'complete|declare|dirs|disown|echo|enable|eval|exec|exit|'
              r'export|false|fc|fg|getopts|hash|help|history|jobs|kill|let|'
@@ -179,7 +179,7 @@ class ShellSessionLexer(Lexer):
 
         for match in line_re.finditer(text):
             line = match.group()
-            m = re.match(r'^((?:\[?\S+@[^$#%]+)[$#%])(.*\n?)', line)
+            m = re.match(r'^((?:\[?\S+@[^$#%]+\]?\s*)[$#%])(.*\n?)', line)
             if m:
                 # To support output lexers (say diff output), the output
                 # needs to be broken by prompts whenever the output lexer
@@ -211,7 +211,7 @@ class BatchLexer(RegexLexer):
     *New in Pygments 0.7.*
     """
     name = 'Batchfile'
-    aliases = ['bat', 'dosbatch', 'winbatch']
+    aliases = ['bat', 'batch', 'dosbatch', 'winbatch']
     filenames = ['*.bat', '*.cmd']
     mimetypes = ['application/x-dos-batch']
 
@@ -408,7 +408,7 @@ class PowerShellLexer(RegexLexer):
             (r'[#&.]', Comment.Multiline),
         ],
         'string': [
-            (r"`[0abfnrtv'\"\$]", String.Escape),
+            (r"`[0abfnrtv'\"\$`]", String.Escape),
             (r'[^$`"]+', String.Double),
             (r'\$\(', Punctuation, 'child'),
             (r'""', String.Double),

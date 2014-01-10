@@ -645,9 +645,10 @@ class RstLexer(RegexLexer):
     Additional options accepted:
 
     `handlecodeblocks`
-        Highlight the contents of ``.. sourcecode:: langauge`` and
-        ``.. code:: language`` directives with a lexer for the given
-        language (default: ``True``). *New in Pygments 0.8.*
+        Highlight the contents of ``.. sourcecode:: language``,
+        ``.. code:: language`` and ``.. code-block:: language``
+        directives with a lexer for the given language (default:
+        ``True``). *New in Pygments 0.8.*
     """
     name = 'reStructuredText'
     aliases = ['rst', 'rest', 'restructuredtext']
@@ -731,7 +732,7 @@ class RstLexer(RegexLexer):
             (r'^(\s*)(\|)( .+\n(?:\|  .+\n)*)',
              bygroups(Text, Operator, using(this, state='inline'))),
             # Sourcecode directives
-            (r'^( *\.\.)(\s*)((?:source)?code)(::)([ \t]*)([^\n]+)'
+            (r'^( *\.\.)(\s*)((?:source)?code(?:-block)?)(::)([ \t]*)([^\n]+)'
              r'(\n[ \t]*\n)([ \t]+)(.*)(\n)((?:(?:\8.*|)\n)+)',
              _handle_sourcecode),
             # A directive
@@ -755,7 +756,7 @@ class RstLexer(RegexLexer):
             (r'^( *)(:.*?:)([ \t]+)(.*?)$',
              bygroups(Text, Name.Class, Text, Name.Function)),
             # Definition list
-            (r'^([^ ].*(?<!::)\n)((?:(?: +.*)\n)+)',
+            (r'^([^\s].*(?<!::)\n)((?:(?: +.*)\n)+)',
              bygroups(using(this, state='inline'), using(this, state='inline'))),
             # Code blocks
             (r'(::)(\n[ \t]*\n)([ \t]+)(.*)(\n)((?:(?:\3.*|)\n)+)',
@@ -1640,6 +1641,7 @@ class CMakeLexer(RegexLexer):
             (r'\(', Punctuation, '#push'),
             (r'\)', Punctuation, '#pop'),
             (r'(\${)(.+?)(})', bygroups(Operator, Name.Variable, Operator)),
+            (r'(\$<)(.+?)(>)', bygroups(Operator, Name.Variable, Operator)),
             (r'(?s)".*?"', String.Double),
             (r'\\\S+', String),
             (r'[^\)$"# \t\n]+', String),
@@ -1656,7 +1658,7 @@ class CMakeLexer(RegexLexer):
         ],
         'ws': [
             (r'[ \t]+', Text),
-            (r'#.+\n', Comment),
+            (r'#.*\n', Comment),
         ]
     }
 

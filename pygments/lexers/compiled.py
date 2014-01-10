@@ -30,7 +30,8 @@ __all__ = ['CLexer', 'CppLexer', 'DLexer', 'DelphiLexer', 'ECLexer',
            'Modula2Lexer', 'BlitzMaxLexer', 'BlitzBasicLexer', 'NimrodLexer',
            'FantomLexer', 'RustLexer', 'CudaLexer', 'MonkeyLexer', 'SwigLexer',
            'DylanLidLexer', 'DylanConsoleLexer', 'CobolLexer',
-           'CobolFreeformatLexer', 'LogosLexer', 'ClayLexer']
+           'CobolFreeformatLexer', 'LogosLexer', 'ClayLexer', 'PikeLexer',
+           'ChapelLexer']
 
 
 class CFamilyLexer(RegexLexer):
@@ -42,7 +43,7 @@ class CFamilyLexer(RegexLexer):
     #: optional Comment or Whitespace
     _ws = r'(?:\s|//.*?\n|/[*].*?[*]/)+'
     #: only one /* */ style comment
-    _ws1 = r':\s*/[*].*?[*]/\s*'
+    _ws1 = r'\s*(?:/[*].*?[*]/\s*)?'
 
     tokens = {
         'whitespace': [
@@ -73,7 +74,6 @@ class CFamilyLexer(RegexLexer):
             (r'\*/', Error),
             (r'[~!%^&*+=|?:<>/-]', Operator),
             (r'[()\[\],.]', Punctuation),
-            (r'\b(case)(.+?)(:)', bygroups(Keyword, using(this), Text)),
             (r'(auto|break|case|const|continue|default|do|else|enum|extern|'
              r'for|goto|if|register|restricted|return|sizeof|static|struct|'
              r'switch|typedef|union|volatile|while)\b', Keyword),
@@ -232,6 +232,45 @@ class CppLexer(CFamilyLexer):
         return 0.1
 
 
+class PikeLexer(CppLexer):
+    """
+    For `Pike <http://pike.lysator.liu.se/>`_ source code.
+
+    *New in Pygments 1.7.*
+    """
+    name = 'Pike'
+    aliases = ['pike']
+    filenames = ['*.pike', '*.pmod']
+    mimetypes = ['text/x-pike']
+
+    tokens = {
+        'statements': [
+            (r'(catch|new|private|protected|public|gauge|'
+             r'throw|throws|class|interface|implement|abstract|extends|from|'
+             r'this|super|new|constant|final|static|import|use|extern|'
+             r'inline|proto|break|continue|if|else|for|'
+             r'while|do|switch|case|as|in|version|return|true|false|null|'
+             r'__VERSION__|__MAJOR__|__MINOR__|__BUILD__|__REAL_VERSION__|'
+             r'__REAL_MAJOR__|__REAL_MINOR__|__REAL_BUILD__|__DATE__|__TIME__|'
+             r'__FILE__|__DIR__|__LINE__|__AUTO_BIGNUM__|__NT__|__PIKE__|'
+             r'__amigaos__|_Pragma|static_assert|defined|sscanf)\b',
+             Keyword),
+            (r'(bool|int|long|float|short|double|char|string|object|void|mapping|'
+             r'array|multiset|program|function|lambda|mixed|'
+             r'[a-z_][a-z0-9_]*_t)\b',
+             Keyword.Type),
+            (r'(class)(\s+)', bygroups(Keyword, Text), 'classname'),
+            (r'[~!%^&*+=|?:<>/-@]', Operator),
+            inherit,
+        ],
+        'classname': [
+            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Class, '#pop'),
+            # template specification
+            (r'\s*(?=>)', Text, '#pop'),
+        ],
+    }
+
+
 class SwigLexer(CppLexer):
     """
     For `SWIG <http://www.swig.org/>`_ source code.
@@ -239,7 +278,7 @@ class SwigLexer(CppLexer):
     *New in Pygments 1.7.*
     """
     name = 'SWIG'
-    aliases = ['Swig', 'swig']
+    aliases = ['swig']
     filenames = ['*.swg', '*.i']
     mimetypes = ['text/swig']
     priority = 0.04 # Lower than C/C++ and Objective C/C++
@@ -1505,7 +1544,7 @@ class FortranLexer(RegexLexer):
 
             (r'(::)', Keyword.Declaration),
 
-            (r'[(),:&%;]', Punctuation),
+            (r'[()\[\],:&%;]', Punctuation),
 
             # Intrinsics
             (r'\b(Abort|Abs|Access|AChar|ACos|AdjustL|AdjustR|AImag|AInt|Alarm|'
@@ -1634,7 +1673,7 @@ class PrologLexer(RegexLexer):
             (r'[\[\](){}|.,;!]', Punctuation),
             (r':-|-->', Punctuation),
             (r'"(?:\\x[0-9a-fA-F]+\\|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|'
-             r'\\[0-7]+\\|\\[\w\W]|[^"])*"', String.Double),
+             r'\\[0-7]+\\|\\["\nabcefnrstv]|[^\\"])*"', String.Double),
             (r"'(?:''|[^'])*'", String.Atom), # quoted atom
             # Needs to not be followed by an atom.
             #(r'=(?=\s|[a-zA-Z\[])', Operator),
@@ -3227,6 +3266,8 @@ class RustLexer(RegexLexer):
             (r"""'(\\['"\\nrt]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}"""
              r"""|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|.)'""",
              String.Char),
+            # Lifetime
+            (r"""'[a-zA-Z_][a-zA-Z0-9_]*""", Name.Label),
             # Binary Literal
             (r'0[Bb][01_]+', Number, 'number_lit'),
             # Octal Literal
@@ -3735,3 +3776,80 @@ class LogosLexer(ObjectiveCppLexer):
         if LogosLexer._logos_keywords.search(text):
             return 1.0
         return 0
+
+
+class ChapelLexer(RegexLexer):
+    """
+    For `Chapel <http://chapel.cray.com/>`_ source.
+
+    *New in Pygments 1.7.*
+    """
+    name = 'Chapel'
+    filenames = ['*.chpl']
+    aliases = ['chapel', 'chpl']
+    # mimetypes = ['text/x-chapel']
+
+    tokens = {
+        'root': [
+            (r'\n', Text),
+            (r'\s+', Text),
+            (r'\\\n', Text),
+
+            (r'//(.*?)\n', Comment.Single),
+            (r'/(\\\n)?[*](.|\n)*?[*](\\\n)?/', Comment.Multiline),
+
+            (r'(config|const|in|inout|out|param|ref|type|var)\b',
+             Keyword.Declaration),
+            (r'(false|nil|true)\b', Keyword.Constant),
+            (r'(bool|complex|imag|int|opaque|range|real|string|uint)\b',
+             Keyword.Type),
+            (r'(atomic|begin|break|by|cobegin|coforall|continue|iter|'
+             r'delete|dmapped|do|domain|else|enum|export|extern|for|forall|'
+             r'if|index|inline|label|lambda|let|local|new|on|otherwise|'
+             r'reduce|return|scan|select|serial|single|sparse|'
+             r'subdomain|sync|then|use|when|where|while|yield|zip)\b',
+             Keyword),
+            (r'(proc)((?:\s|\\\s)+)', bygroups(Keyword, Text), 'procname'),
+            (r'(class|module|record|union)(\s+)', bygroups(Keyword, Text),
+             'classname'),
+
+            # imaginary integers
+            (r'\d+i', Number),
+            (r'\d+\.\d*([Ee][-+]\d+)?i', Number),
+            (r'\.\d+([Ee][-+]\d+)?i', Number),
+            (r'\d+[Ee][-+]\d+i', Number),
+
+            # reals cannot end with a period due to lexical ambiguity with
+            # .. operator. See reference for rationale.
+            (r'(\d*\.\d+)([eE][+-]?[0-9]+)?i?', Number.Float),
+            (r'\d+[eE][+-]?[0-9]+i?', Number.Float),
+
+            # integer literals
+            # -- binary
+            (r'0[bB][0-1]+', Number),
+            # -- hex
+            (r'0[xX][0-9a-fA-F]+', Number.Hex),
+            # -- decimal
+            (r'(0|[1-9][0-9]*)', Number.Integer),
+
+            # strings
+            (r'["\'](\\\\|\\"|[^"\'])*["\']', String),
+
+            # tokens
+            (r'(=|\+=|-=|\*=|/=|\*\*=|%=|&=|\|=|\^=|&&=|\|\|=|<<=|>>=|'
+             r'<=>|\.\.|by|#|\.\.\.|'
+             r'&&|\|\||!|&|\||\^|~|<<|>>|'
+             r'==|!=|<=|>=|<|>|'
+             r'[+\-*/%]|\*\*)', Operator),
+            (r'[:;,.?()\[\]{}]', Punctuation),
+
+            # identifiers
+            (r'[a-zA-Z_][a-zA-Z0-9_$]*', Name.Other),
+        ],
+        'classname': [
+            (r'[a-zA-Z_][a-zA-Z0-9_$]*', Name.Class, '#pop'),
+        ],
+        'procname': [
+            (r'[a-zA-Z_][a-zA-Z0-9_$]*', Name.Function, '#pop'),
+        ],
+    }

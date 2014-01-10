@@ -24,7 +24,7 @@ from pygments.lexers import _stan_builtins
 __all__ = ['JuliaLexer', 'JuliaConsoleLexer', 'MuPADLexer', 'MatlabLexer',
            'MatlabSessionLexer', 'OctaveLexer', 'ScilabLexer', 'NumPyLexer',
            'RConsoleLexer', 'SLexer', 'JagsLexer', 'BugsLexer', 'StanLexer',
-           'IDLLexer', 'RdLexer', 'IgorLexer']
+           'IDLLexer', 'RdLexer', 'IgorLexer', 'MathematicaLexer']
 
 
 class JuliaLexer(RegexLexer):
@@ -167,8 +167,8 @@ class JuliaConsoleLexer(Lexer):
 
             if line.startswith('julia>'):
                 insertions.append((len(curcode),
-                                   [(0, Generic.Prompt, line[:3])]))
-                curcode += line[3:]
+                                   [(0, Generic.Prompt, line[:6])]))
+                curcode += line[6:]
 
             elif line.startswith('      '):
 
@@ -348,13 +348,13 @@ class MatlabLexer(RegexLexer):
 
             # quote can be transpose, instead of string:
             # (not great, but handles common cases...)
-            (r'(?<=[\w\)\]])\'', Operator),
+            (r'(?<=[\w\)\].])\'+', Operator),
 
             (r'(\d+\.\d*|\d*\.\d+)([eEf][+-]?[0-9]+)?', Number.Float),
             (r'\d+[eEf][+-]?[0-9]+', Number.Float),
             (r'\d+', Number.Integer),
 
-            (r'(?<![\w\)\]])\'', String, 'string'),
+            (r'(?<![\w\)\].])\'', String, 'string'),
             ('[a-zA-Z_][a-zA-Z0-9_]*', Name),
             (r'.', Text),
         ],
@@ -403,17 +403,22 @@ class MatlabSessionLexer(Lexer):
         for match in line_re.finditer(text):
             line = match.group()
 
-            if line.startswith('>>'):
+            if line.startswith('>> '):
                 insertions.append((len(curcode),
                                    [(0, Generic.Prompt, line[:3])]))
                 curcode += line[3:]
+
+            elif line.startswith('>>'):
+                insertions.append((len(curcode),
+                                   [(0, Generic.Prompt, line[:2])]))
+                curcode += line[2:]
 
             elif line.startswith('???'):
 
                 idx = len(curcode)
 
                 # without is showing error on same line as before...?
-                line = "\n" + line
+                #line = "\n" + line
                 token = (0, Generic.Traceback, line)
                 insertions.append((idx, [token]))
 
@@ -427,6 +432,7 @@ class MatlabSessionLexer(Lexer):
 
                 yield match.start(), Generic.Output, line
 
+        print insertions
         if curcode: # or item:
             for item in do_insertions(
                 insertions, mlexer.get_tokens_unprocessed(curcode)):
@@ -806,8 +812,8 @@ class OctaveLexer(RegexLexer):
 
             # quote can be transpose, instead of string:
             # (not great, but handles common cases...)
-            (r'(?<=[\w\)\]])\'', Operator),
-            (r'(?<![\w\)\]])\'', String, 'string'),
+            (r'(?<=[\w\)\].])\'+', Operator),
+            (r'(?<![\w\)\].])\'', String, 'string'),
 
             ('[a-zA-Z_][a-zA-Z0-9_]*', Name),
             (r'.', Text),
@@ -871,8 +877,8 @@ class ScilabLexer(RegexLexer):
 
             # quote can be transpose, instead of string:
             # (not great, but handles common cases...)
-            (r'(?<=[\w\)\]])\'', Operator),
-            (r'(?<![\w\)\]])\'', String, 'string'),
+            (r'(?<=[\w\)\].])\'+', Operator),
+            (r'(?<![\w\)\].])\'', String, 'string'),
 
             (r'(\d+\.\d*|\d*\.\d+)([eEf][+-]?[0-9]+)?', Number.Float),
             (r'\d+[eEf][+-]?[0-9]+', Number.Float),
@@ -1308,9 +1314,9 @@ class JagsLexer(RegexLexer):
 class StanLexer(RegexLexer):
     """Pygments Lexer for Stan models.
 
-    The Stan modeling language is specified in the *Stan 1.3.0
+    The Stan modeling language is specified in the *Stan 2.0.1
     Modeling Language Manual* `pdf
-    <http://code.google.com/p/stan/downloads/detail?name=stan-reference-1.3.0.pdf>`_.
+    <https://github.com/stan-dev/stan/releases/download/v2.0.1/stan-reference-2.0.1.pdf>`__
 
     *New in Pygments 1.6.*
     """
@@ -1914,5 +1920,52 @@ class IgorLexer(RegexLexer):
              Name.Decorator),
             (r'[^a-zA-Z"/]+', Text),
             (r'.', Text),
+        ],
+    }
+
+
+class MathematicaLexer(RegexLexer):
+    """
+    Lexer for `Mathematica <http://www.wolfram.com/mathematica/>`_ source code.
+
+    *New in Pygments 1.7.*
+    """
+    name = 'Mathematica'
+    aliases = ['mathematica', 'mma', 'nb']
+    filenames = ['*.nb', '*.cdf', '*.nbp', '*.ma']
+    mimetypes = ['application/mathematica',
+                 'application/vnd.wolfram.mathematica',
+                 'application/vnd.wolfram.mathematica.package',
+                 'application/vnd.wolfram.cdf']
+
+    # http://reference.wolfram.com/mathematica/guide/Syntax.html 
+    operators = [
+        ";;", "=", "=.", "!=" "==", ":=", "->", ":>", "/.", "+", "-", "*", "/",
+        "^", "&&", "||", "!", "<>", "|", "/;", "?", "@", "//", "/@", "@@",
+        "@@@", "~~", "===", "&"]
+    operators.sort(reverse=True)
+
+    punctuation = [",", ";", "(", ")", "[", "]", "{", "}"]
+
+    def _multi_escape(entries):
+        return '(%s)' % ('|'.join(re.escape(entry) for entry in entries))
+
+    tokens = {
+        'root': [
+            (r'(?s)\(\*.*?\*\)', Comment),
+
+            (r'([a-zA-Z]+[A-Za-z0-9]*`)', Name.Namespace),
+            (r'([A-Za-z0-9]*_+[A-Za-z0-9]*)', Name.Variable),
+            (r'#\d*', Name.Variable),
+            (r'([a-zA-Z]+[a-zA-Z0-9]*)', Name),
+
+            (r'-?[0-9]+\.[0-9]*', Number.Float),
+            (r'-?[0-9]*\.[0-9]+', Number.Float),
+            (r'-?[0-9]+', Number.Integer),
+
+            (_multi_escape(operators), Operator),
+            (_multi_escape(punctuation), Punctuation),
+            (r'".*?"', String),
+            (r'\s+', Text.Whitespace),
         ],
     }

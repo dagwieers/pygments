@@ -45,6 +45,8 @@ def test_lexer_classes():
         result = cls.analyse_text(".abc")
         assert isinstance(result, float) and 0.0 <= result <= 1.0
 
+        assert all(al.lower() == al for al in cls.aliases)
+
         inst = cls(opt1="val1", opt2="val2")
         if issubclass(cls, RegexLexer):
             if not hasattr(cls, '_tokens'):
@@ -60,7 +62,10 @@ def test_lexer_classes():
         if cls.name in ['XQuery', 'Opa']:   # XXX temporary
             return
 
-        tokens = list(inst.get_tokens(test_content))
+        try:
+            tokens = list(inst.get_tokens(test_content))
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt('interrupted %s.get_tokens(): test_content=%r' % (cls.__name__, test_content))
         txt = ""
         for token in tokens:
             assert isinstance(token, tuple)
