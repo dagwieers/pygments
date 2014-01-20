@@ -6,11 +6,14 @@ Issue numbers refer to the tracker at
 pull request numbers to the requests at
 <http://bitbucket.org/birkenfeld/pygments-main/pull-requests/merged>.
 
-Version 1.7
+Version 2.0
 -----------
 (under development)
 
-- Dropped Python 2.4 compatibility.
+- Dropped Python 2.4 and 2.5 compatibility.  This is in favor of single-source
+  compatibility between Python 2.6, 2.7 and 3.3+.
+
+- New website and documentation based on Sphinx (finally!)
 
 - Lexers added:
 
@@ -30,6 +33,7 @@ Version 1.7
   * Chapel (PR#256)
   * Kal (PR#233)
   * Eiffel (PR#273)
+  * Cirru (PR#275)
 
 - New styles: "xcode" and "igor", similar to the default highlighting of
   the respective IDEs.
@@ -91,6 +95,8 @@ Version 1.7
 - Ceylon lexer: fix parsing of nested multiline comments (#915).
 
 - C family lexers: fix parsing of indented preprocessor directives (#944).
+
+- Rust lexer: update to 0.9 language version (PR#270).
 
 
 Version 1.6

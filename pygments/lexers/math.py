@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for details.
 """
 
+from __future__ import print_function
+
 import re
 
 from pygments.util import shebang_matches
@@ -31,7 +33,7 @@ class JuliaLexer(RegexLexer):
     """
     For `Julia <http://julialang.org/>`_ source code.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'Julia'
     aliases = ['julia','jl']
@@ -151,7 +153,7 @@ class JuliaConsoleLexer(Lexer):
     """
     For Julia console sessions. Modeled after MatlabSessionLexer.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'Julia console'
     aliases = ['jlcon']
@@ -200,7 +202,7 @@ class MuPADLexer(RegexLexer):
     A `MuPAD <http://www.mupad.com>`_ lexer.
     Contributed by Christopher Creutzig <christopher@creutzig.de>.
 
-    *New in Pygments 0.8.*
+    .. versionadded:: 0.8
     """
     name = 'MuPAD'
     aliases = ['mupad']
@@ -270,7 +272,7 @@ class MatlabLexer(RegexLexer):
     """
     For Matlab source code.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     """
     name = 'Matlab'
     aliases = ['matlab']
@@ -388,7 +390,7 @@ class MatlabSessionLexer(Lexer):
     For Matlab sessions.  Modeled after PythonConsoleLexer.
     Contributed by Ken Schutte <kschutte@csail.mit.edu>.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     """
     name = 'Matlab session'
     aliases = ['matlabsession']
@@ -431,7 +433,7 @@ class MatlabSessionLexer(Lexer):
 
                 yield match.start(), Generic.Output, line
 
-        print insertions
+        print(insertions)
         if curcode: # or item:
             for item in do_insertions(
                 insertions, mlexer.get_tokens_unprocessed(curcode)):
@@ -442,7 +444,7 @@ class OctaveLexer(RegexLexer):
     """
     For GNU Octave source code.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
     name = 'Octave'
     aliases = ['octave']
@@ -833,7 +835,7 @@ class ScilabLexer(RegexLexer):
     """
     For Scilab source code.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
     name = 'Scilab'
     aliases = ['scilab']
@@ -899,7 +901,7 @@ class NumPyLexer(PythonLexer):
     """
     A Python lexer recognizing Numerical Python builtins.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     """
 
     name = 'NumPy'
@@ -1040,7 +1042,7 @@ class SLexer(RegexLexer):
     """
     For S, S-plus, and R source code.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     """
 
     name = 'S'
@@ -1128,7 +1130,7 @@ class BugsLexer(RegexLexer):
     Pygments Lexer for `OpenBugs <http://www.openbugs.info/w/>`_ and WinBugs
     models.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'BUGS'
@@ -1223,7 +1225,7 @@ class JagsLexer(RegexLexer):
     """
     Pygments Lexer for JAGS.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'JAGS'
@@ -1313,7 +1315,7 @@ class StanLexer(RegexLexer):
     Modeling Language Manual* `pdf
     <https://github.com/stan-dev/stan/releases/download/v2.0.1/stan-reference-2.0.1.pdf>`__
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'Stan'
@@ -1386,7 +1388,7 @@ class IDLLexer(RegexLexer):
     """
     Pygments Lexer for IDL (Interactive Data Language).
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'IDL'
     aliases = ['idl']
@@ -1632,7 +1634,7 @@ class RdLexer(RegexLexer):
     Extensions <http://cran.r-project.org/doc/manuals/R-exts.html>`_
     and `Parsing Rd files <developer.r-project.org/parseRd.pdf>`_.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'Rd'
     aliases = ['rd']
@@ -1667,7 +1669,7 @@ class IgorLexer(RegexLexer):
     Pygments Lexer for Igor Pro procedure files (.ipf).
     See http://www.wavemetrics.com/ and http://www.igorexchange.com/.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
 
     name = 'Igor'
@@ -1929,7 +1931,7 @@ class MathematicaLexer(RegexLexer):
     """
     Lexer for `Mathematica <http://www.wolfram.com/mathematica/>`_ source code.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'Mathematica'
     aliases = ['mathematica', 'mma', 'nb']

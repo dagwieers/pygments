@@ -240,7 +240,7 @@ class PikeLexer(CppLexer):
     """
     For `Pike <http://pike.lysator.liu.se/>`_ source code.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'Pike'
     aliases = ['pike']
@@ -279,7 +279,7 @@ class SwigLexer(CppLexer):
     """
     For `SWIG <http://www.swig.org/>`_ source code.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'SWIG'
     aliases = ['swig']
@@ -336,7 +336,7 @@ class ECLexer(CLexer):
     """
     For eC source code with preprocessor directives.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
     name = 'eC'
     aliases = ['ec']
@@ -372,7 +372,7 @@ class NesCLexer(CLexer):
     For `nesC <https://github.com/tinyos/nesc>`_ source code with preprocessor
     directives.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'nesC'
     aliases = ['nesc']
@@ -397,7 +397,7 @@ class ClayLexer(RegexLexer):
     """
     For `Clay <http://claylabs.com/clay/>`_ source.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'Clay'
     filenames = ['*.clay']
@@ -448,7 +448,7 @@ class DLexer(RegexLexer):
     """
     For D source.
 
-    *New in Pygments 1.2.*
+    .. versionadded:: 1.2
     """
     name = 'D'
     filenames = ['*.d', '*.di']
@@ -878,7 +878,7 @@ class DelphiLexer(Lexer):
         if get_bool_opt(options, 'freepascal', True):
             self.keywords.update(self.FREE_PASCAL_KEYWORDS)
         self.builtins = set()
-        for unit in get_list_opt(options, 'units', self.BUILTIN_UNITS.keys()):
+        for unit in get_list_opt(options, 'units', list(self.BUILTIN_UNITS)):
             self.builtins.update(self.BUILTIN_UNITS[unit])
 
     def get_tokens_unprocessed(self, text):
@@ -1082,7 +1082,7 @@ class DylanLexer(RegexLexer):
     """
     For the `Dylan <http://www.opendylan.org/>`_ language.
 
-    *New in Pygments 0.7.*
+    .. versionadded:: 0.7
     """
 
     name = 'Dylan'
@@ -1274,7 +1274,7 @@ class DylanLidLexer(RegexLexer):
     """
     For Dylan LID (Library Interchange Definition) files.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'DylanLID'
@@ -1312,7 +1312,7 @@ class DylanConsoleLexer(Lexer):
 
     This is based on a copy of the RubyConsoleLexer.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'Dylan session'
     aliases = ['dylan-console', 'dylan-repl']
@@ -1495,7 +1495,7 @@ class FortranLexer(RegexLexer):
     """
     Lexer for FORTRAN 90 code.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     """
     name = 'Fortran'
     aliases = ['fortran']
@@ -1610,7 +1610,7 @@ class GLShaderLexer(RegexLexer):
     """
     GLSL (OpenGL Shader) lexer.
 
-    *New in Pygments 1.1.*
+    .. versionadded:: 1.1
     """
     name = 'GLSL'
     aliases = ['glsl']
@@ -1722,7 +1722,7 @@ class CythonLexer(RegexLexer):
     """
     For Pyrex and `Cython <http://cython.org>`_ source code.
 
-    *New in Pygments 1.1.*
+    .. versionadded:: 1.1
     """
 
     name = 'Cython'
@@ -1888,7 +1888,7 @@ class ValaLexer(RegexLexer):
     """
     For Vala source code with preprocessor directives.
 
-    *New in Pygments 1.1.*
+    .. versionadded:: 1.1
     """
     name = 'Vala'
     aliases = ['vala', 'vapi']
@@ -1977,7 +1977,7 @@ class OocLexer(RegexLexer):
     """
     For `Ooc <http://ooc-lang.org/>`_ source code
 
-    *New in Pygments 1.2.*
+    .. versionadded:: 1.2
     """
     name = 'Ooc'
     aliases = ['ooc']
@@ -2116,7 +2116,7 @@ class FelixLexer(RegexLexer):
     """
     For `Felix <http://www.felix-lang.org>`_ source code.
 
-    *New in Pygments 1.2.*
+    .. versionadded:: 1.2
     """
 
     name = 'Felix'
@@ -2370,7 +2370,7 @@ class AdaLexer(RegexLexer):
     """
     For Ada source code.
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'Ada'
@@ -2513,7 +2513,7 @@ class Modula2Lexer(RegexLexer):
     `gm2ext`
         Also highlight GNU extensions (default: False).
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
     name = 'Modula-2'
     aliases = ['modula2', 'm2']
@@ -2695,7 +2695,7 @@ class BlitzMaxLexer(RegexLexer):
     """
     For `BlitzMax <http://blitzbasic.com>`_ source code.
 
-    *New in Pygments 1.4.*
+    .. versionadded:: 1.4
     """
 
     name = 'BlitzMax'
@@ -2789,7 +2789,7 @@ class BlitzBasicLexer(RegexLexer):
     """
     For `BlitzBasic <http://blitzbasic.com>`_ source code.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
 
     name = 'BlitzBasic'
@@ -2871,7 +2871,7 @@ class NimrodLexer(RegexLexer):
     """
     For `Nimrod <http://nimrod-code.org/>`_ source code.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
 
     name = 'Nimrod'
@@ -3012,7 +3012,7 @@ class FantomLexer(RegexLexer):
     """
     For Fantom source code.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
     name = 'Fantom'
     aliases = ['fan']
@@ -3242,12 +3242,12 @@ class FantomLexer(RegexLexer):
 
 class RustLexer(RegexLexer):
     """
-    Lexer for Mozilla's Rust programming language.
+    Lexer for the Rust programming language (version 0.9).
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'Rust'
-    filenames = ['*.rs', '*.rc']
+    filenames = ['*.rs']
     aliases = ['rust']
     mimetypes = ['text/x-rustsrc']
 
@@ -3256,18 +3256,55 @@ class RustLexer(RegexLexer):
             # Whitespace and Comments
             (r'\n', Text),
             (r'\s+', Text),
+            (r'//[/!](.*?)\n', Comment.Doc),
             (r'//(.*?)\n', Comment.Single),
             (r'/[*](.|\n)*?[*]/', Comment.Multiline),
 
             # Keywords
-            (r'(as|assert|break|const'
-             r'|copy|do|else|enum|extern|fail'
-             r'|false|fn|for|if|impl|let|log'
-             r'|loop|match|mod|move|mut|once|priv|pub|pure'
-             r'|ref|return|static|struct|trait|true|type|unsafe|use|while'
-             r'|u8|u16|u32|u64|i8|i16|i32|i64|uint'
-             r'|int|float|f32|f64|str)\b', Keyword),
-
+            (r'(as|box|break|continue'
+             r'|do|else|enum|extern'
+             r'|fn|for|if|impl|in'
+             r'|loop|match|mut|priv|proc|pub'
+             r'|ref|return|static|\'static|struct|trait|true|type'
+             r'|unsafe|while)\b',
+             Keyword),
+            (r'(alignof|be|const|offsetof|pure|sizeof|typeof|once|unsized'
+             r'|yield)\b', Keyword.Reserved),
+            (r'(mod|use)\b', Keyword.Namespace),
+            (r'(true|false)\b', Keyword.Constant),
+            (r'let\b', Keyword.Declaration),
+            (r'(u8|u16|u32|u64|i8|i16|i32|i64|uint|int|f32|f64'
+             r'|str|bool)\b', Keyword.Type),
+            (r'self\b', Name.Builtin.Pseudo),
+            # Prelude
+            (r'(Freeze|Pod|Send|Sized|Add|Sub|Mul|Div|Rem|Neg|Not|BitAnd'
+             r'|BitOr|BitXor|Drop|Shl|Shr|Index|Option|Some|None|Result'
+             r'|Ok|Err|from_str|range|print|println|Any|AnyOwnExt|AnyRefExt'
+             r'|AnyMutRefExt|Ascii|AsciiCast|OnwedAsciiCast|AsciiStr'
+             r'|IntoBytes|Bool|ToCStr|Char|Clone|DeepClone|Eq|ApproxEq'
+             r'|Ord|TotalEq|Ordering|Less|Equal|Greater|Equiv|Container'
+             r'|Mutable|Map|MutableMap|Set|MutableSet|Default|FromStr'
+             r'|Hash|FromIterator|Extendable|Iterator|DoubleEndedIterator'
+             r'|RandomAccessIterator|CloneableIterator|OrdIterator'
+             r'|MutableDoubleEndedIterator|ExactSize|Times|Algebraic'
+             r'|Trigonometric|Exponential|Hyperbolic|Bitwise|BitCount'
+             r'|Bounded|Integer|Fractional|Real|RealExt|Num|NumCast'
+             r'|CheckedAdd|CheckedSub|CheckedMul|Orderable|Signed'
+             r'|Unsigned|Round|Primitive|Int|Float|ToStrRadix'
+             r'|ToPrimitive|FromPrimitive|GenericPath|Path|PosixPath'
+             r'|WindowsPath|RawPtr|Buffer|Writer|Reader|Seek'
+             r'|SendStr|SendStrOwned|SendStrStatic|IntoSendStr|Str'
+             r'|StrVector|StrSlice|OwnedStr|IterBytes|ToStr|IntoStr'
+             r'|CopyableTuple|ImmutableTuple|ImmutableTuple\d+'
+             r'|Tuple\d+|ImmutableEqVector|ImmutableTotalOrdVector'
+             r'|ImmutableCopyableVector|OwnedVector|OwnedCopyableVector'
+             r'|OwnedEqVector|MutableVector|MutableTotalOrdVector'
+             r'|Vector|VectorVector|CopyableVector|ImmutableVector'
+             r'|Port|Chan|SharedChan|spawn|drop)\b', Name.Builtin),
+            # Borrowed pointer
+            (r'(&)(\'[A-Za-z_]\w*)?', bygroups(Operator, Name)),
+            # Labels
+            (r'\'[A-Za-z_]\w*:', Name.Label),
             # Character Literal
             (r"""'(\\['"\\nrt]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}"""
              r"""|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}|.)'""",
@@ -3275,9 +3312,9 @@ class RustLexer(RegexLexer):
             # Lifetime
             (r"""'[a-zA-Z_][a-zA-Z0-9_]*""", Name.Label),
             # Binary Literal
-            (r'0[Bb][01_]+', Number, 'number_lit'),
+            (r'0b[01_]+', Number, 'number_lit'),
             # Octal Literal
-            (r'0[0-7_]+', Number.Oct, 'number_lit'),
+            (r'0o[0-7_]+', Number.Oct, 'number_lit'),
             # Hexadecimal Literal
             (r'0[xX][0-9a-fA-F_]+', Number.Hex, 'number_lit'),
             # Decimal Literal
@@ -3285,20 +3322,22 @@ class RustLexer(RegexLexer):
              r'[0-9_]+|\.[0-9_]*|[eE][+\-]?[0-9_]+)?', Number, 'number_lit'),
             # String Literal
             (r'"', String, 'string'),
+            (r'r(#*)".*?"\1', String.Raw),
 
             # Operators and Punctuation
             (r'[{}()\[\],.;]', Punctuation),
             (r'[+\-*/%&|<>^!~@=:?]', Operator),
 
             # Identifier
-            (r'[a-zA-Z_$][a-zA-Z0-9_]*', Name),
+            (r'[a-zA-Z_]\w*', Name),
 
             # Attributes
             (r'#\[', Comment.Preproc, 'attribute['),
-            (r'#\(', Comment.Preproc, 'attribute('),
             # Macros
-            (r'[A-Za-z_][A-Za-z0-9_]*!\[', Comment.Preproc, 'attribute['),
-            (r'[A-Za-z_][A-Za-z0-9_]*!\(', Comment.Preproc, 'attribute('),
+            (r'([A-Za-z_]\w*)!\s*([A-Za-z_]\w*)?\s*\{',
+             bygroups(Comment.Preproc, Name), 'macro{'),
+            (r'([A-Za-z_]\w*)!\s*([A-Za-z_]\w*)?\(',
+             bygroups(Comment.Preproc, Name), 'macro('),
         ],
         'number_lit': [
             (r'(([ui](8|16|32|64)?)|(f(32|64)?))?', Keyword, '#pop'),
@@ -3309,6 +3348,14 @@ class RustLexer(RegexLexer):
              r"""|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}""", String.Escape),
             (r'[^\\"]+', String),
             (r'\\', String),
+        ],
+        'macro{': [
+            (r'\{', Operator, '#push'),
+            (r'\}', Operator, '#pop'),
+        ],
+        'macro(': [
+            (r'\(', Operator, '#push'),
+            (r'\)', Operator, '#pop'),
         ],
         'attribute_common': [
             (r'"', String, 'string'),
@@ -3333,7 +3380,7 @@ class CudaLexer(CLexer):
     For NVIDIA `CUDA™ <http://developer.nvidia.com/category/zone/cuda-zone>`_
     source.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'CUDA'
     filenames = ['*.cu', '*.cuh']
@@ -3383,7 +3430,7 @@ class MonkeyLexer(RegexLexer):
     `Monkey <https://en.wikipedia.org/wiki/Monkey_(programming_language)>`_
     source code.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'Monkey'
@@ -3511,7 +3558,7 @@ class CobolLexer(RegexLexer):
     """
     Lexer for OpenCOBOL code.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'COBOL'
     aliases = ['cobol']
@@ -3705,7 +3752,7 @@ class CobolFreeformatLexer(CobolLexer):
     """
     Lexer for Free format OpenCOBOL code.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
     name = 'COBOLFree'
     aliases = ['cobolfree']
@@ -3724,7 +3771,7 @@ class LogosLexer(ObjectiveCppLexer):
     """
     For Logos + Objective-C source code with preprocessor directives.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'Logos'
@@ -3788,7 +3835,7 @@ class ChapelLexer(RegexLexer):
     """
     For `Chapel <http://chapel.cray.com/>`_ source.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'Chapel'
     filenames = ['*.chpl']
@@ -3865,7 +3912,7 @@ class EiffelLexer(RegexLexer):
     """
     For `Eiffel <http://www.eiffel.com>`_ source code.
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
     name = 'Eiffel'
     aliases = ['eiffel']

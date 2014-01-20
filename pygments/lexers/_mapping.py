@@ -13,6 +13,8 @@
     :license: BSD, see LICENSE for details.
 """
 
+from __future__ import print_function
+
 LEXERS = {
     'ABAPLexer': ('pygments.lexers.other', 'ABAP', ('abap',), ('*.abap',), ('text/x-abap',)),
     'ActionScript3Lexer': ('pygments.lexers.web', 'ActionScript 3', ('as3', 'actionscript3'), ('*.as',), ('application/x-actionscript', 'text/x-actionscript', 'text/actionscript')),
@@ -61,6 +63,7 @@ LEXERS = {
     'CheetahJavascriptLexer': ('pygments.lexers.templates', 'JavaScript+Cheetah', ('js+cheetah', 'javascript+cheetah', 'js+spitfire', 'javascript+spitfire'), (), ('application/x-javascript+cheetah', 'text/x-javascript+cheetah', 'text/javascript+cheetah', 'application/x-javascript+spitfire', 'text/x-javascript+spitfire', 'text/javascript+spitfire')),
     'CheetahLexer': ('pygments.lexers.templates', 'Cheetah', ('cheetah', 'spitfire'), ('*.tmpl', '*.spt'), ('application/x-cheetah', 'application/x-spitfire')),
     'CheetahXmlLexer': ('pygments.lexers.templates', 'XML+Cheetah', ('xml+cheetah', 'xml+spitfire'), (), ('application/xml+cheetah', 'application/xml+spitfire')),
+    'CirruLexer': ('pygments.lexers.web', 'Cirru', ('cirru',), ('*.cirru',), ('text/x-cirru',)),
     'ClayLexer': ('pygments.lexers.compiled', 'Clay', ('clay',), ('*.clay',), ('text/x-clay',)),
     'ClojureLexer': ('pygments.lexers.jvm', 'Clojure', ('clojure', 'clj'), ('*.clj',), ('text/x-clojure', 'application/x-clojure')),
     'CobolFreeformatLexer': ('pygments.lexers.compiled', 'COBOLFree', ('cobolfree',), ('*.cbl', '*.CBL'), ()),
@@ -326,7 +329,7 @@ if __name__ == '__main__':
     for filename in os.listdir('.'):
         if filename.endswith('.py') and not filename.startswith('_'):
             module_name = 'pygments.lexers.%s' % filename[:-3]
-            print module_name
+            print(module_name)
             module = __import__(module_name, None, None, [''])
             for lexer_name in module.__all__:
                 lexer = getattr(module, lexer_name)

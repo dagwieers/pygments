@@ -13,11 +13,11 @@ import re
 import copy
 
 from pygments.lexer import RegexLexer, ExtendedRegexLexer, bygroups, using, \
-     include, this
+    include, this
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-     Number, Other, Punctuation, Literal
+    Number, Other, Punctuation, Literal
 from pygments.util import get_bool_opt, get_list_opt, looks_like_xml, \
-                          html_doctype_matches, unirange
+    html_doctype_matches, unirange, iteritems
 from pygments.lexers.agile import RubyLexer
 from pygments.lexers.compiled import ScalaLexer
 
@@ -28,7 +28,7 @@ __all__ = ['HtmlLexer', 'XmlLexer', 'JavascriptLexer', 'JsonLexer', 'CssLexer',
            'ObjectiveJLexer', 'CoffeeScriptLexer', 'LiveScriptLexer',
            'DuelLexer', 'ScamlLexer', 'JadeLexer', 'XQueryLexer',
            'DtdLexer', 'DartLexer', 'LassoLexer', 'QmlLexer', 'TypeScriptLexer',
-           'KalLexer']
+           'KalLexer', 'CirruLexer']
 
 
 class JavascriptLexer(RegexLexer):
@@ -95,7 +95,7 @@ class JsonLexer(RegexLexer):
     """
     For JSON data structures.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
 
     name = 'JSON'
@@ -178,7 +178,7 @@ class ActionScriptLexer(RegexLexer):
     """
     For ActionScript source code.
 
-    *New in Pygments 0.9.*
+    .. versionadded:: 0.9
     """
 
     name = 'ActionScript'
@@ -262,7 +262,7 @@ class ActionScript3Lexer(RegexLexer):
     """
     For ActionScript 3 source code.
 
-    *New in Pygments 0.11.*
+    .. versionadded:: 0.11
     """
 
     name = 'ActionScript 3'
@@ -484,7 +484,7 @@ class ObjectiveJLexer(RegexLexer):
     """
     For Objective-J source code with preprocessor directives.
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'Objective-J'
@@ -891,7 +891,7 @@ class PhpLexer(RegexLexer):
         self._functions = set()
         if self.funcnamehighlighting:
             from pygments.lexers._phpbuiltins import MODULES
-            for key, value in MODULES.iteritems():
+            for key, value in iteritems(MODULES):
                 if key not in self.disabledmodules:
                     self._functions.update(value)
         RegexLexer.__init__(self, **options)
@@ -921,7 +921,7 @@ class DtdLexer(RegexLexer):
     """
     A lexer for DTDs (Document Type Definitions).
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
 
     flags = re.MULTILINE | re.DOTALL
@@ -1056,7 +1056,7 @@ class XsltLexer(XmlLexer):
     '''
     A lexer for XSLT.
 
-    *New in Pygments 0.10.*
+    .. versionadded:: 0.10
     '''
 
     name = 'XSLT'
@@ -1094,7 +1094,7 @@ class MxmlLexer(RegexLexer):
     For MXML markup.
     Nested AS3 in <script> tags is highlighted by the appropriate lexer.
 
-    *New in Pygments 1.1.*
+    .. versionadded:: 1.1
     """
     flags = re.MULTILINE | re.DOTALL
     name = 'MXML'
@@ -1137,7 +1137,7 @@ class HaxeLexer(ExtendedRegexLexer):
     """
     For Haxe source code (http://haxe.org/).
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'Haxe'
@@ -2007,7 +2007,7 @@ class HamlLexer(ExtendedRegexLexer):
     """
     For Haml markup.
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'Haml'
@@ -2284,7 +2284,7 @@ class SassLexer(ExtendedRegexLexer):
     """
     For Sass stylesheets.
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'Sass'
@@ -2355,7 +2355,7 @@ class SassLexer(ExtendedRegexLexer):
             (r"\*/", Comment, '#pop'),
         ],
     }
-    for group, common in common_sass_tokens.iteritems():
+    for group, common in iteritems(common_sass_tokens):
         tokens[group] = copy.copy(common)
     tokens['value'].append((r'\n', Text, 'root'))
     tokens['selector'].append((r'\n', Text, 'root'))
@@ -2402,7 +2402,7 @@ class ScssLexer(RegexLexer):
             (r"\*/", Comment, '#pop'),
         ],
     }
-    for group, common in common_sass_tokens.iteritems():
+    for group, common in iteritems(common_sass_tokens):
         tokens[group] = copy.copy(common)
     tokens['value'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])
     tokens['selector'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])
@@ -2414,7 +2414,7 @@ class CoffeeScriptLexer(RegexLexer):
 
     .. _CoffeeScript: http://coffeescript.org
 
-    *New in Pygments 1.3.*
+    .. versionadded:: 1.3
     """
 
     name = 'CoffeeScript'
@@ -2521,7 +2521,7 @@ class KalLexer(RegexLexer):
     .. _Kal: http://rzimmerman.github.io/kal
 
 
-    *New in Pygments 1.7.*
+    .. versionadded:: 2.0
     """
 
     name = 'Kal'
@@ -2748,7 +2748,7 @@ class DuelLexer(RegexLexer):
     See http://duelengine.org/.
     See http://jsonml.org/jbst/.
 
-    *New in Pygments 1.4.*
+    .. versionadded:: 1.4
     """
 
     name = 'Duel'
@@ -2779,7 +2779,7 @@ class ScamlLexer(ExtendedRegexLexer):
     """
     For `Scaml markup <http://scalate.fusesource.org/>`_.  Scaml is Haml for Scala.
 
-    *New in Pygments 1.4.*
+    .. versionadded:: 1.4
     """
 
     name = 'Scaml'
@@ -2893,7 +2893,7 @@ class JadeLexer(ExtendedRegexLexer):
     Jade is a variant of Scaml, see:
     http://scalate.fusesource.org/documentation/scaml-reference.html
 
-    *New in Pygments 1.4.*
+    .. versionadded:: 1.4
     """
 
     name = 'Jade'
@@ -3001,7 +3001,7 @@ class XQueryLexer(ExtendedRegexLexer):
     An XQuery lexer, parsing a stream and outputting the tokens needed to
     highlight xquery code.
 
-    *New in Pygments 1.4.*
+    .. versionadded:: 1.4
     """
     name = 'XQuery'
     aliases = ['xquery', 'xqy', 'xq', 'xql', 'xqm']
@@ -3406,7 +3406,7 @@ class XQueryLexer(ExtendedRegexLexer):
         'xml_comment': [
             (r'(-->)', popstate_xmlcomment_callback),
             (r'[^-]{1,2}', Literal),
-            (ur'\t|\r|\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
+            (u'\\t|\\r|\\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
              unirange(0x10000, 0x10ffff), Literal),
         ],
         'processing_instruction': [
@@ -3416,12 +3416,12 @@ class XQueryLexer(ExtendedRegexLexer):
         ],
         'processing_instruction_content': [
             (r'\?>', String.Doc, '#pop'),
-            (ur'\t|\r|\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
+            (u'\\t|\\r|\\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
              unirange(0x10000, 0x10ffff), Literal),
         ],
         'cdata_section': [
             (r']]>', String.Doc, '#pop'),
-            (ur'\t|\r|\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
+            (u'\\t|\\r|\\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
              unirange(0x10000, 0x10ffff), Literal),
         ],
         'start_tag': [
@@ -3490,7 +3490,7 @@ class XQueryLexer(ExtendedRegexLexer):
         ],
         'pragmacontents': [
             (r'#\)', Punctuation, 'operator'),
-            (ur'\t|\r|\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
+            (u'\\t|\\r|\\n|[\u0020-\uD7FF]|[\uE000-\uFFFD]|' +
              unirange(0x10000, 0x10ffff), Literal),
             (r'(\s+)', Text),
         ],
@@ -3663,7 +3663,7 @@ class DartLexer(RegexLexer):
     """
     For `Dart <http://dartlang.org/>`_ source code.
 
-    *New in Pygments 1.5.*
+    .. versionadded:: 1.5
     """
 
     name = 'Dart'
@@ -3763,7 +3763,7 @@ class TypeScriptLexer(RegexLexer):
     """
     For `TypeScript <http://typescriptlang.org/>`_ source code.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'TypeScript'
@@ -3850,7 +3850,7 @@ class LassoLexer(RegexLexer):
         If given and ``True``, only highlight code between delimiters as Lasso
         (default: ``False``).
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     name = 'Lasso'
@@ -4063,9 +4063,9 @@ class LassoLexer(RegexLexer):
         self._members = set()
         if self.builtinshighlighting:
             from pygments.lexers._lassobuiltins import BUILTINS, MEMBERS
-            for key, value in BUILTINS.iteritems():
+            for key, value in iteritems(BUILTINS):
                 self._builtins.update(value)
-            for key, value in MEMBERS.iteritems():
+            for key, value in iteritems(MEMBERS):
                 self._members.update(value)
         RegexLexer.__init__(self, **options)
 
@@ -4099,7 +4099,7 @@ class QmlLexer(RegexLexer):
     """
     For QML files. See http://doc.qt.digia.com/4.7/qdeclarativeintroduction.html.
 
-    *New in Pygments 1.6.*
+    .. versionadded:: 1.6
     """
 
     # QML is based on javascript, so much of this is taken from the
@@ -4164,5 +4164,61 @@ class QmlLexer(RegexLexer):
             (r'[0-9]+', Number.Integer),
             (r'"(\\\\|\\"|[^"])*"', String.Double),
             (r"'(\\\\|\\'|[^'])*'", String.Single),
+        ]
+    }
+
+
+class CirruLexer(RegexLexer):
+    """
+    Syntax rules of Cirru can be found at:
+    http://grammar.cirru.org/
+
+    * using ``()`` to markup blocks, but limited in the same line
+    * using ``""`` to markup strings, allow ``\`` to escape
+    * using ``$`` as a shorthand for ``()`` till indentation end or ``)``
+    * using indentations for create nesting
+
+    .. versionadded:: 2.0
+    """
+
+    name = 'Cirru'
+    aliases = ['cirru']
+    filenames = ['*.cirru', '*.cr']
+    mimetypes = ['text/x-cirru']
+    flags = re.MULTILINE
+
+    tokens = {
+        'string': [
+            (r'[^"\\\n]', String),
+            (r'\\', String.Escape, 'escape'),
+            (r'"', String, '#pop'),
+        ],
+        'escape': [
+            (r'.', String.Escape, '#pop'),
+        ],
+        'function': [
+            (r'[\w-][^\s\(\)\"]*', Name.Function, '#pop'),
+            (r'\)', Operator, '#pop'),
+            (r'(?=\n)', Text, '#pop'),
+            (r'\(', Operator, '#push'),
+            (r'"', String, ('#pop', 'string')),
+            (r'\s+', Text.Whitespace),
+        ],
+        'line': [
+            (r'^\B', Text.Whitespace, 'function'),
+            (r'\$', Operator, 'function'),
+            (r'\(', Operator, 'function'),
+            (r'\)', Operator),
+            (r'(?=\n)', Text, '#pop'),
+            (r'\n', Text, '#pop'),
+            (r'"', String, 'string'),
+            (r'\s+', Text.Whitespace),
+            (r'[\d\.]+', Number),
+            (r'[\w-][^\"\(\)\s]*', Name.Variable),
+            (r'--', Comment.Single)
+        ],
+        'root': [
+            (r'^\s*', Text.Whitespace, ('line', 'function')),
+            (r'^\s+$', Text.Whitespace),
         ]
     }
