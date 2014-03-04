@@ -203,6 +203,7 @@ LEXERS = {
     'MoinWikiLexer': ('pygments.lexers.text', 'MoinMoin/Trac Wiki markup', ('trac-wiki', 'moin'), (), ('text/x-trac-wiki',)),
     'MonkeyLexer': ('pygments.lexers.compiled', 'Monkey', ('monkey',), ('*.monkey',), ('text/x-monkey',)),
     'MoonScriptLexer': ('pygments.lexers.agile', 'MoonScript', ('moon', 'moonscript'), ('*.moon',), ('text/x-moonscript', 'application/x-moonscript')),
+    'MqlLexer': ('pygments.lexers.compiled', 'MQL', ('mql', 'mq4', 'mq5', 'mql4', 'mql5'), ('*.mq4', '*.mq5', '*.mqh'), ('text/x-mql',)),
     'MscgenLexer': ('pygments.lexers.other', 'Mscgen', ('mscgen', 'msc'), ('*.msc',), ()),
     'MuPADLexer': ('pygments.lexers.math', 'MuPAD', ('mupad',), ('*.mu',), ()),
     'MxmlLexer': ('pygments.lexers.web', 'MXML', ('mxml',), ('*.mxml',), ()),

@@ -39,6 +39,7 @@ Version 2.0
   * Intel objdump (PR#279)
   * MaskJS (PR#280)
   * Inform 6/7 (PR#281)
+  * MQL (PR#285)
 
 - New styles: "xcode" and "igor", similar to the default highlighting of
   the respective IDEs.
