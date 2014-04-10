@@ -723,7 +723,7 @@ class CommonLispLexer(RegexLexer):
     .. versionadded:: 0.9
     """
     name = 'Common Lisp'
-    aliases = ['common-lisp', 'cl', 'lisp']
+    aliases = ['common-lisp', 'cl', 'lisp', 'elisp', 'emacs']
     filenames = ['*.cl', '*.lisp', '*.el']  # use for Elisp too
     mimetypes = ['text/x-common-lisp']
 
@@ -996,7 +996,7 @@ class HaskellLexer(RegexLexer):
         ],
         'character': [
             # Allows multi-chars, incorrectly.
-            (r"[^\\']", String.Char),
+            (r"[^\\']'", String.Char, '#pop'),
             (r"\\", String.Escape, 'escape'),
             ("'", String.Char, '#pop'),
         ],
@@ -1058,13 +1058,13 @@ class IdrisLexer(RegexLexer):
             (r'--(?![!#$%&*+./<=>?@\^|_~:\\]).*?$', Comment.Single),
             (r'{-', Comment.Multiline, 'comment'),
             #  Identifiers
-            (ur'\b(%s)(?!\')\b' % '|'.join(reserved), Keyword.Reserved),
+            (r'\b(%s)(?!\')\b' % '|'.join(reserved), Keyword.Reserved),
             (r'(import|module)(\s+)', bygroups(Keyword.Reserved, Text), 'module'),
             (r"('')?[A-Z][\w\']*", Keyword.Type),
             (r'[a-z][A-Za-z0-9_\']*', Text),
             #  Special Symbols
             (r'(<-|::|->|=>|=)', Operator.Word), # specials
-            (r'([\[\]:!#$%&*+.\\/<=>?@^|~-]+)', Operator.Word), # specials
+            (r'([\(\)\{\}\[\]:!#$%&*+.\\/<=>?@^|~-]+)', Operator.Word), # specials
             #  Numbers
             (r'\d+[eE][+-]?\d+', Number.Float),
             (r'\d+\.\d+([eE][+-]?\d+)?', Number.Float),
@@ -2532,7 +2532,7 @@ class NixLexer(RegexLexer):
             ('(%s)' % '|'.join(re.escape(entry) + '\\b' for entry in builtins),
              Name.Builtin),
 
-            (r'\b(true|false)\b', Name.Constant),
+            (r'\b(true|false|null)\b', Name.Constant),
 
             # operators
             ('(%s)' % '|'.join(re.escape(entry) for entry in operators),
@@ -2559,7 +2559,8 @@ class NixLexer(RegexLexer):
             (r'[a-zA-Z][a-zA-Z0-9\+\-\.]*\:[a-zA-Z0-9%/?:@&=+$,\\_.!~*\'-]+', Literal),
 
             # names of variables
-            (r'[a-zA-Z_][a-zA-Z0-9_\'-]*', String.Symbol),
+            (r'[a-zA-Z0-9-_]+\s*=', String.Symbol),
+            (r'[a-zA-Z_][a-zA-Z0-9_\'-]*', Text),
 
         ],
         'comment': [
