@@ -37,7 +37,7 @@ __all__ = ['BrainfuckLexer', 'BefungeLexer', 'RedcodeLexer', 'MOOCodeLexer',
            'MscgenLexer', 'KconfigLexer', 'VGLLexer', 'SourcePawnLexer',
            'RobotFrameworkLexer', 'PuppetLexer', 'NSISLexer', 'RPMSpecLexer',
            'CbmBasicV2Lexer', 'AutoItLexer', 'RexxLexer', 'APLLexer',
-           'LSLLexer', 'AmbientTalkLexer']
+           'LSLLexer', 'AmbientTalkLexer', 'PawnLexer']
 
 
 class LSLLexer(RegexLexer):
@@ -4021,6 +4021,73 @@ class AmbientTalkLexer(RegexLexer):
         'arglist' : [
             (r'\|', Punctuation, '#pop'),
             (r'\s*(,)\s*', Punctuation),
-            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Variable)
+            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Variable),
+        ],
+    }
+
+
+class PawnLexer(RegexLexer):
+    """
+    For Pawn source code
+    """
+    
+    name = 'Pawn'
+    aliases = ['pawn']
+    filenames = ['*.p', '*.pwn', '*.inc']
+    mimetypes = ['text/x-pawn']
+
+    #: optional Comment or Whitespace
+    _ws = r'(?:\s|//.*?\n|/[*].*?[*]/)+'
+
+    tokens = {
+        'root': [
+            # preprocessor directives: without whitespace
+            ('^#if\s+0', Comment.Preproc, 'if0'),
+            ('^#', Comment.Preproc, 'macro'),
+            # or with whitespace
+            ('^' + _ws + r'#if\s+0', Comment.Preproc, 'if0'),
+            ('^' + _ws + '#', Comment.Preproc, 'macro'),
+            (r'\n', Text),
+            (r'\s+', Text),
+            (r'\\\n', Text), # line continuation
+            (r'/(\\\n)?/(\n|(.|\n)*?[^\\]\n)', Comment.Single),
+            (r'/(\\\n)?\*(.|\n)*?\*(\\\n)?/', Comment.Multiline),
+            (r'[{}]', Punctuation),
+            (r'L?"', String, 'string'),
+            (r"L?'(\\.|\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\\'\n])'", String.Char),
+            (r'(\d+\.\d*|\.\d+|\d+)[eE][+-]?\d+[LlUu]*', Number.Float),
+            (r'(\d+\.\d*|\.\d+|\d+[fF])[fF]?', Number.Float),
+            (r'0x[0-9a-fA-F]+[LlUu]*', Number.Hex),
+            (r'0[0-7]+[LlUu]*', Number.Oct),
+            (r'\d+[LlUu]*', Number.Integer),
+            (r'\*/', Error),
+            (r'[~!%^&*+=|?:<>/-]', Operator),
+            (r'[()\[\],.;]', Punctuation),
+            (r'(switch|case|default|const|new|static|char|continue|break|'
+             r'if|else|for|while|do|operator|enum|'
+             r'public|return|sizeof|tagof|state|goto)\b', Keyword),
+            (r'(bool|Float)\b', Keyword.Type),
+            (r'(true|false)\b', Keyword.Constant),
+            ('[a-zA-Z_][a-zA-Z0-9_]*', Name),
+        ],
+        'string': [
+            (r'"', String, '#pop'),
+            (r'\\([\\abfnrtv"\']|x[a-fA-F0-9]{2,4}|[0-7]{1,3})', String.Escape),
+            (r'[^\\"\n]+', String), # all other characters
+            (r'\\\n', String), # line continuation
+            (r'\\', String), # stray backslash
+        ],
+        'macro': [
+            (r'[^/\n]+', Comment.Preproc),
+            (r'/\*(.|\n)*?\*/', Comment.Multiline),
+            (r'//.*?\n', Comment.Single, '#pop'),
+            (r'/', Comment.Preproc),
+            (r'(?<=\\)\n', Comment.Preproc),
+            (r'\n', Comment.Preproc, '#pop'),
+        ],
+        'if0': [
+            (r'^\s*#if.*?(?<!\\)\n', Comment.Preproc, '#push'),
+            (r'^\s*#endif.*?(?<!\\)\n', Comment.Preproc, '#pop'),
+            (r'.*?\n', Comment),
         ]
     }
