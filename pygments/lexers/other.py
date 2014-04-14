@@ -37,7 +37,7 @@ __all__ = ['BrainfuckLexer', 'BefungeLexer', 'RedcodeLexer', 'MOOCodeLexer',
            'MscgenLexer', 'KconfigLexer', 'VGLLexer', 'SourcePawnLexer',
            'RobotFrameworkLexer', 'PuppetLexer', 'NSISLexer', 'RPMSpecLexer',
            'CbmBasicV2Lexer', 'AutoItLexer', 'RexxLexer', 'APLLexer',
-           'LSLLexer']
+           'LSLLexer', 'AmbientTalkLexer']
 
 
 class LSLLexer(RegexLexer):
@@ -3966,4 +3966,56 @@ class APLLexer(RegexLexer):
             (u'[⍺⍵⍶⍹∇:]', Name.Builtin.Pseudo),
             (r'[{}]', Keyword.Type),
         ],
+    }
+
+class AmbientTalkLexer(RegexLexer):
+    name = 'AmbientTalk'
+    filenames = ['*.at']
+    aliases = ['AT', 'ambienttalk', 'AmbientTalk/2', 'ambienttalk/2', 'AT/2']
+    mimetypes = ['text/x-ambienttalk']
+
+    flags = re.MULTILINE | re.DOTALL
+
+    builtin = ['if:', 'then:', 'else:', 'when:', 'whenever:', 'discovered:',
+        'disconnected:', 'reconnected:', 'takenOffline:', 'becomes:',
+        'export:', 'as:', 'object:', 'actor:', 'mirror:', 'taggedAs:',
+        'mirroredBy:', 'is:']
+    tokens = {
+        'root' : [
+            (r'\s+', Text),
+            (r'//.*?\n', Comment.Single),
+            (r'/\*.*?\*/', Comment.Multiline),
+            (r'(def|deftype|import|alias|exclude)\b', Keyword),
+            (r"(%s)" % "|".join(builtin), Name.Builtin),
+            (r'(true|false|nil)\b', Keyword.Constant),
+            (r'(~|lobby|jlobby|/)\.', Keyword.Constant, 'namespace'),
+            (r'"(\\\\|\\"|[^"])*"', String),
+            (r'\|', Punctuation, 'arglist'),
+            (r'<:|[\^\*!%&<>+=,./?-]|:=', Operator),
+            (r"`[a-zA-Z_][a-zA-Z0-9_]*", String.Symbol),
+            (r"[a-zA-Z_][a-zA-Z0-9_]*:", Name.Function),
+            (r"[\{\}()\[\];`]", Punctuation),
+            (r'(self|super)\b', Name.Variable.Instance),
+            (r"[a-zA-Z_][a-zA-Z0-9_]*", Name.Variable),
+            (r"@[a-zA-Z_][a-zA-Z0-9_]*", Name.Class),
+            (r"@\[", Name.Class, 'annotations'),
+            include('numbers'),
+        ],
+        'numbers' : [
+            (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
+            (r'\d+', Number.Integer)
+        ],
+        'namespace': [
+            (r'[a-zA-Z_][a-zA-Z0-9_]*\.', Name.Namespace),
+            (r'[a-zA-Z_][a-zA-Z0-9_]*:', Name.Function , '#pop'),
+            (r'[a-zA-Z_][a-zA-Z0-9_]*(?!\.)', Name.Function , '#pop')
+        ],
+        'annotations' : [
+            (r"(.*?)\]", Name.Class, '#pop')
+        ],
+        'arglist' : [
+            (r'\|', Punctuation, '#pop'),
+            (r'\s*(,)\s*', Punctuation),
+            (r'[a-zA-Z_][a-zA-Z0-9_]*', Name.Variable)
+        ]
     }
