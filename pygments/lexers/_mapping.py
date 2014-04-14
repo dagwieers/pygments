@@ -67,6 +67,7 @@ LEXERS = {
     'CirruLexer': ('pygments.lexers.web', 'Cirru', ('cirru',), ('*.cirru', '*.cr'), ('text/x-cirru',)),
     'ClayLexer': ('pygments.lexers.compiled', 'Clay', ('clay',), ('*.clay',), ('text/x-clay',)),
     'ClojureLexer': ('pygments.lexers.jvm', 'Clojure', ('clojure', 'clj'), ('*.clj',), ('text/x-clojure', 'application/x-clojure')),
+    'ClojureScriptLexer': ('pygments.lexers.jvm', 'ClojureScript', ('clojurescript', 'cljs'), ('*.cljs',), ('text/x-clojurescript', 'application/x-clojurescript')),
     'CobolFreeformatLexer': ('pygments.lexers.compiled', 'COBOLFree', ('cobolfree',), ('*.cbl', '*.CBL'), ()),
     'CobolLexer': ('pygments.lexers.compiled', 'COBOL', ('cobol',), ('*.cob', '*.COB', '*.cpy', '*.CPY'), ('text/x-cobol',)),
     'CoffeeScriptLexer': ('pygments.lexers.web', 'CoffeeScript', ('coffee-script', 'coffeescript', 'coffee'), ('*.coffee',), ('text/coffeescript',)),
