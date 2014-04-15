@@ -4092,6 +4092,7 @@ class PawnLexer(RegexLexer):
         ]
     }
 
+
 class VCTreeStatusLexer(RegexLexer):
     """
     For colorizing output of version control status commans, like "hg
@@ -4103,6 +4104,7 @@ class VCTreeStatusLexer(RegexLexer):
     aliases = ['vctreestatus']
     filenames = []
     mimetypes = []
+
     tokens = {
         'root' : [
             (r'^A  \+  C\s+', Generic.Error),
