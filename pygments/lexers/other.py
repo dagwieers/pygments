@@ -37,7 +37,8 @@ __all__ = ['BrainfuckLexer', 'BefungeLexer', 'RedcodeLexer', 'MOOCodeLexer',
            'MscgenLexer', 'KconfigLexer', 'VGLLexer', 'SourcePawnLexer',
            'RobotFrameworkLexer', 'PuppetLexer', 'NSISLexer', 'RPMSpecLexer',
            'CbmBasicV2Lexer', 'AutoItLexer', 'RexxLexer', 'APLLexer',
-           'LSLLexer', 'AmbientTalkLexer', 'PawnLexer', 'VCTreeStatusLexer']
+           'LSLLexer', 'AmbientTalkLexer', 'PawnLexer', 'VCTreeStatusLexer',
+           'RslLexer', 'PanLexer']
 
 
 class LSLLexer(RegexLexer):
@@ -1865,7 +1866,7 @@ class GherkinLexer(RegexLexer):
 
     tokens = {
         'comments': [
-            (r'#.*$', Comment),
+            (r'^\s*#.*$', Comment),
           ],
         'feature_elements' : [
             (step_keywords, Keyword, "step_content_stack"),
@@ -1894,6 +1895,7 @@ class GherkinLexer(RegexLexer):
           ],
         'narrative': [
             include('scenario_sections_on_stack'),
+            include('comments'),
             (r"(\s|.)", Name.Function),
           ],
         'table_vars': [
@@ -4117,4 +4119,124 @@ class VCTreeStatusLexer(RegexLexer):
             (r'      >\s+.*\n', Comment.Preproc),
             (r'.*\n', Text)
         ]
+    }
+
+
+class RslLexer(RegexLexer):
+    """
+    `RSL <http://en.wikipedia.org/wiki/RAISE>`_ is the formal specification
+    language used in RAISE (Rigorous Approach to Industrial Software Engineering)
+    method. 
+
+    .. versionadded:: 2.0
+    """
+    name = 'RSL'
+    aliases = ['rsl']
+    filenames = ['*.rsl']
+    mimetypes = ['text/rsl']
+
+    flags = re.MULTILINE | re.DOTALL
+
+    tokens = {
+        'root':[
+            (r'\b(Bool|Char|Int|Nat|Real|Text|Unit|abs|all|always|any|as|'
+             r'axiom|card|case|channel|chaos|class|devt_relation|dom|elems|'
+             r'else|elif|end|exists|extend|false|for|hd|hide|if|in|is|inds|'
+             r'initialise|int|inter|isin|len|let|local|ltl_assertion|object|'
+             r'of|out|post|pre|read|real|rng|scheme|skip|stop|swap|then|'
+             r'thoery|test_case|tl|transition_system|true|type|union|until|'
+             r'use|value|variable|while|with|write|~isin|-inflist|-infset|'
+             r'-list|-set)\b', Keyword),
+            (r'(variable|value)\b', Keyword.Declaration),
+            (r'--.*?\n', Comment),
+            (r'<:.*?:>', Comment),
+            (r'\{!.*?!\}', Comment),
+            (r'/\*.*?\*/', Comment),
+            (r'^[ \t]*([\w]+)[ \t]*:[^:]', Name.Function),
+            (r'(^[ \t]*)([\w]+)([ \t]*\([\w\s,]*\)[ \t]*)(is|as)',
+             bygroups(Text, Name.Function, Text, Keyword)),
+            (r'\b[A-Z]\w*\b',Keyword.Type),
+            (r'(true|false)\b', Keyword.Constant),
+            (r'".*"',String),
+            (r'\'.\'',String.Char),
+            (r'(><|->|-m->|/\\|<=|<<=|<\.|\|\||\|\^\||-~->|-~m->|\\/|>=|>>|'
+             r'\.>|\+\+|-\\|<->|=>|:-|~=|\*\*|<<|>>=|\+>|!!|\|=\||#)',
+             Operator),
+            (r'[0-9]+\.[0-9]+([eE][0-9]+)?[fd]?', Number.Float),
+            (r'0x[0-9a-f]+', Number.Hex),
+            (r'[0-9]+', Number.Integer),
+            (r'.', Text),
+       ],
+   }
+
+    def analyse_text(text):
+        """ 
+        Check for the most common text in the beginning of a RSL file.
+        """
+        if re.search(r'scheme\s*.*?=\s*class\s*type', text, re.I) is not None:
+            return 1.0
+        else:
+            return 0.01
+
+
+class PanLexer(RegexLexer):
+    """
+    Lexer for `pan <http://github.com/quattor/pan/>`_ source files.
+
+    Based on tcsh lexer.
+
+    .. versionadded:: 2.0
+    """
+
+    name = 'Pan'
+    aliases = ['pan']
+    filenames = ['*.pan']
+
+    tokens = {
+        'root': [
+            include('basic'),
+            (r'\(', Keyword, 'paren'),
+            (r'{', Keyword, 'curly'),
+            include('data'),
+        ],
+        'basic': [
+            (r'\b(if|for|with|else|type|bind|while|valid|final|prefix|unique|'
+             r'object|foreach|include|template|function|variable|structure|'
+             r'extensible|declaration)\s*\b',
+             Keyword),
+            (r'\b(file_contents|format|index|length|match|matches|replace|'
+             r'splice|split|substr|to_lowercase|to_uppercase|debug|error|'
+             r'traceback|deprecated|base64_decode|base64_encode|digest|escape|'
+             r'unescape|append|create|first|nlist|key|length|list|merge|next|'
+             r'prepend|splice|is_boolean|is_defined|is_double|is_list|is_long|'
+             r'is_nlist|is_null|is_number|is_property|is_resource|is_string|'
+             r'to_boolean|to_double|to_long|to_string|clone|delete|exists|'
+             r'path_exists|if_exists|return|value)\s*\b',
+             Name.Builtin),
+            (r'#.*', Comment),
+            (r'\\[\w\W]', String.Escape),
+            (r'(\b\w+)(\s*)(=)', bygroups(Name.Variable, Text, Operator)),
+            (r'[\[\]{}()=]+', Operator),
+            (r'<<\s*(\'?)\\?(\w+)[\w\W]+?\2', String),
+            (r';', Punctuation),
+        ],
+        'data': [
+            (r'(?s)"(\\\\|\\[0-7]+|\\.|[^"\\])*"', String.Double),
+            (r"(?s)'(\\\\|\\[0-7]+|\\.|[^'\\])*'", String.Single),
+            (r'\s+', Text),
+            (r'[^=\s\[\]{}()$"\'`\\;#]+', Text),
+            (r'\d+(?= |\Z)', Number),
+        ],
+        'curly': [
+            (r'}', Keyword, '#pop'),
+            (r':-', Keyword),
+            (r'[a-zA-Z0-9_]+', Name.Variable),
+            (r'[^}:"\'`$]+', Punctuation),
+            (r':', Punctuation),
+            include('root'),
+        ],
+        'paren': [
+            (r'\)', Keyword, '#pop'),
+            include('root'),
+        ],
     }
