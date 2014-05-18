@@ -437,6 +437,11 @@ class GroovyLexer(RegexLexer):
 
     tokens = {
         'root': [
+            # Groovy allows a file to start with a shebang
+            (r'#!(.*?)$', Comment.Preproc, 'base'),
+            (r'', Text, 'base'),
+        ],
+        'base': [
             # method names
             (r'^(\s*(?:[a-zA-Z_][\w\.\[\]]*\s+)+?)' # return arguments
              r'([a-zA-Z_]\w*)'                      # method name
@@ -480,6 +485,9 @@ class GroovyLexer(RegexLexer):
             (r'[\w.]+\*?', Name.Namespace, '#pop')
         ],
     }
+
+    def analyse_text(text):
+        return shebang_matches(text, r'groovy')
 
 
 class IokeLexer(RegexLexer):
@@ -778,7 +786,7 @@ class ClojureLexer(RegexLexer):
             (r"\\(.|[a-z]+)", String.Char),
 
             # keywords
-            (r'::?' + valid_name, String.Symbol),
+            (r'::?#?' + valid_name, String.Symbol),
 
             # special operators
             (r'~@|[`\'#^~&@]', Operator),
