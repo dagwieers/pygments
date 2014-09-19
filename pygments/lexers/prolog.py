@@ -11,11 +11,9 @@
 
 import re
 
-from pygments.lexer import RegexLexer, include, bygroups, using, \
-    this, inherit, default, words
-from pygments.util import get_bool_opt
+from pygments.lexer import RegexLexer, bygroups
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation, Error
+    Number, Punctuation
 
 __all__ = ['PrologLexer', 'LogtalkLexer']
 
@@ -26,7 +24,7 @@ class PrologLexer(RegexLexer):
     """
     name = 'Prolog'
     aliases = ['prolog']
-    filenames = ['*.prolog', '*.pro', '*.pl']
+    filenames = ['*.ecl', '*.prolog', '*.pro', '*.pl']
     mimetypes = ['text/x-prolog']
 
     flags = re.UNICODE
