@@ -29,6 +29,7 @@ JS_IDENT_PART = ('(?:[$_' + uni.combine('Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nl',
                  u'\u200c\u200d]|\\\\u[a-fA-F0-9]{4})')
 JS_IDENT = JS_IDENT_START + '(?:' + JS_IDENT_PART + ')*'
 
+
 class JavascriptLexer(RegexLexer):
     """
     For JavaScript source code.
@@ -178,13 +179,13 @@ class KalLexer(RegexLexer):
             # hashmarks, quotes and backslashes must be parsed one at a time
         ],
         'interpoling_string': [
-            (r'}', String.Interpol, "#pop"),
+            (r'\}', String.Interpol, "#pop"),
             include('root')
         ],
         'dqs': [
             (r'"', String, '#pop'),
             (r'\\.|\'', String),  # double-quoted string don't need ' escapes
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             include('strings')
         ],
         'sqs': [
@@ -195,7 +196,7 @@ class KalLexer(RegexLexer):
         'tdqs': [
             (r'"""', String, '#pop'),
             (r'\\.|\'|"', String),  # no need to escape quotes in triple-string
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             include('strings'),
         ],
         'tsqs': [
@@ -287,13 +288,13 @@ class LiveScriptLexer(RegexLexer):
             # hashmarks, quotes and backslashes must be parsed one at a time
         ],
         'interpoling_string': [
-            (r'}', String.Interpol, "#pop"),
+            (r'\}', String.Interpol, "#pop"),
             include('root')
         ],
         'dqs': [
             (r'"', String, '#pop'),
             (r'\\.|\'', String),  # double-quoted string don't need ' escapes
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             (r'#', String),
             include('strings')
         ],
@@ -305,7 +306,7 @@ class LiveScriptLexer(RegexLexer):
         'tdqs': [
             (r'"""', String, '#pop'),
             (r'\\.|\'|"', String),  # no need to escape quotes in triple-string
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             (r'#', String),
             include('strings'),
         ],
@@ -1000,7 +1001,7 @@ class CoffeeScriptLexer(RegexLexer):
         'multilineregex': [
             (r'[^/#]+', String.Regex),
             (r'///([gim]+\b|\B)', String.Regex, '#pop'),
-            (r'#{', String.Interpol, 'interpoling_string'),
+            (r'#\{', String.Interpol, 'interpoling_string'),
             (r'[/#]', String.Regex),
         ],
         'slashstartsregex': [
@@ -1054,13 +1055,13 @@ class CoffeeScriptLexer(RegexLexer):
             # hashmarks, quotes and backslashes must be parsed one at a time
         ],
         'interpoling_string': [
-            (r'}', String.Interpol, "#pop"),
+            (r'\}', String.Interpol, "#pop"),
             include('root')
         ],
         'dqs': [
             (r'"', String, '#pop'),
             (r'\\.|\'', String),  # double-quoted string don't need ' escapes
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             (r'#', String),
             include('strings')
         ],
@@ -1072,7 +1073,7 @@ class CoffeeScriptLexer(RegexLexer):
         'tdqs': [
             (r'"""', String, '#pop'),
             (r'\\.|\'|"', String),  # no need to escape quotes in triple-string
-            (r'#{', String.Interpol, "interpoling_string"),
+            (r'#\{', String.Interpol, "interpoling_string"),
             (r'#', String),
             include('strings'),
         ],
