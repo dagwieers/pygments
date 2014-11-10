@@ -201,19 +201,7 @@ def _print_list(what):
             print("    %s" % docstring_headline(cls))
 
 
-def main(args=sys.argv):
-    """
-    Main command line entry point.
-    """
-    # pylint: disable-msg=R0911,R0912,R0915
-
-    usage = USAGE % ((args[0],) * 6)
-
-    try:
-        popts, args = getopt.getopt(args[1:], "l:f:F:o:O:P:LS:a:N:vhVHgs")
-    except getopt.GetoptError:
-        print(usage, file=sys.stderr)
-        return 2
+def main_inner(popts, args, usage):
     opts = {}
     O_opts = []
     P_opts = []
@@ -476,35 +464,50 @@ def main(args=sys.argv):
             return 1
 
     # ... and do it!
-    try:
-        if '-s' not in opts:
-            # process whole input as per normal...
-            highlight(code, lexer, fmter, outfile)
-        else:
-            if not lexer:
-                print('Error: when using -s a lexer has to be selected with -l',
-                      file=sys.stderr)
-                return 1
-            # line by line processing of stdin (eg: for 'tail -f')...
-            try:
-                while 1:
-                    if sys.version_info > (3,):
-                        # Python 3: we have to use .buffer to get a binary stream
-                        line = sys.stdin.buffer.readline()
-                    else:
-                        line = sys.stdin.readline()
-                    if not line:
-                        break
-                    if not inencoding:
-                        line = guess_decode_from_terminal(line, sys.stdin)[0]
-                    highlight(line, lexer, fmter, outfile)
-                    if hasattr(outfile, 'flush'):
-                        outfile.flush()
-            except KeyboardInterrupt:
-                return 0
+    if '-s' not in opts:
+        # process whole input as per normal...
+        highlight(code, lexer, fmter, outfile)
+        return 0
+    else:
+        if not lexer:
+            print('Error: when using -s a lexer has to be selected with -l',
+                  file=sys.stderr)
+            return 1
+        # line by line processing of stdin (eg: for 'tail -f')...
+        try:
+            while 1:
+                if sys.version_info > (3,):
+                    # Python 3: we have to use .buffer to get a binary stream
+                    line = sys.stdin.buffer.readline()
+                else:
+                    line = sys.stdin.readline()
+                if not line:
+                    break
+                if not inencoding:
+                    line = guess_decode_from_terminal(line, sys.stdin)[0]
+                highlight(line, lexer, fmter, outfile)
+                if hasattr(outfile, 'flush'):
+                    outfile.flush()
+        except KeyboardInterrupt:
+            return 0
 
+
+def main(args=sys.argv):
+    """
+    Main command line entry point.
+    """
+    usage = USAGE % ((args[0],) * 6)
+
+    try:
+        popts, args = getopt.getopt(args[1:], "l:f:F:o:O:P:LS:a:N:vhVHgs")
+    except getopt.GetoptError:
+        print(usage, file=sys.stderr)
+        return 2
+
+    try:
+        return main_inner(popts, args, usage)
     except Exception:
-        if '-v' in opts:
+        if '-v' in dict(popts):
             print(file=sys.stderr)
             print('*' * 65, file=sys.stderr)
             print('An unhandled exception occurred while highlighting.',
@@ -528,5 +531,3 @@ def main(args=sys.argv):
         print('*** If this is a bug you want to report, please rerun with -v.',
               file=sys.stderr)
         return 1
-
-    return 0
