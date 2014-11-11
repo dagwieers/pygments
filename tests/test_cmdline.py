@@ -15,9 +15,8 @@ import sys
 import tempfile
 import unittest
 
-from pygments import highlight
+from pygments import highlight, cmdline
 from pygments.util import StringIO, BytesIO
-from pygments.cmdline import main as cmdline_main
 
 import support
 
@@ -36,7 +35,7 @@ def run_cmdline(*args):
         stdout_buffer = new_stdout = sys.stdout = StringIO()
         stderr_buffer = new_stderr = sys.stderr = StringIO()
     try:
-        ret = cmdline_main(["pygmentize"] + list(args))
+        ret = cmdline.main(["pygmentize"] + list(args))
     finally:
         sys.stdout = saved_stdout
         sys.stderr = saved_stderr
@@ -45,19 +44,6 @@ def run_cmdline(*args):
     out, err = stdout_buffer.getvalue().decode('utf-8'), \
         stderr_buffer.getvalue().decode('utf-8')
     return (ret, out, err)
-
-
-def run_cmdline_with_closed_stdout(*args):
-    saved_stdout, saved_stderr = sys.stdout, sys.stderr
-    sys.stdout, sys.stderr = StringIO(), StringIO()
-    sys.stdout.buffer = sys.stdout
-    sys.stdout.close()
-    try:
-        ret = cmdline_main(['pygmentize'] + list(args))
-        err = sys.stderr.getvalue()
-    finally:
-        sys.stdout, sys.stderr = saved_stdout, saved_stderr
-    return ret, err
 
 
 class CmdLineTest(unittest.TestCase):
@@ -170,16 +156,19 @@ class CmdLineTest(unittest.TestCase):
         self.assertTrue('Error: filter \'foo\' not found' in e)
 
     def test_exception(self):
-        # unexpected exception while highlighting
-        # (we can force that by closing stdout)
-        c, e = run_cmdline_with_closed_stdout('-lpython', TESTFILE)
-        self.assertEqual(c, 1)
-        self.assertTrue('*** Error while highlighting:' in e)
-
-        # same with -v: should reraise the exception
+        cmdline.highlight = None  # override callable to provoke TypeError
         try:
-            run_cmdline_with_closed_stdout('-lpython', '-v', TESTFILE)
-        except Exception:
-            pass
-        else:
-            self.fail('exception not reraised')
+            # unexpected exception while highlighting
+            e = self.check_failure('-lpython', TESTFILE)
+            self.assertTrue('*** Error while highlighting:' in e)
+            self.assertTrue('TypeError' in e)
+
+            # same with -v: should reraise the exception
+            try:
+                self.check_failure('-lpython', '-v', TESTFILE)
+            except Exception:
+                pass
+            else:
+                self.fail('exception not reraised')
+        finally:
+            cmdline.highlight = highlight
