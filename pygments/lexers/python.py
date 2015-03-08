@@ -156,10 +156,11 @@ class PythonLexer(RegexLexer):
              r'U[a-fA-F0-9]{8}|x[a-fA-F0-9]{2}|[0-7]{1,3})', String.Escape)
         ],
         'strings': [
+            # the old style '%s' % (...) string formatting
             (r'%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
              '[hlL]?[diouxXeEfFgGcrs%]', String.Interpol),
+            # backslashes, quotes and formatting signs must be parsed one at a time
             (r'[^\\\'"%\n]+', String),
-            # quotes, percents and backslashes must be parsed one at a time
             (r'[\'"\\]', String),
             # unhandled string formatting sign
             (r'%', String)
@@ -292,13 +293,21 @@ class Python3Lexer(RegexLexer):
         (uni_name, Name.Namespace),
         default('#pop'),
     ]
-    # don't highlight "%s" substitutions
     tokens['strings'] = [
-        (r'[^\\\'"%\n]+', String),
-        # quotes, percents and backslashes must be parsed one at a time
+        # the old style '%s' % (...) string formatting (still valid in Py3)
+        (r'%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
+         '[hlL]?[diouxXeEfFgGcrs%]', String.Interpol),
+        # the new style '{}'.format(...) string formatting
+        (r'\{'
+         '((\w+)((\.\w+)|(\[[^\]]+\]))*)?' # field name
+         '(\![sra])?'                      # conversion
+         '(\:(.?[<>=\^])?[-+ ]?#?0?(\d+)?,?(\.\d+)?[bcdeEfFgGnosxX%]?)?'
+         '\}', String.Interpol),
+        # backslashes, quotes and formatting signs must be parsed one at a time
+        (r'[^\\\'"%\{\n]+', String),
         (r'[\'"\\]', String),
         # unhandled string formatting sign
-        (r'%', String)
+        (r'%|(\{{1,2})', String)
         # newlines are an error (use "nl" state)
     ]
 
