@@ -85,6 +85,7 @@ Other contributors, listed alphabetically, are:
 * Adam Koprowski -- Opa lexer
 * Benjamin Kowarsch -- Modula-2 lexer
 * Domen Kožar -- Nix lexer
+* Oleh Krekel -- Emacs Lisp lexer
 * Alexander Kriegisch -- Kconfig and AspectJ lexers
 * Marek Kubica -- Scheme lexer
 * Jochen Kupperschmidt -- Markdown processor
@@ -135,6 +136,7 @@ Other contributors, listed alphabetically, are:
 * Andre Roberge -- Tango style
 * Konrad Rudolph -- LaTeX formatter enhancements
 * Mario Ruggier -- Evoque lexers
+* Miikka Salminen -- Lovelace style, lexer enhancements
 * Stou Sandalski -- NumPy, FORTRAN, tcsh and XSLT lexers
 * Matteo Sasso -- Common Lisp lexer
 * Joe Schafer -- Ada lexer
