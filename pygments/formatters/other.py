@@ -5,7 +5,7 @@
 
     Other formatters: NullFormatter, RawTokenFormatter.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -64,6 +64,7 @@ class RawTokenFormatter(Formatter):
         Formatter.__init__(self, **options)
         # We ignore self.encoding if it is set, since it gets set for lexer
         # and formatter if given with -Oencoding on the command line.
+        # The RawTokenFormatter outputs only ASCII. Override here.
         self.encoding = 'ascii'  # let pygments.format() do the right thing
         self.compress = get_choice_opt(options, 'compress',
                                        ['', 'none', 'gz', 'bz2'], '')

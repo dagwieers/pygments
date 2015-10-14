@@ -5,7 +5,7 @@
 
     Lexers for Tcl and related languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -50,7 +50,7 @@ class TclLexer(RegexLexer):
         return [
             (keyword_cmds_re, Keyword, 'params' + context),
             (builtin_cmds_re, Name.Builtin, 'params' + context),
-            (r'([\w\.\-]+)', Name.Variable, 'params' + context),
+            (r'([\w.-]+)', Name.Variable, 'params' + context),
             (r'#', Comment, 'comment'),
         ]
 
@@ -85,8 +85,8 @@ class TclLexer(RegexLexer):
             (r'0[0-7]+', Number.Oct),
             (r'\d+\.\d+', Number.Float),
             (r'\d+', Number.Integer),
-            (r'\$([\w\.\-\:]+)', Name.Variable),
-            (r'([\w\.\-\:]+)', Text),
+            (r'\$([\w.:-]+)', Name.Variable),
+            (r'([\w.:-]+)', Text),
         ],
         'params': [
             (r';', Keyword, '#pop'),

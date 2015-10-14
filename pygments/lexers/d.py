@@ -5,7 +5,7 @@
 
     Lexers for D languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -147,12 +147,12 @@ class DLexer(RegexLexer):
             (r'\]', String, '#pop'),
         ],
         'delimited_parenthesis': [
-            (r'[^\(\)]+', String),
+            (r'[^()]+', String),
             (r'\(', String, 'delimited_inside_parenthesis'),
             (r'\)"', String, '#pop'),
         ],
         'delimited_inside_parenthesis': [
-            (r'[^\(\)]+', String),
+            (r'[^()]+', String),
             (r'\(', String, '#push'),
             (r'\)', String, '#pop'),
         ],

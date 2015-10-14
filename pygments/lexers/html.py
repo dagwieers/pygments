@@ -5,7 +5,7 @@
 
     Lexers for HTML, XML and related markup.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -46,12 +46,19 @@ class HtmlLexer(RegexLexer):
             ('<!--', Comment, 'comment'),
             (r'<\?.*?\?>', Comment.Preproc),
             ('<![^>]*>', Comment.Preproc),
-            (r'<\s*script\s*', Name.Tag, ('script-content', 'tag')),
-            (r'<\s*style\s*', Name.Tag, ('style-content', 'tag')),
+            (r'(<)(\s*)(script)(\s*)',
+             bygroups(Punctuation, Text, Name.Tag, Text),
+             ('script-content', 'tag')),
+            (r'(<)(\s*)(style)(\s*)',
+             bygroups(Punctuation, Text, Name.Tag, Text),
+             ('style-content', 'tag')),
             # note: this allows tag names not used in HTML like <x:with-dash>,
             # this is to support yet-unknown template engines and the like
-            (r'<\s*[\w:.-]+', Name.Tag, 'tag'),
-            (r'<\s*/\s*[\w:.-]+\s*>', Name.Tag),
+            (r'(<)(\s*)([\w:.-]+)',
+             bygroups(Punctuation, Text, Name.Tag), 'tag'),
+            (r'(<)(\s*)(/)(\s*)([\w:.-]+)(\s*)(>)',
+             bygroups(Punctuation, Text, Punctuation, Text, Name.Tag, Text,
+                      Punctuation)),
         ],
         'comment': [
             ('[^-]+', Comment),
@@ -60,16 +67,21 @@ class HtmlLexer(RegexLexer):
         ],
         'tag': [
             (r'\s+', Text),
-            (r'([\w:-]+\s*=)(\s*)', bygroups(Name.Attribute, Text), 'attr'),
+            (r'([\w:-]+\s*)(=)(\s*)', bygroups(Name.Attribute, Operator, Text),
+             'attr'),
             (r'[\w:-]+', Name.Attribute),
-            (r'/?\s*>', Name.Tag, '#pop'),
+            (r'(/?)(\s*)(>)', bygroups(Punctuation, Text, Punctuation), '#pop'),
         ],
         'script-content': [
-            (r'<\s*/\s*script\s*>', Name.Tag, '#pop'),
+            (r'(<)(\s*)(/)(\s*)(script)(\s*)(>)',
+             bygroups(Punctuation, Text, Punctuation, Text, Name.Tag, Text,
+                      Punctuation), '#pop'),
             (r'.+?(?=<\s*/\s*script\s*>)', using(JavascriptLexer)),
         ],
         'style-content': [
-            (r'<\s*/\s*style\s*>', Name.Tag, '#pop'),
+            (r'(<)(\s*)(/)(\s*)(style)(\s*)(>)',
+             bygroups(Punctuation, Text, Punctuation, Text, Name.Tag, Text,
+                      Punctuation),'#pop'),
             (r'.+?(?=<\s*/\s*style\s*>)', using(CssLexer)),
         ],
         'attr': [
@@ -137,7 +149,7 @@ class DtdLexer(RegexLexer):
         'element': [
             include('common'),
             (r'EMPTY|ANY|#PCDATA', Keyword.Constant),
-            (r'[^>\s\|()?+*,]+', Name.Tag),
+            (r'[^>\s|()?+*,]+', Name.Tag),
             (r'>', Keyword, '#pop'),
         ],
 
@@ -147,21 +159,21 @@ class DtdLexer(RegexLexer):
              Keyword.Constant),
             (r'#REQUIRED|#IMPLIED|#FIXED', Keyword.Constant),
             (r'xml:space|xml:lang', Keyword.Reserved),
-            (r'[^>\s\|()?+*,]+', Name.Attribute),
+            (r'[^>\s|()?+*,]+', Name.Attribute),
             (r'>', Keyword, '#pop'),
         ],
 
         'entity': [
             include('common'),
             (r'SYSTEM|PUBLIC|NDATA', Keyword.Constant),
-            (r'[^>\s\|()?+*,]+', Name.Entity),
+            (r'[^>\s|()?+*,]+', Name.Entity),
             (r'>', Keyword, '#pop'),
         ],
 
         'notation': [
             include('common'),
             (r'SYSTEM|PUBLIC', Keyword.Constant),
-            (r'[^>\s\|()?+*,]+', Name.Attribute),
+            (r'[^>\s|()?+*,]+', Name.Attribute),
             (r'>', Keyword, '#pop'),
         ],
     }
@@ -217,7 +229,7 @@ class XmlLexer(RegexLexer):
 
     def analyse_text(text):
         if looks_like_xml(text):
-            return 0.5
+            return 0.45  # less than HTML
 
 
 class XsltLexer(XmlLexer):

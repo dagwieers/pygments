@@ -34,7 +34,7 @@
     The ``tests/examplefiles`` contains a few test files with data to be
     parsed by these lexers.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -150,18 +150,18 @@ class PostgresLexer(PostgresBase, RegexLexer):
             (r'[0-9]+', Number.Integer),
             (r"(E|U&)?'(''|[^'])*'", String.Single),
             (r'(U&)?"(""|[^"])*"', String.Name),  # quoted identifier
-            (r'(?s)(\$[^\$]*\$)(.*?)(\1)', language_callback),
+            (r'(?s)(\$[^$]*\$)(.*?)(\1)', language_callback),
             (r'[a-z_]\w*', Name),
 
             # psql variable in SQL
             (r""":(['"]?)[a-z]\w*\b\1""", Name.Variable),
 
-            (r'[;:()\[\]\{\},\.]', Punctuation),
+            (r'[;:()\[\]{},.]', Punctuation),
         ],
         'multiline-comments': [
             (r'/\*', Comment.Multiline, 'multiline-comments'),
             (r'\*/', Comment.Multiline, '#pop'),
-            (r'[^/\*]+', Comment.Multiline),
+            (r'[^/*]+', Comment.Multiline),
             (r'[/*]', Comment.Multiline)
         ],
     }
@@ -442,13 +442,13 @@ class SqlLexer(RegexLexer):
             # TODO: Backslash escapes?
             (r"'(''|[^'])*'", String.Single),
             (r'"(""|[^"])*"', String.Symbol),  # not a real string literal in ANSI SQL
-            (r'[a-z_][\w\$]*', Name),  # allow $s in strings for Oracle
-            (r'[;:()\[\],\.]', Punctuation)
+            (r'[a-z_][\w$]*', Name),  # allow $s in strings for Oracle
+            (r'[;:()\[\],.]', Punctuation)
         ],
         'multiline-comments': [
             (r'/\*', Comment.Multiline, 'multiline-comments'),
             (r'\*/', Comment.Multiline, '#pop'),
-            (r'[^/\*]+', Comment.Multiline),
+            (r'[^/*]+', Comment.Multiline),
             (r'[/*]', Comment.Multiline)
         ]
     }
@@ -489,8 +489,8 @@ class MySqlLexer(RegexLexer):
              r'day_hour|day_microsecond|day_minute|day_second|dec|decimal|'
              r'declare|default|delayed|delete|desc|describe|deterministic|'
              r'distinct|distinctrow|div|double|drop|dual|each|else|elseif|'
-             r'enclosed|escaped|exists|exit|explain|fetch|float|float4|float8'
-             r'|for|force|foreign|from|fulltext|grant|group|having|'
+             r'enclosed|escaped|exists|exit|explain|fetch|flush|float|float4|'
+             r'float8|for|force|foreign|from|fulltext|grant|group|having|'
              r'high_priority|hour_microsecond|hour_minute|hour_second|if|'
              r'ignore|in|index|infile|inner|inout|insensitive|insert|int|'
              r'int1|int2|int3|int4|int8|integer|interval|into|is|iterate|'
@@ -516,12 +516,12 @@ class MySqlLexer(RegexLexer):
              bygroups(Name.Function, Text, Punctuation)),
             (r'[a-z_]\w*', Name),
             (r'@[a-z0-9]*[._]*[a-z0-9]*', Name.Variable),
-            (r'[;:()\[\],\.]', Punctuation)
+            (r'[;:()\[\],.]', Punctuation)
         ],
         'multiline-comments': [
             (r'/\*', Comment.Multiline, 'multiline-comments'),
             (r'\*/', Comment.Multiline, '#pop'),
-            (r'[^/\*]+', Comment.Multiline),
+            (r'[^/*]+', Comment.Multiline),
             (r'[/*]', Comment.Multiline)
         ]
     }
@@ -593,6 +593,6 @@ class RqlLexer(RegexLexer):
             (r'[A-Z_]\w*\??', Name),
             (r"'(''|[^'])*'", String.Single),
             (r'"(""|[^"])*"', String.Single),
-            (r'[;:()\[\],\.]', Punctuation)
+            (r'[;:()\[\],.]', Punctuation)
         ],
     }

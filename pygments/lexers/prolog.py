@@ -5,7 +5,7 @@
 
     Lexers for Prolog and Prolog-like languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -27,7 +27,7 @@ class PrologLexer(RegexLexer):
     filenames = ['*.ecl', '*.prolog', '*.pro', '*.pl']
     mimetypes = ['text/x-prolog']
 
-    flags = re.UNICODE
+    flags = re.UNICODE | re.MULTILINE
 
     tokens = {
         'root': [
@@ -114,7 +114,7 @@ class LogtalkLexer(RegexLexer):
             (r'0x[0-9a-fA-F]+', Number.Hex),
             (r'\d+\.?\d*((e|E)(\+|-)?\d+)?', Number),
             # Variables
-            (r'([A-Z_][a-zA-Z0-9_]*)', Name.Variable),
+            (r'([A-Z_]\w*)', Name.Variable),
             # Event handlers
             (r'(after|before)(?=[(])', Keyword),
             # Message forwarding handler
@@ -155,11 +155,11 @@ class LogtalkLexer(RegexLexer):
             # Term creation and decomposition
             (r'(functor|arg|copy_term|numbervars|term_variables)(?=[(])', Keyword),
             # Evaluable functors
-            (r'(rem|m(ax|in|od)|abs|sign)(?=[(])', Keyword),
+            (r'(div|rem|m(ax|in|od)|abs|sign)(?=[(])', Keyword),
             (r'float(_(integer|fractional)_part)?(?=[(])', Keyword),
-            (r'(floor|truncate|round|ceiling)(?=[(])', Keyword),
+            (r'(floor|t(an|runcate)|round|ceiling)(?=[(])', Keyword),
             # Other arithmetic functors
-            (r'(cos|a(cos|sin|tan)|exp|log|s(in|qrt))(?=[(])', Keyword),
+            (r'(cos|a(cos|sin|tan|tan2)|exp|log|s(in|qrt)|xor)(?=[(])', Keyword),
             # Term testing
             (r'(var|atom(ic)?|integer|float|c(allable|ompound)|n(onvar|umber)|'
              r'ground|acyclic_term)(?=[(])', Keyword),
@@ -212,7 +212,7 @@ class LogtalkLexer(RegexLexer):
             (r'(==|\\==|@=<|@<|@>=|@>)', Operator),
             # Evaluable functors
             (r'(//|[-+*/])', Operator),
-            (r'\b(e|pi|mod|rem)\b', Operator),
+            (r'\b(e|pi|div|mod|rem)\b', Operator),
             # Other arithemtic functors
             (r'\b\*\*\b', Operator),
             # DCG rules
@@ -230,7 +230,7 @@ class LogtalkLexer(RegexLexer):
             # Ponctuation
             (r'[()\[\],.|]', Text),
             # Atoms
-            (r"[a-z][a-zA-Z0-9_]*", Text),
+            (r"[a-z]\w*", Text),
             (r"'", String, 'quoted_atom'),
         ],
 
@@ -259,8 +259,8 @@ class LogtalkLexer(RegexLexer):
              r's(et_(logtalk|prolog)_flag|ynchronized))(?=[(])', Keyword, 'root'),
             (r'op(?=[(])', Keyword, 'root'),
             (r'(c(alls|oinductive)|module|reexport|use(s|_module))(?=[(])', Keyword, 'root'),
-            (r'[a-z][a-zA-Z0-9_]*(?=[(])', Text, 'root'),
-            (r'[a-z][a-zA-Z0-9_]*[.]', Text, 'root'),
+            (r'[a-z]\w*(?=[(])', Text, 'root'),
+            (r'[a-z]\w*[.]', Text, 'root'),
         ],
 
         'entityrelations': [
@@ -272,9 +272,9 @@ class LogtalkLexer(RegexLexer):
             (r'0x[0-9a-fA-F]+', Number.Hex),
             (r'\d+\.?\d*((e|E)(\+|-)?\d+)?', Number),
             # Variables
-            (r'([A-Z_][a-zA-Z0-9_]*)', Name.Variable),
+            (r'([A-Z_]\w*)', Name.Variable),
             # Atoms
-            (r"[a-z][a-zA-Z0-9_]*", Text),
+            (r"[a-z]\w*", Text),
             (r"'", String, 'quoted_atom'),
             # Strings
             (r'"(\\\\|\\"|[^"])*"', String),

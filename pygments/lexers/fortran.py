@@ -5,17 +5,17 @@
 
     Lexers for Fortran languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 import re
 
-from pygments.lexer import RegexLexer, include, words
+from pygments.lexer import RegexLexer, bygroups, include, words, using
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation
+    Number, Punctuation, Generic
 
-__all__ = ['FortranLexer']
+__all__ = ['FortranLexer', 'FortranFixedLexer']
 
 
 class FortranLexer(RegexLexer):
@@ -26,9 +26,9 @@ class FortranLexer(RegexLexer):
     """
     name = 'Fortran'
     aliases = ['fortran']
-    filenames = ['*.f', '*.f90', '*.F', '*.F90']
+    filenames = ['*.f03', '*.f90', '*.F03', '*.F90']
     mimetypes = ['text/x-fortran']
-    flags = re.IGNORECASE
+    flags = re.IGNORECASE | re.MULTILINE
 
     # Data Types: INTEGER, REAL, COMPLEX, LOGICAL, CHARACTER and DOUBLE PRECISION
     # Operators: **, *, +, -, /, <, >, <=, >=, ==, /=
@@ -39,10 +39,11 @@ class FortranLexer(RegexLexer):
 
     tokens = {
         'root': [
+            (r'^#.*\n', Comment.Preproc),
             (r'!.*\n', Comment),
             include('strings'),
             include('core'),
-            (r'[a-z]\w*', Name.Variable),
+            (r'[a-z][\w$]*', Name),
             include('nums'),
             (r'[\s]+', Text),
         ],
@@ -86,7 +87,7 @@ class FortranLexer(RegexLexer):
 
             (r'(::)', Keyword.Declaration),
 
-            (r'[()\[\],:&%;]', Punctuation),
+            (r'[()\[\],:&%;.]', Punctuation),
             # Intrinsics
             (words((
                 'Abort', 'Abs', 'Access', 'AChar', 'ACos', 'ACosH', 'AdjustL',
@@ -98,14 +99,14 @@ class FortranLexer(RegexLexer):
                 'BLT', 'Bit_Size', 'BTest', 'CAbs', 'CCos', 'Ceiling', 'CExp',
                 'Char', 'ChDir', 'ChMod', 'CLog', 'Cmplx', 'Command_Argument_Count',
                 'Complex', 'Conjg', 'Cos', 'CosH', 'Count', 'CPU_Time', 'CShift',
-                'CSin', 'CSqRt', 'CTime', 'C_Funloc', 'C_Loc', 'C_Associated',
+                'CSin', 'CSqRt', 'CTime', 'C_Loc', 'C_Associated',
                 'C_Null_Ptr', 'C_Null_Funptr', 'C_F_Pointer', 'C_F_ProcPointer',
                 'C_Null_Char', 'C_Alert', 'C_Backspace', 'C_Form_Feed', 'C_FunLoc',
-                'C_Loc', 'C_Sizeof', 'C_New_Line', 'C_Carriage_Return',
+                'C_Sizeof', 'C_New_Line', 'C_Carriage_Return',
                 'C_Horizontal_Tab', 'C_Vertical_Tab', 'DAbs', 'DACos', 'DASin',
                 'DATan', 'Date_and_Time', 'DbesJ', 'DbesJN', 'DbesY',
                 'DbesYN', 'Dble', 'DCos', 'DCosH', 'DDiM', 'DErF',
-                'DErFC', 'DExp', 'Digits', 'DiM', 'DInt', 'DLog', 'DLog', 'DMax',
+                'DErFC', 'DExp', 'Digits', 'DiM', 'DInt', 'DLog', 'DMax',
                 'DMin', 'DMod', 'DNInt', 'Dot_Product', 'DProd', 'DSign', 'DSinH',
                 'DShiftL', 'DShiftR', 'DSin', 'DSqRt', 'DTanH', 'DTan', 'DTime',
                 'EOShift', 'Epsilon', 'ErF', 'ErFC', 'ErFC_Scaled', 'ETime',
@@ -157,4 +158,48 @@ class FortranLexer(RegexLexer):
             (r'[+-]?\d*\.\d+(e[-+]?\d+)?(_[a-z]\w+)?', Number.Float),
             (r'[+-]?\d+\.\d*(e[-+]?\d+)?(_[a-z]\w+)?', Number.Float),
         ],
+    }
+
+
+class FortranFixedLexer(RegexLexer):
+    """
+    Lexer for fixed format Fortran.
+
+    .. versionadded:: 2.1
+    """
+    name = 'FortranFixed'
+    aliases = ['fortranfixed']
+    filenames = ['*.f', '*.F']
+
+    flags  = re.IGNORECASE
+
+    def _lex_fortran(self, match, ctx=None):
+        """Lex a line just as free form fortran without line break."""
+        lexer = FortranLexer()
+        text = match.group(0) + "\n"
+        for index, token, value in lexer.get_tokens_unprocessed(text):
+            value = value.replace('\n', '')
+            if value != '':
+                yield index, token, value
+
+    tokens = {
+        'root': [
+            (r'[C*].*\n', Comment),
+            (r'#.*\n', Comment.Preproc),
+            (r' {0,4}!.*\n', Comment),
+            (r'(.{5})', Name.Label, 'cont-char'),
+            (r'.*\n', using(FortranLexer)),
+        ],
+
+        'cont-char': [
+            (' ', Text, 'code'),
+            ('0', Comment, 'code'),
+            ('.', Generic.Strong, 'code')
+        ],
+
+        'code': [
+            (r'(.{66})(.*)(\n)',
+             bygroups(_lex_fortran, Comment, Text), 'root'),
+            (r'(.*)(\n)', bygroups(_lex_fortran, Text), 'root'),
+            (r'', Text, 'root')]
     }

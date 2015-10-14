@@ -5,7 +5,7 @@
 
     Lexer for the Felix language.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -176,10 +176,10 @@ class FelixLexer(RegexLexer):
             (r'/[*]', Comment.Multiline, 'comment2'),
         ],
         'comment2': [
-            (r'[^\/*]', Comment.Multiline),
+            (r'[^/*]', Comment.Multiline),
             (r'/[*]', Comment.Multiline, '#push'),
             (r'[*]/', Comment.Multiline, '#pop'),
-            (r'[\/*]', Comment.Multiline),
+            (r'[/*]', Comment.Multiline),
         ],
         'if0': [
             (r'^\s*#if.*?(?<!\\)\n', Comment, '#push'),

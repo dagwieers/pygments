@@ -5,7 +5,7 @@
 
     Lexers for misc. web stuff.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -85,7 +85,7 @@ class XQueryLexer(ExtendedRegexLexer):
     #                                 ur"[\u203F-\u2040]")
     ncnamechar = r"(?:" + ncnamestartchar + r"|-|\.|[0-9])"
     ncname = "(?:%s+%s*)" % (ncnamestartchar, ncnamechar)
-    pitarget_namestartchar = r"(?:[A-KN-WY-Z]|_|:|[a-kn-wy-z])"
+    pitarget_namestartchar = r"(?:[A-KN-WYZ]|_|:|[a-kn-wyz])"
     pitarget_namechar = r"(?:" + pitarget_namestartchar + r"|-|\.|[0-9])"
     pitarget = "%s+%s*" % (pitarget_namestartchar, pitarget_namechar)
     prefixedname = "%s:%s" % (ncname, ncname)
@@ -101,13 +101,13 @@ class XQueryLexer(ExtendedRegexLexer):
     # FIX UNICODE LATER
     # elementcontentchar = (ur'\t|\r|\n|[\u0020-\u0025]|[\u0028-\u003b]|'
     #                       ur'[\u003d-\u007a]|\u007c|[\u007e-\u007F]')
-    elementcontentchar = r'[A-Za-z]|\s|\d|[!"#$%\(\)\*\+,\-\./\:;=\?\@\[\\\]^_\'`\|~]'
+    elementcontentchar = r'[A-Za-z]|\s|\d|[!"#$%()*+,\-./:;=?@\[\\\]^_\'`|~]'
     # quotattrcontentchar = (ur'\t|\r|\n|[\u0020-\u0021]|[\u0023-\u0025]|'
     #                        ur'[\u0027-\u003b]|[\u003d-\u007a]|\u007c|[\u007e-\u007F]')
-    quotattrcontentchar = r'[A-Za-z]|\s|\d|[!#$%\(\)\*\+,\-\./\:;=\?\@\[\\\]^_\'`\|~]'
+    quotattrcontentchar = r'[A-Za-z]|\s|\d|[!#$%()*+,\-./:;=?@\[\\\]^_\'`|~]'
     # aposattrcontentchar = (ur'\t|\r|\n|[\u0020-\u0025]|[\u0028-\u003b]|'
     #                        ur'[\u003d-\u007a]|\u007c|[\u007e-\u007F]')
-    aposattrcontentchar = r'[A-Za-z]|\s|\d|[!"#$%\(\)\*\+,\-\./\:;=\?\@\[\\\]^_`\|~]'
+    aposattrcontentchar = r'[A-Za-z]|\s|\d|[!"#$%()*+,\-./:;=?@\[\\\]^_`|~]'
 
     # CHAR elements - fix the above elementcontentchar, quotattrcontentchar,
     #                 aposattrcontentchar
@@ -583,8 +583,8 @@ class XQueryLexer(ExtendedRegexLexer):
 
             # handle operator state
             # order on numbers matters - handle most complex first
-            (r'\d+(\.\d*)?[eE][\+\-]?\d+', Number.Float, 'operator'),
-            (r'(\.\d+)[eE][\+\-]?\d+', Number.Float, 'operator'),
+            (r'\d+(\.\d*)?[eE][+-]?\d+', Number.Float, 'operator'),
+            (r'(\.\d+)[eE][+-]?\d+', Number.Float, 'operator'),
             (r'(\.\d+|\d+\.\d*)', Number.Float, 'operator'),
             (r'(\d+)', Number.Integer, 'operator'),
             (r'(\.\.|\.|\))', Punctuation, 'operator'),
@@ -731,12 +731,13 @@ class QmlLexer(RegexLexer):
     # JavascriptLexer above.
 
     name = 'QML'
-    aliases = ['qml']
-    filenames = ['*.qml']
-    mimetypes = ['application/x-qml']
+    aliases = ['qml', 'qbs']
+    filenames = ['*.qml', '*.qbs']
+    mimetypes = ['application/x-qml', 'application/x-qt.qbs+qml']
 
     # pasted from JavascriptLexer, with some additions
-    flags = re.DOTALL
+    flags = re.DOTALL | re.MULTILINE
+
     tokens = {
         'commentsandwhitespace': [
             (r'\s+', Text),
@@ -758,14 +759,14 @@ class QmlLexer(RegexLexer):
             (r'^(?=\s|/|<!--)', Text, 'slashstartsregex'),
             include('commentsandwhitespace'),
             (r'\+\+|--|~|&&|\?|:|\|\||\\(?=\n)|'
-             r'(<<|>>>?|==?|!=?|[-<>+*%&\|\^/])=?', Operator, 'slashstartsregex'),
+             r'(<<|>>>?|==?|!=?|[-<>+*%&|^/])=?', Operator, 'slashstartsregex'),
             (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
             (r'[})\].]', Punctuation),
 
             # QML insertions
-            (r'\bid\s*:\s*[A-Za-z][_A-Za-z.0-9]*', Keyword.Declaration,
+            (r'\bid\s*:\s*[A-Za-z][\w.]*', Keyword.Declaration,
              'slashstartsregex'),
-            (r'\b[A-Za-z][_A-Za-z.0-9]*\s*:', Keyword, 'slashstartsregex'),
+            (r'\b[A-Za-z][\w.]*\s*:', Keyword, 'slashstartsregex'),
 
             # the rest from JavascriptLexer
             (r'(for|in|while|do|break|return|continue|switch|case|default|if|else|'
@@ -795,7 +796,7 @@ class QmlLexer(RegexLexer):
 class CirruLexer(RegexLexer):
     """
     Syntax rules of Cirru can be found at:
-    http://grammar.cirru.org/
+    http://cirru.org/
 
     * using ``()`` to markup blocks, but limited in the same line
     * using ``""`` to markup strings, allow ``\`` to escape
@@ -807,7 +808,7 @@ class CirruLexer(RegexLexer):
 
     name = 'Cirru'
     aliases = ['cirru']
-    filenames = ['*.cirru', '*.cr']
+    filenames = ['*.cirru']
     mimetypes = ['text/x-cirru']
     flags = re.MULTILINE
 
@@ -821,30 +822,27 @@ class CirruLexer(RegexLexer):
             (r'.', String.Escape, '#pop'),
         ],
         'function': [
-            (r'[\w-][^\s\(\)\"]*', Name.Function, '#pop'),
+            (r'[^\s"()]+', Name.Function, '#pop'),
             (r'\)', Operator, '#pop'),
             (r'(?=\n)', Text, '#pop'),
             (r'\(', Operator, '#push'),
             (r'"', String, ('#pop', 'string')),
-            (r'\s+', Text.Whitespace),
+            (r'[ ]+', Text.Whitespace),
             (r'\,', Operator, '#pop'),
         ],
         'line': [
-            (r'^\B', Text.Whitespace, 'function'),
             (r'\$', Operator, 'function'),
             (r'\(', Operator, 'function'),
             (r'\)', Operator),
-            (r'(?=\n)', Text, '#pop'),
             (r'\n', Text, '#pop'),
             (r'"', String, 'string'),
-            (r'\s+', Text.Whitespace),
-            (r'[\d\.]+', Number),
-            (r'[\w-][^\"\(\)\s]*', Name.Variable),
-            (r'--', Comment.Single)
+            (r'[ ]+', Text.Whitespace),
+            (r'[+-]?[\d.]+\b', Number),
+            (r'[^\s"()]+', Name.Variable)
         ],
         'root': [
-            (r'^\s*', Text.Whitespace, ('line', 'function')),
-            (r'^\s+$', Text.Whitespace),
+            (r'^\n+', Text.Whitespace),
+            default(('line', 'function')),
         ]
     }
 
@@ -910,9 +908,9 @@ class SlimLexer(ExtendedRegexLexer):
 
         'html-attributes': [
             (r'=', Punctuation),
-            (r'"[^\"]+"', using(RubyLexer), 'tag'),
+            (r'"[^"]+"', using(RubyLexer), 'tag'),
             (r'\'[^\']+\'', using(RubyLexer), 'tag'),
-            (r'[\w]+', Text, 'tag'),
+            (r'\w+', Text, 'tag'),
         ],
 
         'slim-comment-block': [

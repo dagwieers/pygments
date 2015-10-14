@@ -5,7 +5,7 @@
 
     Lexers for PHP and related languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -57,7 +57,7 @@ class ZephirLexer(RegexLexer):
             (r'^(?=\s|/|<!--)', Text, 'slashstartsregex'),
             include('commentsandwhitespace'),
             (r'\+\+|--|~|&&|\?|:|\|\||\\(?=\n)|'
-             r'(<<|>>>?|==?|!=?|->|[-<>+*%&\|\^/])=?', Operator, 'slashstartsregex'),
+             r'(<<|>>>?|==?|!=?|->|[-<>+*%&|^/])=?', Operator, 'slashstartsregex'),
             (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
             (r'[})\].]', Punctuation),
             (r'(for|in|while|do|break|return|continue|switch|case|default|if|else|loop|'
@@ -148,7 +148,8 @@ class PhpLexer(RegexLexer):
             (r'/\*.*?\*/', Comment.Multiline),
             (r'(->|::)(\s*)(' + _ident_inner + ')',
              bygroups(Operator, Text, Name.Attribute)),
-            (r'[~!%^&*+=|:.<>/?@-]+', Operator),
+            (r'[~!%^&*+=|:.<>/@-]+', Operator),
+            (r'\?', Operator),  # don't add to the charclass above!
             (r'[\[\]{}();,]+', Punctuation),
             (r'(class)(\s+)', bygroups(Keyword, Text), 'classname'),
             (r'(function)(\s*)(?=\()', bygroups(Keyword, Text)),
@@ -171,10 +172,10 @@ class PhpLexer(RegexLexer):
             (r'\$\{\$+' + _ident_inner + '\}', Name.Variable),
             (r'\$+' + _ident_inner, Name.Variable),
             (_ident_inner, Name.Other),
-            (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
-            (r'\d+[eE][+-]?[0-9]+', Number.Float),
+            (r'(\d+\.\d*|\d*\.\d+)(e[+-]?[0-9]+)?', Number.Float),
+            (r'\d+e[+-]?[0-9]+', Number.Float),
             (r'0[0-7]+', Number.Oct),
-            (r'0[xX][a-f0-9]+', Number.Hex),
+            (r'0x[a-f0-9]+', Number.Hex),
             (r'\d+', Number.Integer),
             (r'0b[01]+', Number.Bin),
             (r"'([^'\\]*(?:\\.[^'\\]*)*)'", String.Single),
@@ -190,7 +191,7 @@ class PhpLexer(RegexLexer):
         'string': [
             (r'"', String.Double, '#pop'),
             (r'[^{$"\\]+', String.Double),
-            (r'\\([nrt\"$\\]|[0-7]{1,3}|x[0-9a-f]{1,2})', String.Escape),
+            (r'\\([nrt"$\\]|[0-7]{1,3}|x[0-9a-f]{1,2})', String.Escape),
             (r'\$' + _ident_inner + '(\[\S+?\]|->' + _ident_inner + ')?',
              String.Interpol),
             (r'(\{\$\{)(.*?)(\}\})',
@@ -241,6 +242,4 @@ class PhpLexer(RegexLexer):
         rv = 0.0
         if re.search(r'<\?(?!xml)', text):
             rv += 0.3
-        if '?>' in text:
-            rv += 0.1
         return rv

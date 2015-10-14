@@ -5,20 +5,25 @@
 
     Lexer for resource definition files.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 import re
 
 from pygments.lexer import RegexLexer, bygroups, words
-from pygments.token import Comment, String, Number, Operator, Text, Keyword, \
-    Name, String
+from pygments.token import Comment, String, Number, Operator, Text, \
+    Keyword, Name
 
 __all__ = ['ResourceLexer']
 
 
 class ResourceLexer(RegexLexer):
+    """Lexer for `ICU Resource bundles
+    <http://userguide.icu-project.org/locale/resources>`_.
+
+    .. versionadded:: 2.0
+    """
     name = 'ResourceBundle'
     aliases = ['resource', 'resourcebundle']
     filenames = ['*.txt']

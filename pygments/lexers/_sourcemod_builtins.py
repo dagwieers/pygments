@@ -8,7 +8,7 @@
 
     Do not edit the FUNCTIONS list by hand.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -1091,7 +1091,9 @@ FUNCTIONS = (
     'SDKCall',
     'GetPlayerResourceEntity',
 )
-if __name__ == '__main__':
+
+
+if __name__ == '__main__':  # pragma: no cover
     import re
     import sys
     try:

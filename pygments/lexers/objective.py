@@ -5,16 +5,16 @@
 
     Lexers for Objective-C family languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 import re
 
-from pygments.lexer import include, bygroups, using, this, words, inherit, \
-    default
+from pygments.lexer import RegexLexer, include, bygroups, using, this, words, \
+    inherit, default
 from pygments.token import Text, Keyword, Name, String, Operator, \
-    Number, Punctuation, Literal
+    Number, Punctuation, Literal, Comment
 
 from pygments.lexers.c_cpp import CLexer, CppLexer
 
@@ -280,7 +280,7 @@ class LogosLexer(ObjectiveCppLexer):
         return 0
 
 
-class SwiftLexer(ObjectiveCLexer):
+class SwiftLexer(RegexLexer):
     """
     For `Swift <https://developer.apple.com/swift/>`_ source.
 
@@ -291,33 +291,211 @@ class SwiftLexer(ObjectiveCLexer):
     aliases = ['swift']
     mimetypes = ['text/x-swift']
 
-    keywords_decl = set(('class', 'deinit', 'enum', 'extension', 'func', 'import',
-                         'init', 'let', 'protocol', 'static', 'struct', 'subscript',
-                         'typealias', 'var'))
-    keywords_stmt = set(('break', 'case', 'continue', 'default', 'do', 'else',
-                         'fallthrough', 'if', 'in', 'for', 'return', 'switch',
-                         'where', 'while'))
-    keywords_type = set(('as', 'dynamicType', 'is', 'new', 'super', 'self', 'Self',
-                         'Type', '__COLUMN__', '__FILE__', '__FUNCTION__',
-                         '__LINE__'))
-    keywords_resrv = set(('associativity', 'didSet', 'get', 'infix', 'inout', 'left',
-                          'mutating', 'none', 'nonmutating', 'operator', 'override',
-                          'postfix', 'precedence', 'prefix', 'right', 'set',
-                          'unowned', 'unowned(safe)', 'unowned(unsafe)', 'weak',
-                          'willSet'))
-    operators = set(('->',))
+    tokens = {
+        'root': [
+            # Whitespace and Comments
+            (r'\n', Text),
+            (r'\s+', Text),
+            (r'//', Comment.Single, 'comment-single'),
+            (r'/\*', Comment.Multiline, 'comment-multi'),
+            (r'#(if|elseif|else|endif)\b', Comment.Preproc, 'preproc'),
+
+            # Keywords
+            include('keywords'),
+
+            # Global Types
+            (words((
+                'Array', 'AutoreleasingUnsafeMutablePointer', 'BidirectionalReverseView',
+                'Bit', 'Bool', 'CFunctionPointer', 'COpaquePointer', 'CVaListPointer',
+                'Character', 'ClosedInterval', 'CollectionOfOne', 'ContiguousArray',
+                'Dictionary', 'DictionaryGenerator', 'DictionaryIndex', 'Double',
+                'EmptyCollection', 'EmptyGenerator', 'EnumerateGenerator',
+                'EnumerateSequence', 'FilterCollectionView',
+                'FilterCollectionViewIndex', 'FilterGenerator', 'FilterSequenceView',
+                'Float', 'Float80', 'FloatingPointClassification', 'GeneratorOf',
+                'GeneratorOfOne', 'GeneratorSequence', 'HalfOpenInterval', 'HeapBuffer',
+                'HeapBufferStorage', 'ImplicitlyUnwrappedOptional', 'IndexingGenerator',
+                'Int', 'Int16', 'Int32', 'Int64', 'Int8', 'LazyBidirectionalCollection',
+                'LazyForwardCollection', 'LazyRandomAccessCollection',
+                'LazySequence', 'MapCollectionView', 'MapSequenceGenerator',
+                'MapSequenceView', 'MirrorDisposition', 'ObjectIdentifier', 'OnHeap',
+                'Optional', 'PermutationGenerator', 'QuickLookObject',
+                'RandomAccessReverseView', 'Range', 'RangeGenerator', 'RawByte', 'Repeat',
+                'ReverseBidirectionalIndex', 'ReverseRandomAccessIndex', 'SequenceOf',
+                'SinkOf', 'Slice', 'StaticString', 'StrideThrough', 'StrideThroughGenerator',
+                'StrideTo', 'StrideToGenerator', 'String', 'UInt', 'UInt16', 'UInt32',
+                'UInt64', 'UInt8', 'UTF16', 'UTF32', 'UTF8', 'UnicodeDecodingResult',
+                'UnicodeScalar', 'Unmanaged', 'UnsafeBufferPointer',
+                'UnsafeBufferPointerGenerator', 'UnsafeMutableBufferPointer',
+                'UnsafeMutablePointer', 'UnsafePointer', 'Zip2', 'ZipGenerator2',
+                # Protocols
+                'AbsoluteValuable', 'AnyObject', 'ArrayLiteralConvertible',
+                'BidirectionalIndexType', 'BitwiseOperationsType',
+                'BooleanLiteralConvertible', 'BooleanType', 'CVarArgType',
+                'CollectionType', 'Comparable', 'DebugPrintable',
+                'DictionaryLiteralConvertible', 'Equatable',
+                'ExtendedGraphemeClusterLiteralConvertible',
+                'ExtensibleCollectionType', 'FloatLiteralConvertible',
+                'FloatingPointType', 'ForwardIndexType', 'GeneratorType', 'Hashable',
+                'IntegerArithmeticType', 'IntegerLiteralConvertible', 'IntegerType',
+                'IntervalType', 'MirrorType', 'MutableCollectionType', 'MutableSliceable',
+                'NilLiteralConvertible', 'OutputStreamType', 'Printable',
+                'RandomAccessIndexType', 'RangeReplaceableCollectionType',
+                'RawOptionSetType', 'RawRepresentable', 'Reflectable', 'SequenceType',
+                'SignedIntegerType', 'SignedNumberType', 'SinkType', 'Sliceable',
+                'Streamable', 'Strideable', 'StringInterpolationConvertible',
+                'StringLiteralConvertible', 'UnicodeCodecType',
+                'UnicodeScalarLiteralConvertible', 'UnsignedIntegerType',
+                '_ArrayBufferType', '_BidirectionalIndexType', '_CocoaStringType',
+                '_CollectionType', '_Comparable', '_ExtensibleCollectionType',
+                '_ForwardIndexType', '_Incrementable', '_IntegerArithmeticType',
+                '_IntegerType', '_ObjectiveCBridgeable', '_RandomAccessIndexType',
+                '_RawOptionSetType', '_SequenceType', '_Sequence_Type',
+                '_SignedIntegerType', '_SignedNumberType', '_Sliceable', '_Strideable',
+                '_SwiftNSArrayRequiredOverridesType', '_SwiftNSArrayType',
+                '_SwiftNSCopyingType', '_SwiftNSDictionaryRequiredOverridesType',
+                '_SwiftNSDictionaryType', '_SwiftNSEnumeratorType',
+                '_SwiftNSFastEnumerationType', '_SwiftNSStringRequiredOverridesType',
+                '_SwiftNSStringType', '_UnsignedIntegerType',
+                # Variables
+                'C_ARGC', 'C_ARGV', 'Process',
+                # Typealiases
+                'Any', 'AnyClass', 'BooleanLiteralType', 'CBool', 'CChar', 'CChar16',
+                'CChar32', 'CDouble', 'CFloat', 'CInt', 'CLong', 'CLongLong', 'CShort',
+                'CSignedChar', 'CUnsignedInt', 'CUnsignedLong', 'CUnsignedShort',
+                'CWideChar', 'ExtendedGraphemeClusterType', 'Float32', 'Float64',
+                'FloatLiteralType', 'IntMax', 'IntegerLiteralType', 'StringLiteralType',
+                'UIntMax', 'UWord', 'UnicodeScalarType', 'Void', 'Word',
+                # Foundation/Cocoa
+                'NSErrorPointer', 'NSObjectProtocol', 'Selector'), suffix=r'\b'),
+             Name.Builtin),
+            # Functions
+            (words((
+                'abs', 'advance', 'alignof', 'alignofValue', 'assert', 'assertionFailure',
+                'contains', 'count', 'countElements', 'debugPrint', 'debugPrintln',
+                'distance', 'dropFirst', 'dropLast', 'dump', 'enumerate', 'equal',
+                'extend', 'fatalError', 'filter', 'find', 'first', 'getVaList', 'indices',
+                'insert', 'isEmpty', 'join', 'last', 'lazy', 'lexicographicalCompare',
+                'map', 'max', 'maxElement', 'min', 'minElement', 'numericCast', 'overlaps',
+                'partition', 'precondition', 'preconditionFailure', 'prefix', 'print',
+                'println', 'reduce', 'reflect', 'removeAll', 'removeAtIndex', 'removeLast',
+                'removeRange', 'reverse', 'sizeof', 'sizeofValue', 'sort', 'sorted',
+                'splice', 'split', 'startsWith', 'stride', 'strideof', 'strideofValue',
+                'suffix', 'swap', 'toDebugString', 'toString', 'transcode',
+                'underestimateCount', 'unsafeAddressOf', 'unsafeBitCast', 'unsafeDowncast',
+                'withExtendedLifetime', 'withUnsafeMutablePointer',
+                'withUnsafeMutablePointers', 'withUnsafePointer', 'withUnsafePointers',
+                'withVaList'), suffix=r'\b'),
+             Name.Builtin.Pseudo),
+
+            # Implicit Block Variables
+            (r'\$\d+', Name.Variable),
+
+            # Binary Literal
+            (r'0b[01_]+', Number.Bin),
+            # Octal Literal
+            (r'0o[0-7_]+', Number.Oct),
+            # Hexadecimal Literal
+            (r'0x[0-9a-fA-F_]+', Number.Hex),
+            # Decimal Literal
+            (r'[0-9][0-9_]*(\.[0-9_]+[eE][+\-]?[0-9_]+|'
+             r'\.[0-9_]*|[eE][+\-]?[0-9_]+)', Number.Float),
+            (r'[0-9][0-9_]*', Number.Integer),
+            # String Literal
+            (r'"', String, 'string'),
+
+            # Operators and Punctuation
+            (r'[(){}\[\].,:;=@#`?]|->|[<&?](?=\w)|(?<=\w)[>!?]', Punctuation),
+            (r'[/=\-+!*%<>&|^?~]+', Operator),
+
+            # Identifier
+            (r'[a-zA-Z_]\w*', Name)
+        ],
+        'keywords': [
+            (words((
+                'break', 'case', 'continue', 'default', 'do', 'else',
+                'fallthrough', 'for', 'if', 'in', 'return', 'switch', 'where',
+                'while'), suffix=r'\b'),
+             Keyword),
+            (r'@availability\([^)]+\)', Keyword.Reserved),
+            (words((
+                'associativity', 'convenience', 'dynamic', 'didSet', 'final',
+                'get', 'infix', 'inout', 'lazy', 'left', 'mutating', 'none',
+                'nonmutating', 'optional', 'override', 'postfix', 'precedence',
+                'prefix', 'Protocol', 'required', 'right', 'set', 'Type',
+                'unowned', 'weak', 'willSet', '@availability', '@autoclosure',
+                '@noreturn', '@NSApplicationMain', '@NSCopying', '@NSManaged',
+                '@objc', '@UIApplicationMain', '@IBAction', '@IBDesignable',
+                '@IBInspectable', '@IBOutlet'), suffix=r'\b'),
+             Keyword.Reserved),
+            (r'(as|dynamicType|false|is|nil|self|Self|super|true|__COLUMN__'
+             r'|__FILE__|__FUNCTION__|__LINE__|_)\b', Keyword.Constant),
+            (r'import\b', Keyword.Declaration, 'module'),
+            (r'(class|enum|extension|struct|protocol)(\s+)([a-zA-Z_]\w*)',
+             bygroups(Keyword.Declaration, Text, Name.Class)),
+            (r'(func)(\s+)([a-zA-Z_]\w*)',
+             bygroups(Keyword.Declaration, Text, Name.Function)),
+            (r'(var|let)(\s+)([a-zA-Z_]\w*)', bygroups(Keyword.Declaration,
+             Text, Name.Variable)),
+            (words((
+                'class', 'deinit', 'enum', 'extension', 'func', 'import', 'init',
+                'internal', 'let', 'operator', 'private', 'protocol', 'public',
+                'static', 'struct', 'subscript', 'typealias', 'var'), suffix=r'\b'),
+             Keyword.Declaration)
+        ],
+        'comment': [
+            (r':param: [a-zA-Z_]\w*|:returns?:|(FIXME|MARK|TODO):',
+             Comment.Special)
+        ],
+
+        # Nested
+        'comment-single': [
+            (r'\n', Text, '#pop'),
+            include('comment'),
+            (r'[^\n]', Comment.Single)
+        ],
+        'comment-multi': [
+            include('comment'),
+            (r'[^*/]', Comment.Multiline),
+            (r'/\*', Comment.Multiline, '#push'),
+            (r'\*/', Comment.Multiline, '#pop'),
+            (r'[*/]', Comment.Multiline)
+        ],
+        'module': [
+            (r'\n', Text, '#pop'),
+            (r'[a-zA-Z_]\w*', Name.Class),
+            include('root')
+        ],
+        'preproc': [
+            (r'\n', Text, '#pop'),
+            include('keywords'),
+            (r'[A-Za-z]\w*', Comment.Preproc),
+            include('root')
+        ],
+        'string': [
+            (r'\\\(', String.Interpol, 'string-intp'),
+            (r'"', String, '#pop'),
+            (r"""\\['"\\nrt]|\\x[0-9a-fA-F]{2}|\\[0-7]{1,3}"""
+             r"""|\\u[0-9a-fA-F]{4}|\\U[0-9a-fA-F]{8}""", String.Escape),
+            (r'[^\\"]+', String),
+            (r'\\', String)
+        ],
+        'string-intp': [
+            (r'\(', String.Interpol, '#push'),
+            (r'\)', String.Interpol, '#pop'),
+            include('root')
+        ]
+    }
 
     def get_tokens_unprocessed(self, text):
-        for index, token, value in ObjectiveCLexer.get_tokens_unprocessed(self, text):
-            if token is Name:
-                if value in self.keywords_decl:
-                    token = Keyword
-                elif value in self.keywords_stmt:
-                    token = Keyword
-                elif value in self.keywords_type:
-                    token = Keyword.Type
-                elif value in self.keywords_resrv:
-                    token = Keyword.Reserved
-                elif value in self.operators:
-                    token = Operator
+        from pygments.lexers._cocoa_builtins import COCOA_INTERFACES, \
+            COCOA_PROTOCOLS, COCOA_PRIMITIVES
+
+        for index, token, value in \
+                RegexLexer.get_tokens_unprocessed(self, text):
+            if token is Name or token is Name.Class:
+                if value in COCOA_INTERFACES or value in COCOA_PROTOCOLS \
+                   or value in COCOA_PRIMITIVES:
+                    token = Name.Builtin.Pseudo
+
             yield index, token, value

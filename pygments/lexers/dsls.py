@@ -5,13 +5,13 @@
 
     Lexers for various domain-specific languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
 import re
 
-from pygments.lexer import RegexLexer, bygroups, words, include
+from pygments.lexer import RegexLexer, bygroups, words, include, default
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
     Number, Punctuation, Literal
 
@@ -34,7 +34,7 @@ class ProtoBufLexer(RegexLexer):
     tokens = {
         'root': [
             (r'[ \t]+', Text),
-            (r'[,;{}\[\]\(\)]', Punctuation),
+            (r'[,;{}\[\]()]', Punctuation),
             (r'/(\\\n)?/(\n|(.|\n)*?[^\\]\n)', Comment.Single),
             (r'/(\\\n)?\*(.|\n)*?\*(\\\n)?/', Comment.Multiline),
             (words((
@@ -53,7 +53,8 @@ class ProtoBufLexer(RegexLexer):
              bygroups(Keyword.Declaration, Text), 'message'),
             (r'(enum|group|service)(\s+)',
              bygroups(Keyword.Declaration, Text), 'type'),
-            (r'\".*\"', String),
+            (r'\".*?\"', String),
+            (r'\'.*?\'', String),
             (r'(\d+\.\d*|\.\d+|\d+)[eE][+-]?\d+[LlUu]*', Number.Float),
             (r'(\d+\.\d*|\.\d+|\d+[fF])[fF]?', Number.Float),
             (r'(\-?(inf|nan))\b', Number.Float),
@@ -61,18 +62,21 @@ class ProtoBufLexer(RegexLexer):
             (r'0[0-7]+[LlUu]*', Number.Oct),
             (r'\d+[LlUu]*', Number.Integer),
             (r'[+-=]', Operator),
-            (r'([a-zA-Z_][\w\.]*)([ \t]*)(=)',
+            (r'([a-zA-Z_][\w.]*)([ \t]*)(=)',
              bygroups(Name.Attribute, Text, Operator)),
-            ('[a-zA-Z_][\w\.]*', Name),
+            ('[a-zA-Z_][\w.]*', Name),
         ],
         'package': [
-            (r'[a-zA-Z_]\w*', Name.Namespace, '#pop')
+            (r'[a-zA-Z_]\w*', Name.Namespace, '#pop'),
+            default('#pop'),
         ],
         'message': [
-            (r'[a-zA-Z_]\w*', Name.Class, '#pop')
+            (r'[a-zA-Z_]\w*', Name.Class, '#pop'),
+            default('#pop'),
         ],
         'type': [
-            (r'[a-zA-Z_]\w*', Name, '#pop')
+            (r'[a-zA-Z_]\w*', Name, '#pop'),
+            default('#pop'),
         ],
     }
 
@@ -87,7 +91,7 @@ class BroLexer(RegexLexer):
     aliases = ['bro']
     filenames = ['*.bro']
 
-    _hex = r'[0-9a-fA-F_]+'
+    _hex = r'[0-9a-fA-F_]'
     _float = r'((\d*\.?\d+)|(\d+\.?\d*))([eE][-+]?\d+)?'
     _h = r'[A-Za-z0-9][-A-Za-z0-9]*'
 
@@ -136,7 +140,7 @@ class BroLexer(RegexLexer):
             (r'[{}()\[\]$.,;]', Punctuation),
             # Identfier
             (r'([_a-zA-Z]\w*)(::)', bygroups(Name, Name.Namespace)),
-            (r'[a-zA-Z_][a-zA-Z_0-9]*', Name)
+            (r'[a-zA-Z_]\w*', Name)
         ],
         'string': [
             (r'"', String, '#pop'),
@@ -366,7 +370,7 @@ class VGLLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'\{[^\}]*\}', Comment.Multiline),
+            (r'\{[^}]*\}', Comment.Multiline),
             (r'declare', Keyword.Constant),
             (r'(if|then|else|endif|while|do|endwhile|and|or|prompt|object'
              r'|create|on|line|with|global|routine|value|endroutine|constant'
@@ -374,11 +378,11 @@ class VGLLexer(RegexLexer):
              r'|delete|enable|windows|name|notprotected)(?! *[=<>.,()])',
              Keyword),
             (r'(true|false|null|empty|error|locked)', Keyword.Constant),
-            (r'[~\^\*\#!%&\[\]\(\)<>\|+=:;,./?-]', Operator),
+            (r'[~^*#!%&\[\]()<>|+=:;,./?-]', Operator),
             (r'"[^"]*"', String),
-            (r'(\.)([a-z_\$][\w\$]*)', bygroups(Operator, Name.Attribute)),
+            (r'(\.)([a-z_$][\w$]*)', bygroups(Operator, Name.Attribute)),
             (r'[0-9][0-9]*(\.[0-9]+(e[+\-]?[0-9]+)?)?', Number),
-            (r'[a-z_\$][\w\$]*', Name),
+            (r'[a-z_$][\w$]*', Name),
             (r'[\r\n]+', Text),
             (r'\s+', Text)
         ]
@@ -399,7 +403,7 @@ class AlloyLexer(RegexLexer):
 
     flags = re.MULTILINE | re.DOTALL
 
-    iden_rex = r'[a-zA-Z_][a-zA-Z0-9_\']*'
+    iden_rex = r'[a-zA-Z_][\w\']*'
     text_tuple = (r'[^\S\n]+', Text)
 
     tokens = {
@@ -435,7 +439,7 @@ class AlloyLexer(RegexLexer):
             (r'(and|or|implies|iff|in)\b', Operator.Word),
             (r'(fun|pred|fact|assert)(\s+)', bygroups(Keyword, Text), 'fun'),
             (r'!|#|&&|\+\+|<<|>>|>=|<=>|<=|\.|->', Operator),
-            (r'[-+/*%=<>&!^|~\{\}\[\]\(\)\.]', Operator),
+            (r'[-+/*%=<>&!^|~{}\[\]().]', Operator),
             (iden_rex, Name),
             (r'[:,]', Punctuation),
             (r'[0-9]+', Number.Integer),
@@ -475,8 +479,8 @@ class PanLexer(RegexLexer):
                 'file_contents', 'format', 'index', 'length', 'match', 'matches', 'replace',
                 'splice', 'split', 'substr', 'to_lowercase', 'to_uppercase', 'debug', 'error',
                 'traceback', 'deprecated', 'base64_decode', 'base64_encode', 'digest', 'escape',
-                'unescape', 'append', 'create', 'first', 'nlist', 'key', 'length', 'list', 'merge', 'next',
-                'prepend', 'splice', 'is_boolean', 'is_defined', 'is_double', 'is_list', 'is_long',
+                'unescape', 'append', 'create', 'first', 'nlist', 'key', 'list', 'merge', 'next',
+                'prepend', 'is_boolean', 'is_defined', 'is_double', 'is_list', 'is_long',
                 'is_nlist', 'is_null', 'is_number', 'is_property', 'is_resource', 'is_string',
                 'to_boolean', 'to_double', 'to_long', 'to_string', 'clone', 'delete', 'exists',
                 'path_exists', 'if_exists', 'return', 'value'), prefix=r'\b', suffix=r'\s*\b'),

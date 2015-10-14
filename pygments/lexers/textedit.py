@@ -5,7 +5,7 @@
 
     Lexers for languages related to text processing.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -52,7 +52,7 @@ class AwkLexer(RegexLexer):
             (r'^(?=\s|/)', Text, 'slashstartsregex'),
             include('commentsandwhitespace'),
             (r'\+\+|--|\|\||&&|in\b|\$|!?~|'
-             r'(\*\*|[-<>+*%\^/!=])=?', Operator, 'slashstartsregex'),
+             r'(\*\*|[-<>+*%\^/!=|])=?', Operator, 'slashstartsregex'),
             (r'[{(\[;,]', Punctuation, 'slashstartsregex'),
             (r'[})\].]', Punctuation),
             (r'(break|continue|do|while|exit|for|if|else|'
@@ -62,9 +62,9 @@ class AwkLexer(RegexLexer):
              r'length|match|split|sprintf|sub|substr|tolower|toupper|close|'
              r'fflush|getline|next|nextfile|print|printf|strftime|systime|'
              r'delete|system)\b', Keyword.Reserved),
-            (r'(ARGC|ARGIND|ARGV|CONVFMT|ENVIRON|ERRNO|FIELDWIDTHS|FILENAME|FNR|FS|'
-             r'IGNORECASE|NF|NR|OFMT|OFS|ORFS|RLENGTH|RS|RSTART|RT|'
-             r'SUBSEP)\b', Name.Builtin),
+            (r'(ARGC|ARGIND|ARGV|BEGIN|CONVFMT|ENVIRON|END|ERRNO|FIELDWIDTHS|'
+             r'FILENAME|FNR|FS|IGNORECASE|NF|NR|OFMT|OFS|ORFS|RLENGTH|RS|'
+             r'RSTART|RT|SUBSEP)\b', Name.Builtin),
             (r'[$a-zA-Z_]\w*', Name.Other),
             (r'[0-9][0-9]*\.[0-9]+([eE][0-9]+)?[fd]?', Number.Float),
             (r'0x[0-9a-fA-F]+', Number.Hex),

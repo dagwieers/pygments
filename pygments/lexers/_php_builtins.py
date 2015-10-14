@@ -12,7 +12,7 @@
              internet connection. don't run that at home, use
              a server ;-)
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -4672,7 +4672,8 @@ MODULES = {'.NET': ('dotnet_load',),
            'xdiff_string_patch',
            'xdiff_string_rabdiff')}
 
-if __name__ == '__main__':
+
+if __name__ == '__main__':  # pragma: no cover
     import glob
     import os
     import pprint

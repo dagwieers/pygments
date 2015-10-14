@@ -5,7 +5,7 @@
 
     Lexers for graph query languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -61,12 +61,13 @@ class CypherLexer(RegexLexer):
         'relations': [
             (r'(-\[)(.*?)(\]->)', bygroups(Operator, using(this), Operator)),
             (r'(<-\[)(.*?)(\]-)', bygroups(Operator, using(this), Operator)),
+            (r'(-\[)(.*?)(\]-)', bygroups(Operator, using(this), Operator)),
             (r'-->|<--|\[|\]', Operator),
             (r'<|>|<>|=|<=|=>|\(|\)|\||:|,|;', Punctuation),
             (r'[.*{}]', Punctuation),
         ],
         'strings': [
-            (r'"(?:\\[tbnrf\'\"\\]|[^\\"])*"', String),
+            (r'"(?:\\[tbnrf\'"\\]|[^\\"])*"', String),
             (r'`(?:``|[^`])+`', Name.Variable),
         ],
         'whitespace': [

@@ -5,7 +5,7 @@
 
     Lexers for the Ooc language.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -66,7 +66,7 @@ class OocLexer(RegexLexer):
             (r'[0-9_]\.[0-9_]*(?!\.)', Number.Float),
             (r'[0-9_]+', Number.Decimal),
 
-            (r'"(?:\\.|\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\\"])*"',
+            (r'"(?:\\.|\\[0-7]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\"])*"',
              String.Double),
             (r"'(?:\\.|\\[0-9]{1,3}|\\x[a-fA-F0-9]{1,2}|[^\\\'\n])'",
              String.Char),

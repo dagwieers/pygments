@@ -6,7 +6,7 @@
     Sphinx extension to generate automatic documentation of lexers,
     formatters and filters.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -133,8 +133,8 @@ class PygmentsDoc(Directive):
             if isinstance(docstring, bytes):
                 docstring = docstring.decode('utf8')
             heading = cls.__name__
-            out.append(FMTERDOC % (heading, ', '.join(data[1]) or 'None',
-                                   ', '.join(data[2]).replace('*', '\\*') or 'None',
+            out.append(FMTERDOC % (heading, ', '.join(data[2]) or 'None',
+                                   ', '.join(data[3]).replace('*', '\\*') or 'None',
                                    docstring))
         return ''.join(out)
 

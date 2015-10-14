@@ -5,7 +5,7 @@
 
     Pygments lexers.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -18,7 +18,7 @@ from os.path import basename
 from pygments.lexers._mapping import LEXERS
 from pygments.modeline import get_filetype_from_buffer
 from pygments.plugin import find_plugin_lexers
-from pygments.util import ClassNotFound, itervalues
+from pygments.util import ClassNotFound, itervalues, guess_decode
 
 
 __all__ = ['get_lexer_by_name', 'get_lexer_for_filename', 'find_lexer_class',
@@ -88,7 +88,7 @@ def get_lexer_by_name(_alias, **options):
             return _lexer_cache[name](**options)
     # continue with lexers from setuptools entrypoints
     for cls in find_plugin_lexers():
-        if _alias in cls.aliases:
+        if _alias.lower() in cls.aliases:
             return cls(**options)
     raise ClassNotFound('no lexer for alias %r found' % _alias)
 
@@ -116,7 +116,7 @@ def find_lexer_class_for_filename(_fn, code=None):
 
     if sys.version_info > (3,) and isinstance(code, bytes):
         # decode it, since all analyse_text functions expect unicode
-        code = code.decode('latin1')
+        code = guess_decode(code)
 
     def get_rating(info):
         cls, filename = info
@@ -195,16 +195,17 @@ def guess_lexer_for_filename(_fn, _text, **options):
         <pygments.lexers.templates.CssPhpLexer object at 0xb7ba518c>
     """
     fn = basename(_fn)
-    primary = None
+    primary = {}
     matching_lexers = set()
     for lexer in _iter_lexerclasses():
         for filename in lexer.filenames:
             if _fn_matches(fn, filename):
                 matching_lexers.add(lexer)
-                primary = lexer
+                primary[lexer] = True
         for filename in lexer.alias_filenames:
             if _fn_matches(fn, filename):
                 matching_lexers.add(lexer)
+                primary[lexer] = False
     if not matching_lexers:
         raise ClassNotFound('no lexer for filename %r found' % fn)
     if len(matching_lexers) == 1:
@@ -216,14 +217,15 @@ def guess_lexer_for_filename(_fn, _text, **options):
             return lexer(**options)
         result.append((rv, lexer))
 
-    # since py3 can no longer sort by class name by default, here is the
-    # sorting function that works in both
-    def type_sort(type_):
-        return (type_[0], type_[1].__name__)
+    def type_sort(t):
+        # sort by:
+        # - analyse score
+        # - is primary filename pattern?
+        # - priority
+        # - last resort: class name
+        return (t[0], primary[t[1]], t[1].priority, t[1].__name__)
     result.sort(key=type_sort)
 
-    if not result[-1][0] and primary is not None:
-        return primary(**options)
     return result[-1][1](**options)
 
 

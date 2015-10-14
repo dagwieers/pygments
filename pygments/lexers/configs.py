@@ -5,7 +5,7 @@
 
     Lexers for configuration file formats.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -18,7 +18,8 @@ from pygments.lexers.shell import BashLexer
 
 __all__ = ['IniLexer', 'RegeditLexer', 'PropertiesLexer', 'KconfigLexer',
            'Cfengine3Lexer', 'ApacheConfLexer', 'SquidConfLexer',
-           'NginxConfLexer', 'LighttpdConfLexer', 'DockerLexer']
+           'NginxConfLexer', 'LighttpdConfLexer', 'DockerLexer',
+           'TerraformLexer']
 
 
 class IniLexer(RegexLexer):
@@ -240,9 +241,9 @@ class Cfengine3Lexer(RegexLexer):
              bygroups(Keyword.Reserved, Text, Operator, Text)),
             (r'"', String, 'string'),
             (r'(\w+)(\()', bygroups(Name.Function, Punctuation)),
-            (r'([\w.!&|\(\)]+)(::)', bygroups(Name.Class, Punctuation)),
+            (r'([\w.!&|()]+)(::)', bygroups(Name.Class, Punctuation)),
             (r'(\w+)(:)', bygroups(Keyword.Declaration, Punctuation)),
-            (r'@[\{\(][^\)\}]+[\}\)]', Name.Variable),
+            (r'@[{(][^)}]+[})]', Name.Variable),
             (r'[(){},;]', Punctuation),
             (r'=>', Operator),
             (r'->', Operator),
@@ -252,16 +253,16 @@ class Cfengine3Lexer(RegexLexer):
             (r'\s+', Text),
         ],
         'string': [
-            (r'\$[\{\(]', String.Interpol, 'interpol'),
+            (r'\$[{(]', String.Interpol, 'interpol'),
             (r'\\.', String.Escape),
             (r'"', String, '#pop'),
             (r'\n', String),
             (r'.', String),
         ],
         'interpol': [
-            (r'\$[\{\(]', String.Interpol, '#push'),
-            (r'[\}\)]', String.Interpol, '#pop'),
-            (r'[^\$\{\(\)\}]+', String.Interpol),
+            (r'\$[{(]', String.Interpol, '#push'),
+            (r'[})]', String.Interpol, '#pop'),
+            (r'[^${()}]+', String.Interpol),
         ],
         'arglist': [
             (r'\)', Punctuation, '#pop'),
@@ -369,10 +370,10 @@ class SquidConfLexer(RegexLexer):
         "netdb_ping_rate", "never_direct", "no_cache", "passthrough_proxy",
         "pconn_timeout", "pid_filename", "pinger_program", "positive_dns_ttl",
         "prefer_direct", "proxy_auth", "proxy_auth_realm", "query_icmp",
-        "quick_abort", "quick_abort", "quick_abort_max", "quick_abort_min",
+        "quick_abort", "quick_abort_max", "quick_abort_min",
         "quick_abort_pct", "range_offset_limit", "read_timeout",
         "redirect_children", "redirect_program",
-        "redirect_rewrites_host_header", "reference_age", "reference_age",
+        "redirect_rewrites_host_header", "reference_age",
         "refresh_pattern", "reload_into_ims", "request_body_max_size",
         "request_size", "request_timeout", "shutdown_lifetime",
         "single_parent_bypass", "siteselect_timeout", "snmp_access",
@@ -542,5 +543,77 @@ class DockerLexer(RegexLexer):
             (r'#.*', Comment),
             (r'RUN', Keyword), # Rest of line falls through
             (r'(.*\\\n)*.+', using(BashLexer)),
+        ],
+    }
+
+
+class TerraformLexer(RegexLexer):
+    """
+    Lexer for `terraformi .tf files <https://www.terraform.io/>`_
+
+    .. versionadded:: 2.1
+    """
+
+    name = 'Terraform'
+    aliases = ['terraform', 'tf']
+    filenames = ['*.tf']
+    mimetypes = ['application/x-tf', 'application/x-terraform']
+
+    tokens = {
+       'root': [
+            include('string'),
+            include('punctuation'),
+            include('curly'),
+            include('basic'),
+            include('whitespace'),
+            (r'[0-9]+', Number),
+       ],
+       'basic': [
+            (words(('true', 'false'), prefix=r'\b', suffix=r'\b'), Keyword.Type),
+            (r'\s*/\*', Comment.Multiline, 'comment'),
+            (r'\s*#.*\n', Comment.Single),
+            (r'(.*?)(\s*)(=)', bygroups(Name.Attribute, Text, Operator)),
+            (words(('variable', 'resource', 'provider', 'provisioner', 'module'),
+                   prefix=r'\b', suffix=r'\b'), Keyword.Reserved, 'function'),
+            (words(('ingress', 'egress', 'listener', 'default', 'connection'),
+                   prefix=r'\b', suffix=r'\b'), Keyword.Declaration),
+            ('\$\{', String.Interpol, 'var_builtin'),
+       ],
+       'function': [
+            (r'(\s+)(".*")(\s+)', bygroups(Text, String, Text)),
+            include('punctuation'),
+            include('curly'),
+        ],
+        'var_builtin': [
+            (r'\$\{', String.Interpol, '#push'),
+            (words(('concat', 'file', 'join', 'lookup', 'element'),
+                   prefix=r'\b', suffix=r'\b'), Name.Builtin),
+            include('string'),
+            include('punctuation'),
+            (r'\s+', Text),
+            (r'\}', String.Interpol, '#pop'),
+        ],
+        'string':[
+            (r'(".*")', bygroups(String.Double)),
+        ],
+        'punctuation':[
+            (r'[\[\]\(\),.]', Punctuation),
+        ],
+        # Keep this seperate from punctuation - we sometimes want to use different
+        # Tokens for { }
+        'curly':[
+            (r'\{', Text.Punctuation),
+            (r'\}', Text.Punctuation),
+        ],
+        'comment': [
+            (r'[^*/]', Comment.Multiline),
+            (r'/\*', Comment.Multiline, '#push'),
+            (r'\*/', Comment.Multiline, '#pop'),
+            (r'[*/]', Comment.Multiline)
+        ],
+        'whitespace': [
+            (r'\n', Text),
+            (r'\s+', Text),
+            (r'\\\n', Text),
         ],
     }

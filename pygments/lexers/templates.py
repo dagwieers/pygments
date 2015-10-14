@@ -5,7 +5,7 @@
 
     Lexers for various template engines' markup.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -237,7 +237,7 @@ class VelocityLexer(RegexLexer):
             default('#pop')
         ],
         'directiveparams': [
-            (r'(&&|\|\||==?|!=?|[-<>+*%&\|\^/])|\b(eq|ne|gt|lt|ge|le|not|in)\b',
+            (r'(&&|\|\||==?|!=?|[-<>+*%&|^/])|\b(eq|ne|gt|lt|ge|le|not|in)\b',
              Operator),
             (r'\[', Operator, 'rangeoperator'),
             (r'\b' + identifier + r'\b', Name.Function),
@@ -314,7 +314,7 @@ class VelocityXmlLexer(DelegatingLexer):
     def analyse_text(text):
         rv = VelocityLexer.analyse_text(text) - 0.01
         if looks_like_xml(text):
-            rv += 0.5
+            rv += 0.4
         return rv
 
 
@@ -369,7 +369,7 @@ class DjangoLexer(RegexLexer):
              r'with(?:(?:out)?\s*context)?|scoped|ignore\s+missing)\b',
              Keyword),
             (r'(loop|block|super|forloop)\b', Name.Builtin),
-            (r'[a-zA-Z][\w-]*', Name.Variable),
+            (r'[a-zA-Z_][\w-]*', Name.Variable),
             (r'\.\w+', Name.Variable),
             (r':?"(\\\\|\\"|[^"])*"', String.Double),
             (r":?'(\\\\|\\'|[^'])*'", String.Single),
@@ -568,10 +568,12 @@ class MasonLexer(RegexLexer):
     }
 
     def analyse_text(text):
-        rv = 0.0
-        if re.search('<&', text) is not None:
-            rv = 1.0
-        return rv
+        result = 0.0
+        if re.search(r'</%(class|doc|init)%>', text) is not None:
+            result = 1.0
+        elif re.search(r'<&.+&>', text, re.DOTALL) is not None:
+            result = 0.11
+        return result
 
 
 class MakoLexer(RegexLexer):
@@ -598,11 +600,11 @@ class MakoLexer(RegexLexer):
             (r'(\s*)(##[^\n]*)(\n|\Z)',
              bygroups(Text, Comment.Preproc, Other)),
             (r'(?s)<%doc>.*?</%doc>', Comment.Preproc),
-            (r'(<%)([\w\.\:]+)',
+            (r'(<%)([\w.:]+)',
              bygroups(Comment.Preproc, Name.Builtin), 'tag'),
-            (r'(</%)([\w\.\:]+)(>)',
+            (r'(</%)([\w.:]+)(>)',
              bygroups(Comment.Preproc, Name.Builtin, Comment.Preproc)),
-            (r'<%(?=([\w\.\:]+))', Comment.Preproc, 'ondeftags'),
+            (r'<%(?=([\w.:]+))', Comment.Preproc, 'ondeftags'),
             (r'(<%(?:!?))(.*?)(%>)(?s)',
              bygroups(Comment.Preproc, using(PythonLexer), Comment.Preproc)),
             (r'(\$\{)(.*?)(\})',
@@ -753,7 +755,7 @@ class CheetahLexer(RegexLexer):
              (bygroups(Comment.Preproc, using(CheetahPythonLexer),
                        Comment.Preproc))),
             # TODO support other Python syntax like $foo['bar']
-            (r'(\$)([a-zA-Z_][\w\.]*\w)',
+            (r'(\$)([a-zA-Z_][\w.]*\w)',
              bygroups(Comment.Preproc, using(CheetahPythonLexer))),
             (r'(\$\{!?)(.*?)(\})(?s)',
              bygroups(Comment.Preproc, using(CheetahPythonLexer),
@@ -834,11 +836,11 @@ class GenshiTextLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'[^#\$\s]+', Other),
+            (r'[^#$\s]+', Other),
             (r'^(\s*)(##.*)$', bygroups(Text, Comment)),
             (r'^(\s*)(#)', bygroups(Text, Comment.Preproc), 'directive'),
             include('variable'),
-            (r'[#\$\s]', Other),
+            (r'[#$\s]', Other),
         ],
         'directive': [
             (r'\n', Text, '#pop'),
@@ -851,7 +853,7 @@ class GenshiTextLexer(RegexLexer):
         'variable': [
             (r'(?<!\$)(\$\{)(.+?)(\})',
              bygroups(Comment.Preproc, using(PythonLexer), Comment.Preproc)),
-            (r'(?<!\$)(\$)([a-zA-Z_][\w\.]*)',
+            (r'(?<!\$)(\$)([a-zA-Z_][\w.]*)',
              Name.Variable),
         ]
     }
@@ -867,7 +869,7 @@ class GenshiMarkupLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'[^<\$]+', Other),
+            (r'[^<$]+', Other),
             (r'(<\?python)(.*?)(\?>)',
              bygroups(Comment.Preproc, using(PythonLexer), Comment.Preproc)),
             # yield style and script blocks as Other
@@ -875,7 +877,7 @@ class GenshiMarkupLexer(RegexLexer):
             (r'<\s*py:[a-zA-Z0-9]+', Name.Tag, 'pytag'),
             (r'<\s*[a-zA-Z0-9:]+', Name.Tag, 'tag'),
             include('variable'),
-            (r'[<\$]', Other),
+            (r'[<$]', Other),
         ],
         'pytag': [
             (r'\s+', Text),
@@ -1122,7 +1124,7 @@ class HtmlPhpLexer(DelegatingLexer):
 
 class XmlPhpLexer(DelegatingLexer):
     """
-    Subclass of `PhpLexer` that higlights unhandled data with the `XmlLexer`.
+    Subclass of `PhpLexer` that highlights unhandled data with the `XmlLexer`.
     """
 
     name = 'XML+PHP'
@@ -1180,7 +1182,7 @@ class JavascriptPhpLexer(DelegatingLexer):
 
 class HtmlSmartyLexer(DelegatingLexer):
     """
-    Subclass of the `SmartyLexer` that highighlights unlexed data with the
+    Subclass of the `SmartyLexer` that highlights unlexed data with the
     `HtmlLexer`.
 
     Nested Javascript and CSS is highlighted too.
@@ -1263,7 +1265,7 @@ class JavascriptSmartyLexer(DelegatingLexer):
 
 class HtmlDjangoLexer(DelegatingLexer):
     """
-    Subclass of the `DjangoLexer` that highighlights unlexed data with the
+    Subclass of the `DjangoLexer` that highlights unlexed data with the
     `HtmlLexer`.
 
     Nested Javascript and CSS is highlighted too.
@@ -1701,9 +1703,7 @@ class LassoHtmlLexer(DelegatingLexer):
 
     def analyse_text(text):
         rv = LassoLexer.analyse_text(text) - 0.01
-        if re.search(r'<\w+>', text, re.I):
-            rv += 0.2
-        if html_doctype_matches(text):
+        if html_doctype_matches(text):  # same as HTML lexer
             rv += 0.5
         return rv
 
@@ -1814,11 +1814,11 @@ class HandlebarsLexer(RegexLexer):
             (r'\}\}', Comment.Preproc, '#pop'),
 
             # Handlebars
-            (r'([\#/]*)(each|if|unless|else|with|log|in)', bygroups(Keyword,
+            (r'([#/]*)(each|if|unless|else|with|log|in)', bygroups(Keyword,
              Keyword)),
 
             # General {{#block}}
-            (r'([\#/])([\w-]+)', bygroups(Name.Function, Name.Function)),
+            (r'([#/])([\w-]+)', bygroups(Name.Function, Name.Function)),
 
             # {{opt=something}}
             (r'([\w-]+)(=)', bygroups(Name.Attribute, Operator)),
@@ -1853,7 +1853,7 @@ class HandlebarsHtmlLexer(DelegatingLexer):
 
 class YamlJinjaLexer(DelegatingLexer):
     """
-    Subclass of the `DjangoLexer` that highighlights unlexed data with the
+    Subclass of the `DjangoLexer` that highlights unlexed data with the
     `YamlLexer`.
 
     Commonly used in Saltstack salt states.
@@ -1937,7 +1937,7 @@ class LiquidLexer(RegexLexer):
             include('whitespace'),
             (r'\}\}', Punctuation, ('#pop', '#pop')),  # end of filters and output
 
-            (r'([^\s\|:]+)(:?)(\s*)',
+            (r'([^\s|:]+)(:?)(\s*)',
              bygroups(Name.Function, Punctuation, Whitespace), 'filter-markup')
         ],
 
@@ -1957,7 +1957,7 @@ class LiquidLexer(RegexLexer):
                       Punctuation)),
             (r'\b!', Operator),
             (r'\bnot\b', Operator.Word),
-            (r'([\w\.\'"]+)(\s+)(contains)(\s+)([\w\.\'"]+)',
+            (r'([\w.\'"]+)(\s+)(contains)(\s+)([\w.\'"]+)',
              bygroups(using(this, state = 'generic'), Whitespace, Operator.Word,
                       Whitespace, using(this, state = 'generic'))),
 
@@ -1996,7 +1996,7 @@ class LiquidLexer(RegexLexer):
             (r'([^\s=:]+)(\s*)(=|:)',
              bygroups(Name.Attribute, Whitespace, Operator)),
             # explicit variables
-            (r'(\{\{)(\s*)([^\s\}])(\s*)(\}\})',
+            (r'(\{\{)(\s*)([^\s}])(\s*)(\}\})',
              bygroups(Punctuation, Whitespace, using(this, state = 'variable'),
                       Whitespace, Punctuation)),
 
@@ -2067,7 +2067,7 @@ class LiquidLexer(RegexLexer):
         ],
 
         'raw': [
-            (r'[^\{]+', Text),
+            (r'[^{]+', Text),
             (r'(\{%)(\s*)(endraw)(\s*)(%\})',
              bygroups(Punctuation, Whitespace, Name.Tag, Whitespace,
                       Punctuation), '#pop'),

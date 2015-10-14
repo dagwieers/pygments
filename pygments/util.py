@@ -5,7 +5,7 @@
 
     Utility functions.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -17,12 +17,15 @@ split_path_re = re.compile(r'[/\\ ]')
 doctype_lookup_re = re.compile(r'''(?smx)
     (<\?.*?\?>)?\s*
     <!DOCTYPE\s+(
+     [a-zA-Z_][a-zA-Z0-9]*
+     (?: \s+      # optional in HTML5
      [a-zA-Z_][a-zA-Z0-9]*\s+
-     [a-zA-Z_][a-zA-Z0-9]*\s+
-     "[^"]*")
+     "[^"]*")?
+     )
      [^>]*>
 ''')
 tag_re = re.compile(r'<(.+?)(\s.*?)?>.*?</.+?>(?uism)')
+xml_decl_re = re.compile(r'\s*<\?xml[^>]*\?>', re.I)
 
 
 class ClassNotFound(ValueError):
@@ -52,7 +55,7 @@ def get_bool_opt(options, optname, default=None):
     elif not isinstance(string, string_types):
         raise OptionError('Invalid type %r for option %s; use '
                           '1/0, yes/no, true/false, on/off' % (
-                          string, optname))
+                              string, optname))
     elif string.lower() in ('1', 'yes', 'true', 'on'):
         return True
     elif string.lower() in ('0', 'no', 'false', 'off'):
@@ -60,7 +63,7 @@ def get_bool_opt(options, optname, default=None):
     else:
         raise OptionError('Invalid value %r for option %s; use '
                           '1/0, yes/no, true/false, on/off' % (
-                          string, optname))
+                              string, optname))
 
 
 def get_int_opt(options, optname, default=None):
@@ -70,11 +73,11 @@ def get_int_opt(options, optname, default=None):
     except TypeError:
         raise OptionError('Invalid type %r for option %s; you '
                           'must give an integer value' % (
-                          string, optname))
+                              string, optname))
     except ValueError:
         raise OptionError('Invalid value %r for option %s; you '
                           'must give an integer value' % (
-                          string, optname))
+                              string, optname))
 
 
 def get_list_opt(options, optname, default=None):
@@ -86,7 +89,7 @@ def get_list_opt(options, optname, default=None):
     else:
         raise OptionError('Invalid type %r for option %s; you '
                           'must give a list value' % (
-                          val, optname))
+                              val, optname))
 
 
 def docstring_headline(obj):
@@ -173,17 +176,21 @@ def doctype_matches(text, regex):
     if m is None:
         return False
     doctype = m.group(2)
-    return re.compile(regex).match(doctype.strip()) is not None
+    return re.compile(regex, re.I).match(doctype.strip()) is not None
 
 
 def html_doctype_matches(text):
     """Check if the file looks like it has a html doctype."""
-    return doctype_matches(text, r'html\s+PUBLIC\s+"-//W3C//DTD X?HTML.*')
+    return doctype_matches(text, r'html')
 
 
 _looks_like_xml_cache = {}
+
+
 def looks_like_xml(text):
     """Check if a doctype exists or if we have some tags."""
+    if xml_decl_re.match(text):
+        return True
     key = hash(text)
     try:
         return _looks_like_xml_cache[key]
@@ -195,6 +202,7 @@ def looks_like_xml(text):
         _looks_like_xml_cache[key] = rv
         return rv
 
+
 # Python narrow build compatibility
 
 def _surrogatepair(c):
@@ -204,6 +212,7 @@ def _surrogatepair(c):
     # From example D28 of:
     # http://www.unicode.org/book/ch03.pdf
     return (0xd7c0 + (c >> 10), (0xdc00 + (c & 0x3ff)))
+
 
 def unirange(a, b):
     """Returns a regular expression string to match the given non-BMP range."""
@@ -261,6 +270,22 @@ def format_lines(var_name, seq, raw=False, indent_level=0):
             lines.append(inner_indent + r[:-2] + r[-1] + ',')
     lines.append(base_indent + ')')
     return '\n'.join(lines)
+
+
+def duplicates_removed(it, already_seen=()):
+    """
+    Returns a list with duplicates removed from the iterable `it`.
+
+    Order is preserved.
+    """
+    lst = []
+    seen = set()
+    for i in it:
+        if i in seen or i in already_seen:
+            continue
+        lst.append(i)
+        seen.add(i)
+    return lst
 
 
 class Future(object):
@@ -329,7 +354,8 @@ if sys.version_info < (3, 0):
     u_prefix = 'u'
     iteritems = dict.iteritems
     itervalues = dict.itervalues
-    import StringIO, cStringIO
+    import StringIO
+    import cStringIO
     # unfortunately, io.StringIO in Python 2 doesn't accept str at all
     StringIO = StringIO.StringIO
     BytesIO = cStringIO.StringIO
@@ -341,7 +367,12 @@ else:
     u_prefix = ''
     iteritems = dict.items
     itervalues = dict.values
-    from io import StringIO, BytesIO
+    from io import StringIO, BytesIO, TextIOWrapper
+
+    class UnclosingTextIOWrapper(TextIOWrapper):
+        # Don't close underlying buffer on destruction.
+        def close(self):
+            pass
 
 
 def add_metaclass(metaclass):

@@ -5,7 +5,7 @@
 
     Lexers for "business-oriented" languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -48,7 +48,7 @@ class CobolLexer(RegexLexer):
             include('strings'),
             include('core'),
             include('nums'),
-            (r'[a-z0-9]([_a-z0-9\-]*[a-z0-9]+)?', Name.Variable),
+            (r'[a-z0-9]([\w\-]*[a-z0-9]+)?', Name.Variable),
             # (r'[\s]+', Text),
             (r'[ \t]+', Text),
         ],
@@ -211,8 +211,8 @@ class CobolLexer(RegexLexer):
 
         'nums': [
             (r'\d+(\s*|\.$|$)', Number.Integer),
-            (r'[+-]?\d*\.\d+([eE][-+]?\d+)?', Number.Float),
-            (r'[+-]?\d+\.\d*([eE][-+]?\d+)?', Number.Float),
+            (r'[+-]?\d*\.\d+(E[-+]?\d+)?', Number.Float),
+            (r'[+-]?\d+\.\d*(E[-+]?\d+)?', Number.Float),
         ],
     }
 
@@ -422,7 +422,7 @@ class ABAPLexer(RegexLexer):
             (r'[?*<>=\-+]', Operator),
             (r"'(''|[^'])*'", String.Single),
             (r"`([^`])*`", String.Single),
-            (r'[/;:()\[\],\.]', Punctuation)
+            (r'[/;:()\[\],.]', Punctuation)
         ],
     }
 
@@ -516,7 +516,7 @@ com/gooddata/processor/COMMANDS.txt>`_
             (r'[a-z]\w*', Name.Variable),
             (r'=', Operator),
             (r'"', String, 'string-literal'),
-            (r'[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]{1,3})?', Number),
+            (r'[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]{1,3})?', Number),
             # Space is not significant
             (r'\s', Text)
         ],
@@ -550,7 +550,7 @@ class MaqlLexer(RegexLexer):
             # IDENTIFIER
             (r'\{[^}]+\}', Name.Variable),
             # NUMBER
-            (r'[0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]{1,3})?', Number),
+            (r'[0-9]+(?:\.[0-9]+)?(?:e[+-]?[0-9]{1,3})?', Number),
             # STRING
             (r'"', String, 'string-literal'),
             #  RELATION
@@ -567,20 +567,20 @@ class MaqlLexer(RegexLexer):
                 'FALSE', 'ROW', 'ROWS', 'FROM', 'ALL', 'AS', 'PF', 'COLUMN',
                 'COLUMNS', 'DEFINE', 'REPORT', 'LIMIT', 'TABLE', 'LIKE', 'AND',
                 'BY', 'BETWEEN', 'EXCEPT', 'SELECT', 'MATCH', 'WHERE', 'TRUE',
-                'FOR', 'IN', 'WITHOUT', 'FILTER', 'ALIAS', 'ORDER', 'FACT',
-                'WHEN', 'NOT', 'ON', 'KEYS', 'KEY', 'FULLSET', 'PRIMARY',
-                'LABELS', 'LABEL', 'VISUAL', 'TITLE', 'DESCRIPTION', 'FOLDER',
-                'ALTER', 'DROP', 'ADD', 'DATASET', 'DATATYPE', 'INT', 'BIGINT',
-                'DOUBLE', 'DATE', 'VARCHAR', 'DECIMAL', 'SYNCHRONIZE', 'TYPE',
-                'DEFAULT', 'ORDER', 'ASC', 'DESC', 'HYPERLINK', 'INCLUDE',
-                'TEMPLATE', 'MODIFY'), suffix=r'\b'),
+                'FOR', 'IN', 'WITHOUT', 'FILTER', 'ALIAS', 'WHEN', 'NOT', 'ON',
+                'KEYS', 'KEY', 'FULLSET', 'PRIMARY', 'LABELS', 'LABEL',
+                'VISUAL', 'TITLE', 'DESCRIPTION', 'FOLDER', 'ALTER', 'DROP',
+                'ADD', 'DATASET', 'DATATYPE', 'INT', 'BIGINT', 'DOUBLE', 'DATE',
+                'VARCHAR', 'DECIMAL', 'SYNCHRONIZE', 'TYPE', 'DEFAULT', 'ORDER',
+                'ASC', 'DESC', 'HYPERLINK', 'INCLUDE', 'TEMPLATE', 'MODIFY'),
+                suffix=r'\b'),
              Keyword),
             # FUNCNAME
             (r'[a-z]\w*\b', Name.Function),
             # Comments
             (r'#.*', Comment.Single),
             # Punctuation
-            (r'[,;\(\)]', Punctuation),
+            (r'[,;()]', Punctuation),
             # Space is not significant
             (r'\s+', Text)
         ],

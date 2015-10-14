@@ -2,9 +2,90 @@ Pygments changelog
 ==================
 
 Issue numbers refer to the tracker at
-<http://bitbucket.org/birkenfeld/pygments-main/issues>,
+<https://bitbucket.org/birkenfeld/pygments-main/issues>,
 pull request numbers to the requests at
-<http://bitbucket.org/birkenfeld/pygments-main/pull-requests/merged>.
+<https://bitbucket.org/birkenfeld/pygments-main/pull-requests/merged>.
+
+
+Version 2.1
+-----------
+(not released yet)
+
+- Added lexers:
+
+  * Emacs Lisp (PR#431)
+  * Arduino (PR#442)
+  * Modula-2 with multi-dialect support (#1090)
+  * Fortran fixed format (PR#213)
+  * Archetype Definition language (PR#483)
+  * Terraform (PR#432)
+  * Jcl, Easytrieve (PR#208)
+  * ParaSail (PR#381)
+  * Boogie (PR#420)
+  * Turtle (PR#425)
+  * Fish Shell (PR#422)
+  * Roboconf (PR#449)
+  * Test Anything Protocol (PR#428)
+
+- Added styles:
+
+  * Lovelace (PR#456)
+  * Algol and Algol-nu (#1090)
+
+- Updated autopygmentize script (PR#445)
+
+- Fixed style inheritance for non-standard token types in HTML output.
+
+- Added support for async/await to Python 3 lexer.
+
+- Rewrote linenos option for TerminalFormatter (it's better, but slightly
+  different output than before).  (#1147)
+
+- Javascript lexer now supports most of ES6.  (#1100)
+
+- Cocoa builtins updated for iOS 8.1 (PR#433)
+
+
+Version 2.0.3
+-------------
+(not released yet)
+
+- Fix highlighting of certain IRC logs formats (#1076).
+
+
+Version 2.0.2
+-------------
+(released Jan 20, 2015)
+
+- Fix Python tracebacks getting duplicated in the console lexer (#1068).
+
+- Backquote-delimited identifiers are now recognized in F# (#1062).
+
+
+Version 2.0.1
+-------------
+(released Nov 10, 2014)
+
+- Fix an encoding issue when using ``pygmentize`` with the ``-o`` option.
+
+
+Version 2.0
+-----------
+(released Nov 9, 2014)
+
+- Default lexer encoding is now "guess", i.e. UTF-8 / Locale / Latin1 is
+  tried in that order.
+
+- Major update to Swift lexer (PR#410).
+
+- Multiple fixes to lexer guessing in conflicting cases:
+
+  * recognize HTML5 by doctype
+  * recognize XML by XML declaration
+  * don't recognize C/C++ as SystemVerilog
+
+- Simplified regexes and builtin lists.
+
 
 Version 2.0rc1
 --------------
@@ -103,6 +184,10 @@ Version 2.0rc1
 
 - Pygments will now recognize "vim" modelines when guessing the lexer for
   a file based on content (PR#118).
+
+- Major restructure of the ``pygments.lexers`` module namespace.  There are now
+  many more modules with less lexers per module.  Old modules are still around
+  and re-export the lexers they previously contained.
 
 - The NameHighlightFilter now works with any Name.* token type (#790).
 

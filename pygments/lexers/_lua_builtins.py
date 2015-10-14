@@ -9,7 +9,7 @@
 
     Do not edit the MODULES dict by hand.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -143,7 +143,8 @@ MODULES = {'basic': ('_G',
            'table.remove',
            'table.sort')}
 
-if __name__ == '__main__':
+
+if __name__ == '__main__':  # pragma: no cover
     import re
     try:
         from urllib import urlopen

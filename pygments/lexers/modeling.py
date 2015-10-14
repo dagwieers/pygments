@@ -5,7 +5,7 @@
 
     Lexers for modeling languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -46,7 +46,7 @@ class ModelicaLexer(RegexLexer):
             include('whitespace'),
             (r'"', String.Double, 'string'),
             (r'[()\[\]{},;]+', Punctuation),
-            (r'\.?[\^*/+\-]|\.|<>|[<>:=]=?', Operator),
+            (r'\.?[*^/+-]|\.|<>|[<>:=]=?', Operator),
             (r'\d+(\.?\d*[eE][-+]?\d+|\.\d*)', Number.Float),
             (r'\d+', Number.Integer),
             (r'(abs|acos|actualStream|array|asin|assert|AssertionLevel|atan|'
@@ -164,7 +164,7 @@ class BugsLexer(RegexLexer):
             (r'(model)(\s+)(\{)',
              bygroups(Keyword.Namespace, Text, Punctuation)),
             # Reserved Words
-            (r'(for|in)(?![0-9a-zA-Z\._])', Keyword.Reserved),
+            (r'(for|in)(?![\w.])', Keyword.Reserved),
             # Built-in Functions
             (r'(%s)(?=\s*\()'
              % r'|'.join(_FUNCTIONS + _DISTRIBUTIONS),
@@ -246,9 +246,9 @@ class JagsLexer(RegexLexer):
             # Block start
             (r'(model|data)(\s+)(\{)',
              bygroups(Keyword.Namespace, Text, Punctuation)),
-            (r'var(?![0-9a-zA-Z\._])', Keyword.Declaration),
+            (r'var(?![\w.])', Keyword.Declaration),
             # Reserved Words
-            (r'(for|in)(?![0-9a-zA-Z\._])', Keyword.Reserved),
+            (r'(for|in)(?![\w.])', Keyword.Reserved),
             # Builtins
             # Need to use lookahead because . is a valid char
             (r'(%s)(?=\s*\()' % r'|'.join(_FUNCTIONS
@@ -284,8 +284,8 @@ class StanLexer(RegexLexer):
     """Pygments Lexer for Stan models.
 
     The Stan modeling language is specified in the *Stan Modeling Language
-    User's Guide and Reference Manual, v2.4.0*,
-    `pdf <https://github.com/stan-dev/stan/releases/download/v2.4.0/stan-reference-2.4.0.pdf>`__.
+    User's Guide and Reference Manual, v2.7.0*,
+    `pdf <https://github.com/stan-dev/stan/releases/download/v2.7.0/stan-reference-2.7.0.pdf>`__.
 
     .. versionadded:: 1.6
     """

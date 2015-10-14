@@ -5,7 +5,7 @@
 
     Lexers for Perl and related languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -40,12 +40,13 @@ class PerlLexer(RegexLexer):
             (r'\{(\\\\|\\[^\\]|[^\\}])*\}[egimosx]*', String.Regex, '#pop'),
             (r'<(\\\\|\\[^\\]|[^\\>])*>[egimosx]*', String.Regex, '#pop'),
             (r'\[(\\\\|\\[^\\]|[^\\\]])*\][egimosx]*', String.Regex, '#pop'),
-            (r'\((\\\\|\\[^\\]|[^\\\)])*\)[egimosx]*', String.Regex, '#pop'),
-            (r'@(\\\\|\\[^\\]|[^\\\@])*@[egimosx]*', String.Regex, '#pop'),
-            (r'%(\\\\|\\[^\\]|[^\\\%])*%[egimosx]*', String.Regex, '#pop'),
-            (r'\$(\\\\|\\[^\\]|[^\\\$])*\$[egimosx]*', String.Regex, '#pop'),
+            (r'\((\\\\|\\[^\\]|[^\\)])*\)[egimosx]*', String.Regex, '#pop'),
+            (r'@(\\\\|\\[^\\]|[^\\@])*@[egimosx]*', String.Regex, '#pop'),
+            (r'%(\\\\|\\[^\\]|[^\\%])*%[egimosx]*', String.Regex, '#pop'),
+            (r'\$(\\\\|\\[^\\]|[^\\$])*\$[egimosx]*', String.Regex, '#pop'),
         ],
         'root': [
+            (r'\A\#!.+?$', Comment.Hashbang),
             (r'\#.*?$', Comment.Single),
             (r'^=[a-zA-Z0-9]+\s+.*?\n=cut', Comment.Multiline),
             (words((
@@ -71,11 +72,11 @@ class PerlLexer(RegexLexer):
             (r's<(\\\\|\\[^\\]|[^\\>])*>\s*', String.Regex, 'balanced-regex'),
             (r's\[(\\\\|\\[^\\]|[^\\\]])*\]\s*', String.Regex,
                 'balanced-regex'),
-            (r's\((\\\\|\\[^\\]|[^\\\)])*\)\s*', String.Regex,
+            (r's\((\\\\|\\[^\\]|[^\\)])*\)\s*', String.Regex,
                 'balanced-regex'),
 
             (r'm?/(\\\\|\\[^\\]|[^\\/\n])*/[gcimosx]*', String.Regex),
-            (r'm(?=[/!\\{<\[\(@%\$])', String.Regex, 'balanced-regex'),
+            (r'm(?=[/!\\{<\[(@%$])', String.Regex, 'balanced-regex'),
             (r'((?<==~)|(?<=\())\s*/(\\\\|\\[^\\]|[^\\/])*/[gcimosx]*',
                 String.Regex),
             (r'\s+', Text),
@@ -128,14 +129,14 @@ class PerlLexer(RegexLexer):
             (r'(q|qq|qw|qr|qx)\(', String.Other, 'rb-string'),
             (r'(q|qq|qw|qr|qx)\[', String.Other, 'sb-string'),
             (r'(q|qq|qw|qr|qx)\<', String.Other, 'lt-string'),
-            (r'(q|qq|qw|qr|qx)([^a-zA-Z0-9])(.|\n)*?\2', String.Other),
+            (r'(q|qq|qw|qr|qx)([\W_])(.|\n)*?\2', String.Other),
             (r'package\s+', Keyword, 'modulename'),
             (r'sub\s+', Keyword, 'funcname'),
             (r'(\[\]|\*\*|::|<<|>>|>=|<=>|<=|={3}|!=|=~|'
              r'!~|&&?|\|\||\.{1,3})', Operator),
             (r'[-+/*%=<>&^|!\\~]=?', Operator),
-            (r'[\(\)\[\]:;,<>/\?\{\}]', Punctuation),  # yes, there's no shortage
-                                                       # of punctuation in Perl!
+            (r'[()\[\]:;,<>/?{}]', Punctuation),  # yes, there's no shortage
+                                                  # of punctuation in Perl!
             (r'(?=\w)', Name, 'name'),
         ],
         'format': [
@@ -159,26 +160,26 @@ class PerlLexer(RegexLexer):
             (r'[a-zA-Z_]\w*', Name.Namespace, '#pop')
         ],
         'funcname': [
-            (r'[a-zA-Z_]\w*[\!\?]?', Name.Function),
+            (r'[a-zA-Z_]\w*[!?]?', Name.Function),
             (r'\s+', Text),
             # argument declaration
             (r'(\([$@%]*\))(\s*)', bygroups(Punctuation, Text)),
-            (r'.*?\{', Punctuation, '#pop'),
             (r';', Punctuation, '#pop'),
+            (r'.*?\{', Punctuation, '#pop'),
         ],
         'cb-string': [
-            (r'\\[\{\}\\]', String.Other),
+            (r'\\[{}\\]', String.Other),
             (r'\\', String.Other),
             (r'\{', String.Other, 'cb-string'),
             (r'\}', String.Other, '#pop'),
-            (r'[^\{\}\\]+', String.Other)
+            (r'[^{}\\]+', String.Other)
         ],
         'rb-string': [
-            (r'\\[\(\)\\]', String.Other),
+            (r'\\[()\\]', String.Other),
             (r'\\', String.Other),
             (r'\(', String.Other, 'rb-string'),
             (r'\)', String.Other, '#pop'),
-            (r'[^\(\)]+', String.Other)
+            (r'[^()]+', String.Other)
         ],
         'sb-string': [
             (r'\\[\[\]\\]', String.Other),
@@ -188,11 +189,11 @@ class PerlLexer(RegexLexer):
             (r'[^\[\]]+', String.Other)
         ],
         'lt-string': [
-            (r'\\[\<\>\\]', String.Other),
+            (r'\\[<>\\]', String.Other),
             (r'\\', String.Other),
             (r'\<', String.Other, 'lt-string'),
             (r'\>', String.Other, '#pop'),
-            (r'[^\<\>]+', String.Other)
+            (r'[^<>]+', String.Other)
         ],
         'end-part': [
             (r'.+', Comment.Preproc, '#pop')
@@ -518,13 +519,13 @@ class Perl6Lexer(ExtendedRegexLexer):
             (r'(?<=~~)\s*/(?:\\\\|\\/|.)*?/', String.Regex),
             (r'(?<=[=(,])\s*/(?:\\\\|\\/|.)*?/', String.Regex),
             (r'm\w+(?=\()', Name),
-            (r'(?:m|ms|rx)\s*(?P<adverbs>:[\w\s:]+)?\s*(?P<delimiter>(?P<first_char>[^0-9a-zA-Z_:\s])'
+            (r'(?:m|ms|rx)\s*(?P<adverbs>:[\w\s:]+)?\s*(?P<delimiter>(?P<first_char>[^\w:\s])'
              r'(?P=first_char)*)', brackets_callback(String.Regex)),
             (r'(?:s|ss|tr)\s*(?::[\w\s:]+)?\s*/(?:\\\\|\\/|.)*?/(?:\\\\|\\/|.)*?/',
              String.Regex),
             (r'<[^\s=].*?\S>', String),
             (_build_word_match(PERL6_OPERATORS), Operator),
-            (r'[0-9a-zA-Z_]' + PERL6_IDENTIFIER_RANGE + '*', Name),
+            (r'\w' + PERL6_IDENTIFIER_RANGE + '*', Name),
             (r"'(\\\\|\\[^\\]|[^'\\])*'", String),
             (r'"(\\\\|\\[^\\]|[^"\\])*"', String),
         ],

@@ -5,7 +5,7 @@
 
     Lexers for ActionScript and MXML.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -38,7 +38,7 @@ class ActionScriptLexer(RegexLexer):
             (r'//.*?\n', Comment.Single),
             (r'/\*.*?\*/', Comment.Multiline),
             (r'/(\\\\|\\/|[^/\n])*/[gim]*', String.Regex),
-            (r'[~\^\*!%&<>\|+=:;,/?\\-]+', Operator),
+            (r'[~^*!%&<>|+=:;,/?\\-]+', Operator),
             (r'[{}\[\]();.]+', Punctuation),
             (words((
                 'case', 'default', 'for', 'each', 'in', 'while', 'do', 'break',
@@ -98,7 +98,7 @@ class ActionScriptLexer(RegexLexer):
             (words((
                 'decodeURI', 'decodeURIComponent', 'encodeURI', 'escape', 'eval', 'isFinite', 'isNaN',
                 'isXMLName', 'clearInterval', 'fscommand', 'getTimer', 'getURL', 'getVersion',
-                'isFinite', 'parseFloat', 'parseInt', 'setInterval', 'trace', 'updateAfterEvent',
+                'parseFloat', 'parseInt', 'setInterval', 'trace', 'updateAfterEvent',
                 'unescape'), suffix=r'\b'),
              Name.Function),
             (r'[$a-zA-Z_]\w*', Name.Other),
@@ -166,7 +166,7 @@ class ActionScript3Lexer(RegexLexer):
             (r'[0-9]+', Number.Integer),
             (r'"(\\\\|\\"|[^"])*"', String.Double),
             (r"'(\\\\|\\'|[^'])*'", String.Single),
-            (r'[~\^\*!%&<>\|+=:;,/?\\{}\[\]().-]+', Operator),
+            (r'[~^*!%&<>|+=:;,/?\\{}\[\]().-]+', Operator),
         ],
         'funcparams': [
             (r'\s+', Text),

@@ -5,7 +5,7 @@
 
     Lexers for Makefiles and similar.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -176,7 +176,7 @@ class CMakeLexer(RegexLexer):
             (r'(\$<)(.+?)(>)', bygroups(Operator, Name.Variable, Operator)),
             (r'(?s)".*?"', String.Double),
             (r'\\\S+', String),
-            (r'[^\)$"# \t\n]+', String),
+            (r'[^)$"# \t\n]+', String),
             (r'\n', Text),  # explicitly legal
             include('keywords'),
             include('ws')

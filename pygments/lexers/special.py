@@ -5,7 +5,7 @@
 
     Special lexers.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -35,6 +35,7 @@ class TextLexer(Lexer):
 _ttype_cache = {}
 
 line_re = re.compile(b'.*?\n')
+
 
 class RawTokenLexer(Lexer):
     """
@@ -82,7 +83,7 @@ class RawTokenLexer(Lexer):
             try:
                 ttypestr, val = match.group().split(b'\t', 1)
             except ValueError:
-                val = match.group().decode(self.encoding)
+                val = match.group().decode('ascii', 'replace')
                 ttype = Error
             else:
                 ttype = _ttype_cache.get(ttypestr)

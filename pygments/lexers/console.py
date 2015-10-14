@@ -5,7 +5,7 @@
 
     Lexers for misc console output.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -18,7 +18,7 @@ __all__ = ['VCTreeStatusLexer', 'PyPyLogLexer']
 
 class VCTreeStatusLexer(RegexLexer):
     """
-    For colorizing output of version control status commans, like "hg
+    For colorizing output of version control status commands, like "hg
     status" or "svn status".
 
     .. versionadded:: 2.0
@@ -35,7 +35,7 @@ class VCTreeStatusLexer(RegexLexer):
             (r'^M\s+', Generic.Inserted),
             (r'^C\s+', Generic.Error),
             (r'^D\s+', Generic.Deleted),
-            (r'^[\?!]\s+', Comment.Preproc),
+            (r'^[?!]\s+', Comment.Preproc),
             (r'      >\s+.*\n', Comment.Preproc),
             (r'.*\n', Text)
         ]

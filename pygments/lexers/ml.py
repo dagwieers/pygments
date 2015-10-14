@@ -5,7 +5,7 @@
 
     Lexers for ML family languages.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -61,7 +61,7 @@ class SMLLexer(RegexLexer):
     def stringy(whatkind):
         return [
             (r'[^"\\]', whatkind),
-            (r'\\[\\\"abtnvfr]', String.Escape),
+            (r'\\[\\"abtnvfr]', String.Escape),
             # Control-character notation is used for codes < 32,
             # where \^@ == \000
             (r'\\\^[\x40-\x5e]', String.Escape),
@@ -224,7 +224,7 @@ class SMLLexer(RegexLexer):
         # Dealing with what comes after the 'fun' (or 'and' or '|') keyword
         'fname': [
             include('whitespace'),
-            (r'\'[0-9a-zA-Z_\']*', Name.Decorator),
+            (r'\'[\w\']*', Name.Decorator),
             (r'\(', Punctuation, 'tyvarseq'),
 
             (r'(%s)' % alphanumid_re, Name.Function, '#pop'),
@@ -237,7 +237,7 @@ class SMLLexer(RegexLexer):
         # Dealing with what comes after the 'val' (or 'and') keyword
         'vname': [
             include('whitespace'),
-            (r'\'[0-9a-zA-Z_\']*', Name.Decorator),
+            (r'\'[\w\']*', Name.Decorator),
             (r'\(', Punctuation, 'tyvarseq'),
 
             (r'(%s)(\s*)(=(?!%s))' % (alphanumid_re, symbolicid_re),
@@ -256,7 +256,7 @@ class SMLLexer(RegexLexer):
             include('whitespace'),
             include('breakout'),
 
-            (r'\'[0-9a-zA-Z_\']*', Name.Decorator),
+            (r'\'[\w\']*', Name.Decorator),
             (r'\(', Punctuation, 'tyvarseq'),
             (r'=(?!%s)' % symbolicid_re, Punctuation, ('#pop', 'typbind')),
 
@@ -281,7 +281,7 @@ class SMLLexer(RegexLexer):
             include('whitespace'),
             include('breakout'),
 
-            (r'\'[0-9a-zA-Z_\']*', Name.Decorator),
+            (r'\'[\w\']*', Name.Decorator),
             (r'\(', Punctuation, 'tyvarseq'),
             (r'(=)(\s*)(datatype)',
              bygroups(Punctuation, Text, Keyword.Reserved), '#pop'),
@@ -338,7 +338,7 @@ class SMLLexer(RegexLexer):
             (r'\s', Text),
             (r'\(\*', Comment.Multiline, 'comment'),
 
-            (r'\'[0-9a-zA-Z_\']*', Name.Decorator),
+            (r'\'[\w\']*', Name.Decorator),
             (alphanumid_re, Name),
             (r',', Punctuation),
             (r'\)', Punctuation, '#pop'),
@@ -390,7 +390,7 @@ class OcamlLexer(RegexLexer):
 
     tokens = {
         'escape-sequence': [
-            (r'\\[\\\"\'ntbr]', String.Escape),
+            (r'\\[\\"\'ntbr]', String.Escape),
             (r'\\[0-9]{3}', String.Escape),
             (r'\\x[0-9a-fA-F]{2}', String.Escape),
         ],
@@ -441,6 +441,7 @@ class OcamlLexer(RegexLexer):
             (r'[A-Z][\w\']*(?=\s*\.)', Name.Namespace),
             (r'[A-Z][\w\']*', Name.Class, '#pop'),
             (r'[a-z_][\w\']*', Name, '#pop'),
+            default('#pop'),
         ],
     }
 
@@ -477,7 +478,7 @@ class OpaLexer(RegexLexer):
     tokens = {
         # copied from the caml lexer, should be adapted
         'escape-sequence': [
-            (r'\\[\\\"\'ntr}]', String.Escape),
+            (r'\\[\\"\'ntr}]', String.Escape),
             (r'\\[0-9]{3}', String.Escape),
             (r'\\x[0-9a-fA-F]{2}', String.Escape),
         ],
@@ -662,7 +663,7 @@ class OpaLexer(RegexLexer):
         # to support it)
         'type-tuple': [
             include('comments-and-spaces'),
-            (r'[^\(\)/*]+', Keyword.Type),
+            (r'[^()/*]+', Keyword.Type),
             (r'[/*]', Keyword.Type),
             (r'\(', Keyword.Type, '#push'),
             (r'\)', Keyword.Type, '#pop'),

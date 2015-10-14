@@ -5,7 +5,7 @@
 
     Lexers for CSS and related stylesheet formats.
 
-    :copyright: Copyright 2006-2014 by the Pygments team, see AUTHORS.
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
     :license: BSD, see LICENSE for details.
 """
 
@@ -13,12 +13,12 @@ import re
 import copy
 
 from pygments.lexer import ExtendedRegexLexer, RegexLexer, include, bygroups, \
-    default, words
+    default, words, inherit
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
     Number, Punctuation
 from pygments.util import iteritems
 
-__all__ = ['CssLexer', 'SassLexer', 'ScssLexer']
+__all__ = ['CssLexer', 'SassLexer', 'ScssLexer', 'LessCssLexer']
 
 
 class CssLexer(RegexLexer):
@@ -44,7 +44,7 @@ class CssLexer(RegexLexer):
             (r'\#[\w-]+', Name.Function),
             (r'@[\w-]+', Keyword, 'atrule'),
             (r'[\w-]+', Name.Tag),
-            (r'[~\^\*!%&$\[\]\(\)<>\|+=@:;,./?-]', Operator),
+            (r'[~^*!%&$\[\]()<>|+=@:;,./?-]', Operator),
             (r'"(\\\\|\\"|[^"])*"', String.Double),
             (r"'(\\\\|\\'|[^'])*'", String.Single)
         ],
@@ -151,11 +151,11 @@ class CssLexer(RegexLexer):
             (r'\!important', Comment.Preproc),
             (r'/\*(?:.|\n)*?\*/', Comment),
             (r'\#[a-zA-Z0-9]{1,6}', Number),
-            (r'[\.-]?[0-9]*[\.]?[0-9]+(em|px|pt|pc|in|mm|cm|ex|s)\b', Number),
+            (r'[.-]?[0-9]*[.]?[0-9]+(em|px|pt|pc|in|mm|cm|ex|s)\b', Number),
             # Separate regex for percentages, as can't do word boundaries with %
-            (r'[\.-]?[0-9]*[\.]?[0-9]+%', Number),
+            (r'[.-]?[0-9]*[.]?[0-9]+%', Number),
             (r'-?[0-9]+', Number),
-            (r'[~\^\*!%&<>\|+=@:,./?-]+', Operator),
+            (r'[~^*!%&<>|+=@:,./?-]+', Operator),
             (r'[\[\]();]+', Punctuation),
             (r'"(\\\\|\\"|[^"])*"', String.Double),
             (r"'(\\\\|\\'|[^'])*'", String.Single),
@@ -269,7 +269,7 @@ common_sass_tokens = {
         (r'(-?\d+)(\%|[a-z]+)?', bygroups(Number.Integer, Keyword.Type)),
         (r'(-?\d*\.\d+)(\%|[a-z]+)?', bygroups(Number.Float, Keyword.Type)),
         (r'#\{', String.Interpol, 'interpolation'),
-        (r'[~\^\*!&%<>\|+=@:,./?-]+', Operator),
+        (r'[~^*!&%<>|+=@:,./?-]+', Operator),
         (r'[\[\]()]+', Punctuation),
         (r'"', String.Double, 'string-double'),
         (r"'", String.Single, 'string-single'),
@@ -289,7 +289,7 @@ common_sass_tokens = {
         (r'[\w-]+', Name.Tag),
         (r'#\{', String.Interpol, 'interpolation'),
         (r'&', Keyword),
-        (r'[~\^\*!&\[\]\(\)<>\|+=@:;,./?-]', Operator),
+        (r'[~^*!&\[\]()<>|+=@:;,./?-]', Operator),
         (r'"', String.Double, 'string-double'),
         (r"'", String.Single, 'string-single'),
     ],
@@ -380,7 +380,8 @@ class SassLexer(ExtendedRegexLexer):
     filenames = ['*.sass']
     mimetypes = ['text/x-sass']
 
-    flags = re.IGNORECASE
+    flags = re.IGNORECASE | re.MULTILINE
+
     tokens = {
         'root': [
             (r'[ \t]*\n', Text),
@@ -471,10 +472,12 @@ class ScssLexer(RegexLexer):
             (r'(@mixin)( [\w-]+)', bygroups(Keyword, Name.Function), 'value'),
             (r'(@include)( [\w-]+)', bygroups(Keyword, Name.Decorator), 'value'),
             (r'@extend', Keyword, 'selector'),
+            (r'(@media)(\s+)', bygroups(Keyword, Text), 'value'),
             (r'@[\w-]+', Keyword, 'selector'),
             (r'(\$[\w-]*\w)([ \t]*:)', bygroups(Name.Variable, Operator), 'value'),
-            (r'(?=[^;{}][;}])', Name.Attribute, 'attr'),
-            (r'(?=[^;{}:]+:[^a-z])', Name.Attribute, 'attr'),
+            # TODO: broken, and prone to infinite loops.
+            #(r'(?=[^;{}][;}])', Name.Attribute, 'attr'),
+            #(r'(?=[^;{}:]+:[^a-z])', Name.Attribute, 'attr'),
             default('selector'),
         ],
 
@@ -482,6 +485,7 @@ class ScssLexer(RegexLexer):
             (r'[^\s:="\[]+', Name.Attribute),
             (r'#\{', String.Interpol, 'interpolation'),
             (r'[ \t]*:', Operator, 'value'),
+            default('#pop'),
         ],
 
         'inline-comment': [
@@ -492,5 +496,29 @@ class ScssLexer(RegexLexer):
     }
     for group, common in iteritems(common_sass_tokens):
         tokens[group] = copy.copy(common)
-    tokens['value'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])
-    tokens['selector'].extend([(r'\n', Text), (r'[;{}]', Punctuation, 'root')])
+    tokens['value'].extend([(r'\n', Text), (r'[;{}]', Punctuation, '#pop')])
+    tokens['selector'].extend([(r'\n', Text), (r'[;{}]', Punctuation, '#pop')])
+
+
+class LessCssLexer(CssLexer):
+    """
+    For `LESS <http://lesscss.org/>`_ styleshets.
+
+    .. versionadded:: 2.1
+    """
+
+    name = 'LessCss'
+    aliases = ['less']
+    filenames = ['*.less']
+    mimetypes = ['text/x-less-css']
+
+    tokens = {
+        'root': [
+            (r'@\w+', Name.Variable),
+            inherit,
+        ],
+        'content': [
+            (r'{', Punctuation, '#push'),
+            inherit,
+        ],
+    }
