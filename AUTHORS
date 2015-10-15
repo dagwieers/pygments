@@ -59,6 +59,7 @@ Other contributors, listed alphabetically, are:
 * Krzysiek Goj -- Scala lexer
 * Matt Good -- Genshi, Cheetah lexers
 * Michał Górny -- vim modeline support
+* Alex Gosse -- TrafficScript lexer
 * Patrick Gotthardt -- PHP namespaces support
 * Olivier Guibe -- Asymptote lexer
 * Jordi Gutiérrez Hermoso -- Octave lexer
