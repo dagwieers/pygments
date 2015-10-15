@@ -32,6 +32,7 @@ Version 2.1
   * Shell consoles (Tcsh, PowerShell, MSDOS) (PR#479)
   * Elm and J (PR#452)
   * Crmsh (PR#440)
+  * Praat (PR#492)
 
 
 - Added styles:
