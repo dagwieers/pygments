@@ -542,7 +542,7 @@ class LassoLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'^#!.+lasso9\b', Comment.Preproc, 'lasso'),
+            (r'^#![ \S]+lasso9\b', Comment.Preproc, 'lasso'),
             (r'\[no_square_brackets\]', Comment.Preproc, 'nosquarebrackets'),
             (r'\[noprocess\]', Comment.Preproc, ('delimiters', 'noprocess')),
             (r'\[', Comment.Preproc, ('delimiters', 'squarebrackets')),
@@ -561,9 +561,11 @@ class LassoLexer(RegexLexer):
             (r'[^[<]+', Other),
         ],
         'nosquarebrackets': [
+            (r'\[noprocess\]', Comment.Preproc, 'noprocess'),
+            (r'\[', Other),
             (r'<\?(LassoScript|lasso|=)', Comment.Preproc, 'anglebrackets'),
-            (r'<', Other),
-            (r'[^<]+', Other),
+            (r'<(!--.*?-->)?', Other),
+            (r'[^[<]+', Other),
         ],
         'noprocess': [
             (r'\[/noprocess\]', Comment.Preproc, '#pop'),
@@ -596,7 +598,7 @@ class LassoLexer(RegexLexer):
             (r'\d*\.\d+(e[+-]?\d+)?', Number.Float),
             (r'0x[\da-f]+', Number.Hex),
             (r'\d+', Number.Integer),
-            (r'([+-]?)(infinity|NaN)\b', bygroups(Operator, Number)),
+            (r'(infinity|NaN)\b', Number),
             (r"'", String.Single, 'singlestring'),
             (r'"', String.Double, 'doublestring'),
             (r'`[^`]*`', String.Backtick),
@@ -604,16 +606,17 @@ class LassoLexer(RegexLexer):
             # names
             (r'\$[a-z_][\w.]*', Name.Variable),
             (r'#([a-z_][\w.]*|\d+)', Name.Variable.Instance),
-            (r"(\.)('[a-z_][\w.]*')",
+            (r"(\.\s*)('[a-z_][\w.]*')",
                 bygroups(Name.Builtin.Pseudo, Name.Variable.Class)),
             (r"(self)(\s*->\s*)('[a-z_][\w.]*')",
                 bygroups(Name.Builtin.Pseudo, Operator, Name.Variable.Class)),
-            (r'(\.\.?)([a-z_][\w.]*(=(?!=))?)',
+            (r'(\.\.?\s*)([a-z_][\w.]*(=(?!=))?)',
                 bygroups(Name.Builtin.Pseudo, Name.Other.Member)),
             (r'(->\\?\s*|&\s*)([a-z_][\w.]*(=(?!=))?)',
                 bygroups(Operator, Name.Other.Member)),
-            (r'(self|inherited)\b', Name.Builtin.Pseudo),
-            (r'-[a-z_][\w.]*', Name.Attribute),
+            (r'(?<!->)(self|inherited|currentcapture|givenblock)\b',
+                Name.Builtin.Pseudo),
+            (r'-(?!infinity)[a-z_][\w.]*', Name.Attribute),
             (r'::\s*[a-z_][\w.]*', Name.Label),
             (r'(error_(code|msg)_\w+|Error_AddError|Error_ColumnRestriction|'
              r'Error_DatabaseConnectionUnavailable|Error_DatabaseTimeout|'
@@ -643,7 +646,8 @@ class LassoLexer(RegexLexer):
             (r'(true|false|none|minimal|full|all|void)\b', Keyword.Constant),
             (r'(local|var|variable|global|data(?=\s))\b', Keyword.Declaration),
             (r'(array|date|decimal|duration|integer|map|pair|string|tag|xml|'
-             r'null|bytes|list|queue|set|stack|staticarray|tie)\b', Keyword.Type),
+             r'null|boolean|bytes|keyword|list|locale|queue|set|stack|'
+             r'staticarray)\b', Keyword.Type),
             (r'([a-z_][\w.]*)(\s+)(in)\b', bygroups(Name, Text, Keyword)),
             (r'(let|into)(\s+)([a-z_][\w.]*)', bygroups(Keyword, Text, Name)),
             (r'require\b', Keyword, 'requiresection'),
@@ -692,7 +696,7 @@ class LassoLexer(RegexLexer):
             (r'\\', String.Double),
         ],
         'escape': [
-            (r'\\(U[\da-f]{8}|u[\da-f]{4}|x[\da-f]{1,2}|[0-7]{1,3}|:[^:]+:|'
+            (r'\\(U[\da-f]{8}|u[\da-f]{4}|x[\da-f]{1,2}|[0-7]{1,3}|:[^:\n\r]+:|'
              r'[abefnrtv?"\'\\]|$)', String.Escape),
         ],
         'signature': [
