@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for details.
 """
 
-from pygments.lexer import RegexLexer, words, bygroups, re, include
+from pygments.lexer import RegexLexer, words, re
 from pygments.token import Text, Operator, Keyword, Name, Comment
 
 __all__ = ['RoboconfGraphLexer', 'RoboconfInstancesLexer']
@@ -32,7 +32,7 @@ class RoboconfGraphLexer(RegexLexer):
             (r'\s+', Text),
 
             # There is one operator
-            (r'=',Operator),
+            (r'=', Operator),
 
             # Keywords
             (words(('facet', 'import'), suffix=r'\s*\b', prefix=r'\b'), Keyword),

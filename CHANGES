@@ -35,17 +35,18 @@ Version 2.1
   * Praat (PR#492)
   * CSound (PR#494)
 
-
 - Added styles:
 
   * Lovelace (PR#456)
   * Algol and Algol-nu (#1090)
 
-
 - Added formatters:
 
   * IRC (PR#458)
+  * True color (24-bit) terminal ANSI sequences (#1142)
+    (formatter alias: "16m")
 
+- Improved performance of the HTML formatter for long lines (PR#504).
 
 - Updated autopygmentize script (PR#445)
 
