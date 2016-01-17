@@ -12,8 +12,7 @@ processed version (in different formats) containing syntax highlighting markup.
 
 Its features include:
 
-* a wide range of common languages and markup formats is supported (look here
-  for a list)
+* a wide range of common :doc:`languages and markup formats <languages>` is supported
 * new languages and formats are added easily
 * a number of output formats is available, including:
 
@@ -90,6 +89,7 @@ Who uses Pygments?
 
 This is an (incomplete) list of projects and sites known to use the Pygments highlighter.
 
+* `Wikipedia <http://en.wikipedia.org>`_
 * `Pygments API <http://pygments.appspot.com/>`_, a HTTP POST interface to Pygments
 * `The Sphinx documentation builder <http://sphinx.pocoo.org/>`_, for embedded source examples
 * `rst2pdf <http://code.google.com/p/rst2pdf/>`_, a reStructuredText to PDF converter
@@ -102,7 +102,6 @@ This is an (incomplete) list of projects and sites known to use the Pygments hig
 * `BzrFruit <http://repo.or.cz/w/bzrfruit.git>`_, a Bazaar branch viewer
 * `QBzr <http://bazaar-vcs.org/QBzr>`_, a cross-platform Qt-based GUI front end for Bazaar
 * `BitBucket <http://bitbucket.org/>`_, a Mercurial and Git hosting site
-* `GitHub <http://github.com/>`_, a site offering secure Git hosting and collaborative development
 * `Review Board <http://www.review-board.org/>`_, a collaborative code reviewing tool
 * `skeletonz <http://orangoo.com/skeletonz/>`_, a Python powered content management system
 * `Diamanda <http://code.google.com/p/diamanda/>`_, a Django powered wiki system with support for Pygments
