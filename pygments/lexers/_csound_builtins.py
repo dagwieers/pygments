@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+    pygments.lexers._csound_builtins
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
+"""
 
 # Opcodes in Csound 6.05 from
 #   csound --list-opcodes
@@ -12,6 +19,7 @@
 #   endop   <http://www.csounds.com/manual/html/endop.html
 #   goto    <http://www.csounds.com/manual/html/goto.html>
 #   igoto   <http://www.csounds.com/manual/html/igoto.html>
+#   instr   <http://www.csounds.com/manual/html/instr.html>
 #   kgoto   <http://www.csounds.com/manual/html/kgoto.html>
 #   loop_ge <http://www.csounds.com/manual/html/loop_ge.html>
 #   loop_gt <http://www.csounds.com/manual/html/loop_gt.html>
@@ -463,7 +471,7 @@ OPCODES = set((
     'ins',
     'insglobal',
     'insremot',
-    'instr',
+   #'instr',
     'int',
     'integ',
     'interp',
