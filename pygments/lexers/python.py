@@ -486,8 +486,10 @@ class PythonTracebackLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'^Traceback \(most recent call last\):\n',
-             Generic.Traceback, 'intb'),
+            # Cover both (most recent call last) and (innermost last)
+            # The optional ^C allows us to catch keyboard interrupt signals.
+            (r'^(\^C)?(Traceback.*\n)',
+             bygroups(Text, Generic.Traceback), 'intb'),
             # SyntaxError starts with this.
             (r'^(?=  File "[^"]+", line \d+)', Generic.Traceback, 'intb'),
             (r'^.*\n', Other),
@@ -580,6 +582,8 @@ class CythonLexer(RegexLexer):
             include('keywords'),
             (r'(def|property)(\s+)', bygroups(Keyword, Text), 'funcname'),
             (r'(cp?def)(\s+)', bygroups(Keyword, Text), 'cdef'),
+            # (should actually start a block with only cdefs)
+            (r'(cdef)(:)', bygroups(Keyword, Punctuation)),
             (r'(class|struct)(\s+)', bygroups(Keyword, Text), 'classname'),
             (r'(from)(\s+)', bygroups(Keyword, Text), 'fromimport'),
             (r'(c?import)(\s+)', bygroups(Keyword, Text), 'import'),
@@ -599,7 +603,7 @@ class CythonLexer(RegexLexer):
         'keywords': [
             (words((
                 'assert', 'break', 'by', 'continue', 'ctypedef', 'del', 'elif',
-                'else', 'except', 'except?', 'exec', 'finally', 'for', 'gil',
+                'else', 'except', 'except?', 'exec', 'finally', 'for', 'fused', 'gil',
                 'global', 'if', 'include', 'lambda', 'nogil', 'pass', 'print',
                 'raise', 'return', 'try', 'while', 'yield', 'as', 'with'), suffix=r'\b'),
              Keyword),
