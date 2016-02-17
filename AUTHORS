@@ -114,6 +114,7 @@ Other contributors, listed alphabetically, are:
 * Matt Layman -- TAP lexer
 * Kristian Lyngstøl -- Varnish lexers
 * Sylvestre Ledru -- Scilab lexer
+* Chee Sing Lee -- Flatline lexer
 * Mark Lee -- Vala lexer
 * Valentin Lorentz -- C++ lexer improvements
 * Ben Mabey -- Gherkin lexer
