@@ -6,7 +6,6 @@ Issue numbers refer to the tracker at
 pull request numbers to the requests at
 <https://bitbucket.org/birkenfeld/pygments-main/pull-requests/merged>.
 
-
 Version 2.2
 -----------
 (in development)
@@ -38,6 +37,13 @@ Version 2.2
 
 - Styles can now define colors with ANSI colors for use in the 256-color
   terminal formatter. (PR#531)
+
+
+Version 2.1.2
+-------------
+(in development)
+
+- Fixed Python 3 regression in image formatter (#1215)
 
 
 Version 2.1.1
