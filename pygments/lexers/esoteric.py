@@ -11,9 +11,9 @@
 
 from pygments.lexer import RegexLexer, include, words
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
-    Number, Punctuation, Error, Whitespace
+    Number, Punctuation, Error
 
-__all__ = ['BrainfuckLexer', 'BefungeLexer', 'BoogieLexer', 'RedcodeLexer', 'CAmkESLexer', 'AheuiLexer']
+__all__ = ['BrainfuckLexer', 'BefungeLexer', 'RedcodeLexer', 'CAmkESLexer', 'BoogieLexer', 'AheuiLexer']
 
 
 class BrainfuckLexer(RegexLexer):
@@ -90,7 +90,7 @@ class CAmkESLexer(RegexLexer):
     filenames = ['*.camkes', '*.idl4']
 
     tokens = {
-        'root':[
+        'root': [
             # C pre-processor directive
             (r'^\s*#.*\n', Comment.Preproc),
 
@@ -99,21 +99,25 @@ class CAmkESLexer(RegexLexer):
             (r'/\*(.|\n)*?\*/', Comment),
             (r'//.*\n', Comment),
 
-            (r'[\[\(\){},\.;=\]]', Punctuation),
+            (r'[\[(){},.;\]]', Punctuation),
+            (r'[~!%^&*+=|?:<>/-]', Operator),
 
             (words(('assembly', 'attribute', 'component', 'composition',
                     'configuration', 'connection', 'connector', 'consumes',
-                    'control', 'dataport', 'Dataport', 'emits', 'event',
-                    'Event', 'from', 'group', 'hardware', 'has', 'interface',
-                    'Interface', 'maybe', 'procedure', 'Procedure', 'provides',
-                    'template', 'to', 'uses'), suffix=r'\b'), Keyword),
+                    'control', 'dataport', 'Dataport', 'Dataports', 'emits',
+                    'event', 'Event', 'Events', 'export', 'from', 'group',
+                    'hardware', 'has', 'interface', 'Interface', 'maybe',
+                    'procedure', 'Procedure', 'Procedures', 'provides',
+                    'template', 'thread', 'threads', 'to', 'uses', 'with'),
+                   suffix=r'\b'), Keyword),
 
             (words(('bool', 'boolean', 'Buf', 'char', 'character', 'double',
                     'float', 'in', 'inout', 'int', 'int16_6', 'int32_t',
                     'int64_t', 'int8_t', 'integer', 'mutex', 'out', 'real',
-                    'refin', 'semaphore', 'signed', 'string', 'uint16_t',
-                    'uint32_t', 'uint64_t', 'uint8_t', 'uintptr_t', 'unsigned',
-                    'void'), suffix=r'\b'), Keyword.Type),
+                    'refin', 'semaphore', 'signed', 'string', 'struct',
+                    'uint16_t', 'uint32_t', 'uint64_t', 'uint8_t', 'uintptr_t',
+                    'unsigned', 'void'),
+                   suffix=r'\b'), Keyword.Type),
 
             # Recognised attributes
             (r'[a-zA-Z_]\w*_(priority|domain|buffer)', Keyword.Reserved),
@@ -131,6 +135,7 @@ class CAmkESLexer(RegexLexer):
             (r'-?[\d]+', Number),
             (r'-?[\d]+\.[\d]+', Number.Float),
             (r'"[^"]*"', String),
+            (r'[Tt]rue|[Ff]alse', Name.Builtin),
 
             # Identifiers
             (r'[a-zA-Z_]\w*', Name),
@@ -170,6 +175,44 @@ class RedcodeLexer(RegexLexer):
             (r'[.,]', Punctuation),  # mode
             #  Numbers
             (r'[-+]?\d+', Number.Integer),
+        ],
+    }
+
+
+class AheuiLexer(RegexLexer):
+    """
+    Aheui_ Lexer.
+
+    Aheui_ is esoteric language based on Korean alphabets.
+
+    .. _Aheui:: http://aheui.github.io/
+
+    """
+
+    name = u'Aheui'
+    aliases = ['aheui']
+    filenames = ['*.aheui']
+
+    tokens = {
+        'root': [
+            (u'['
+             u'나-낳냐-냫너-넣녀-녛노-놓뇨-눟뉴-닇'
+             u'다-닿댜-댷더-덯뎌-뎧도-돟됴-둫듀-딓'
+             u'따-땋땨-떃떠-떻뗘-뗳또-똫뚀-뚷뜌-띟'
+             u'라-랗랴-럏러-렇려-렿로-롷료-뤃류-릫'
+             u'마-맣먀-먛머-멓며-몋모-뫃묘-뭏뮤-믷'
+             u'바-밯뱌-뱧버-벟벼-볗보-봏뵤-붛뷰-빃'
+             u'빠-빻뺘-뺳뻐-뻫뼈-뼣뽀-뽛뾰-뿧쀼-삏'
+             u'사-샇샤-샿서-섷셔-셯소-솧쇼-숳슈-싛'
+             u'싸-쌓쌰-썋써-쎃쎠-쎻쏘-쏳쑈-쑿쓔-씧'
+             u'자-잫쟈-쟣저-젛져-졓조-좋죠-줗쥬-즿'
+             u'차-챃챠-챻처-첳쳐-쳫초-촣쵸-춯츄-칗'
+             u'카-캏캬-컇커-컿켜-켷코-콯쿄-쿻큐-킣'
+             u'타-탛탸-턓터-텋텨-톃토-톻툐-퉇튜-틯'
+             u'파-팧퍄-퍟퍼-펗펴-폏포-퐇표-풓퓨-픻'
+             u'하-핳햐-햫허-헣혀-혛호-홓효-훟휴-힇'
+             u']', Operator),
+            ('.', Comment),
         ],
     }
 
@@ -218,40 +261,3 @@ class BoogieLexer(RegexLexer):
         ],
     }
 
-
-class AheuiLexer(RegexLexer):
-    """
-    Aheui_ Lexer.
-
-    Aheui_ is esoteric language based on Korean alphabets.
-
-    .. _Aheui:: http://aheui.github.io/
-
-    """
-
-    name = u'Aheui'
-    aliases = ['aheui']
-    filenames = ['*.aheui']
-
-    tokens = {
-        'root': [
-            (u'['
-             u'나-낳냐-냫너-넣녀-녛노-놓뇨-눟뉴-닇'
-             u'다-닿댜-댷더-덯뎌-뎧도-돟됴-둫듀-딓'
-             u'따-땋땨-떃떠-떻뗘-뗳또-똫뚀-뚷뜌-띟'
-             u'라-랗랴-럏러-렇려-렿로-롷료-뤃류-릫'
-             u'마-맣먀-먛머-멓며-몋모-뫃묘-뭏뮤-믷'
-             u'바-밯뱌-뱧버-벟벼-볗보-봏뵤-붛뷰-빃'
-             u'빠-빻뺘-뺳뻐-뻫뼈-뼣뽀-뽛뾰-뿧쀼-삏'
-             u'사-샇샤-샿서-섷셔-셯소-솧쇼-숳슈-싛'
-             u'싸-쌓쌰-썋써-쎃쎠-쎻쏘-쏳쑈-쑿쓔-씧'
-             u'자-잫쟈-쟣저-젛져-졓조-좋죠-줗쥬-즿'
-             u'차-챃챠-챻처-첳쳐-쳫초-촣쵸-춯츄-칗'
-             u'카-캏캬-컇커-컿켜-켷코-콯쿄-쿻큐-킣'
-             u'타-탛탸-턓터-텋텨-톃토-톻툐-퉇튜-틯'
-             u'파-팧퍄-퍟퍼-펗펴-폏포-퐇표-풓퓨-픻'
-             u'하-핳햐-햫허-헣혀-혛호-홓효-훟휴-힇'
-             u']', Operator),
-            ('.', Comment),
-        ],
-    }
