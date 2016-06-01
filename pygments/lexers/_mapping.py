@@ -261,6 +261,7 @@ LEXERS = {
     'Modula2Lexer': ('pygments.lexers.modula2', 'Modula-2', ('modula2', 'm2'), ('*.def', '*.mod'), ('text/x-modula2',)),
     'MoinWikiLexer': ('pygments.lexers.markup', 'MoinMoin/Trac Wiki markup', ('trac-wiki', 'moin'), (), ('text/x-trac-wiki',)),
     'MonkeyLexer': ('pygments.lexers.basic', 'Monkey', ('monkey',), ('*.monkey',), ('text/x-monkey',)),
+    'MonteLexer': ('pygments.lexers.monte', 'Monte', ('monte',), ('*.mt',), ()),
     'MoonScriptLexer': ('pygments.lexers.scripting', 'MoonScript', ('moon', 'moonscript'), ('*.moon',), ('text/x-moonscript', 'application/x-moonscript')),
     'MozPreprocCssLexer': ('pygments.lexers.markup', 'CSS+mozpreproc', ('css+mozpreproc',), ('*.css.in',), ()),
     'MozPreprocHashLexer': ('pygments.lexers.markup', 'mozhashpreproc', ('mozhashpreproc',), (), ()),
