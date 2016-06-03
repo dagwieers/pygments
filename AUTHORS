@@ -141,6 +141,7 @@ Other contributors, listed alphabetically, are:
 * Mher Movsisyan -- DTD lexer
 * Dejan Muhamedagic -- Crmsh lexer
 * Ana Nelson -- Ragel, ANTLR, R console lexers
+* Kurt Neufeld -- Markdown lexer
 * Nam T. Nguyen -- Monokai style
 * Jesper Noehr -- HTML formatter "anchorlinenos"
 * Mike Nolta -- Julia lexer
