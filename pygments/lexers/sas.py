@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-
 """
     pygments.lexers.sas
     ~~~~~~~~~~~~~~~~~~~
 
     Lexer for SAS.
+
+    :copyright: Copyright 2006-2015 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
 """
 
 import re
@@ -16,13 +18,14 @@ __all__ = ['SASLexer']
 
 class SASLexer(RegexLexer):
     """
-    For `SAS <http://www.sas.com/>` files.
+    For `SAS <http://www.sas.com/>`_ files.
 
-    Syntax from syntax/sas.vim by James Kidd <james.kidd@covance.com>
+    .. versionadded:: 2.2
     """
+    # Syntax from syntax/sas.vim by James Kidd <james.kidd@covance.com>
 
     name      = 'SAS'
-    aliases   = ['SAS', 'sas']
+    aliases   = ['sas']
     filenames = ['*.SAS', '*.sas']
     mimetypes = ['text/x-sas', 'text/sas', 'application/x-sas']
     flags     = re.IGNORECASE | re.MULTILINE
@@ -31,8 +34,8 @@ class SASLexer(RegexLexer):
         "bquote", "nrbquote", "cmpres", "qcmpres", "compstor", "datatyp",
         "display", "do", "else", "end", "eval", "global", "goto", "if",
         "index", "input", "keydef", "label", "left", "length", "let",
-        "local", "lowcase", "macro", "mend", "nrbquote", "nrquote",
-        "nrstr", "put", "qcmpres", "qleft", "qlowcase", "qscan",
+        "local", "lowcase", "macro", "mend", "nrquote",
+        "nrstr", "put", "qleft", "qlowcase", "qscan",
         "qsubstr", "qsysfunc", "qtrim", "quote", "qupcase", "scan",
         "str", "substr", "superq", "syscall", "sysevalf", "sysexec",
         "sysfunc", "sysget", "syslput", "sysprod", "sysrc", "sysrput",
@@ -73,8 +76,8 @@ class SASLexer(RegexLexer):
         "compress", "cos", "cosh", "css", "curobs", "cv", "daccdb",
         "daccdbsl", "daccsl", "daccsyd", "dacctab", "dairy", "date",
         "datejul", "datepart", "datetime", "day", "dclose", "depdb",
-        "depdbsl", "depdbsl", "depsl", "depsl", "depsyd", "depsyd",
-        "deptab", "deptab", "dequote", "dhms", "dif", "digamma",
+        "depdbsl", "depsl", "depsyd",
+        "deptab", "dequote", "dhms", "dif", "digamma",
         "dim", "dinfo", "dnum", "dopen", "doptname", "doptnum",
         "dread", "dropnote", "dsname", "erf", "erfc", "exist", "exp",
         "fappend", "fclose", "fcol", "fdelete", "fetch", "fetchobs",
