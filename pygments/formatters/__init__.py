@@ -20,7 +20,7 @@ from pygments.plugin import find_plugin_formatters
 from pygments.util import ClassNotFound, itervalues
 
 __all__ = ['get_formatter_by_name', 'get_formatter_for_filename',
-           'get_all_formatters'] + list(FORMATTERS)
+           'get_all_formatters', 'load_formatter_from_file'] + list(FORMATTERS)
 
 _formatter_cache = {}  # classes by name
 _pattern_cache = {}
@@ -77,6 +77,39 @@ def get_formatter_by_name(_alias, **options):
     if cls is None:
         raise ClassNotFound("no formatter found for name %r" % _alias)
     return cls(**options)
+
+
+def load_formatter_from_file(filename, formattername="CustomFormatter",
+                             **options):
+    """Load a formatter from a file.
+
+    This method expects a file located relative to the current working
+    directory, which contains a class named CustomFormatter. By default,
+    it expects the Formatter to be named CustomFormatter; you can specify
+    your own class name as the second argument to this function.
+
+    Users should be very careful with the input, because this method
+    is equivalent to running eval on the input file.
+
+    Raises ClassNotFound if there are any problems importing the Formatter
+    """
+    try:
+        # This empty dict will contain the namespace for the exec'd file
+        custom_namespace = {}
+        exec(open(filename, 'r'), custom_namespace)
+        # Retrieve the class `formattername` from that namespace
+        if not formattername in custom_namespace:
+            raise ClassNotFound('no valid %s class found in %s' %
+                                (formattername, filename))
+        formatter_class = custom_namespace[formattername]
+        # And finally instantiate it with the options
+        return formatter_class(**options)
+    except IOError as err:
+        raise ClassNotFound('cannot read %s' % filename)
+    except ClassNotFound as err:
+        raise err
+    except Exception as err:
+        raise ClassNotFound('error when loading custom formatter: %s' % err)
 
 
 def get_formatter_for_filename(fn, **options):
